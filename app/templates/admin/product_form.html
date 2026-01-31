@@ -186,7 +186,10 @@
                 <div class="btn-group">
                     <button class="btn"
                         onclick="window.location.href='{{ url_for('admin.product_new') }}';">New</button>
-                    <button class="btn">Confirm</button>
+                    <button type="submit" class="btn" form="product-form"
+                        style="background-color: var(--primary-accent); color: white;">
+                        {% if product %}Save{% else %}Create{% endif %}
+                    </button>
                     <button class="btn">Archived</button>
                 </div>
                 <div class="btn-group">
@@ -195,11 +198,12 @@
                 </div>
             </div>
 
-            <form action="#" method="POST" class="form-body">
+            <form id="product-form" action="{{ url_for('admin.product_new') }}" method="POST" class="form-body">
                 <!-- Product Name - Full Width Underline -->
                 <div class="input-row">
                     <span class="label">Product Name</span>
-                    <input type="text" class="input-field" placeholder="e.g. Modern Teak Chair">
+                    <input type="text" name="name" class="input-field" placeholder="e.g. Modern Teak Chair"
+                        value="{{ product.name if product else '' }}" required>
                 </div>
 
                 <div class="fields-grid">
@@ -208,7 +212,8 @@
                         <div class="compact-group">
                             <span class="label">Category</span>
                             <div style="flex: 1; position: relative;">
-                                <input type="text" class="input-field" placeholder="Selection" style="width: 100%;">
+                                <input type="text" name="category" class="input-field" placeholder="Selection"
+                                    style="width: 100%;" value="{{ product.category if product else '' }}">
                             </div>
                         </div>
                         <p class="hint-text">
@@ -223,7 +228,9 @@
                         <div class="compact-group">
                             <span class="label" style="min-width: 120px;">Sales Price</span>
                             <div style="flex: 1; display: flex; align-items: flex-end; gap: 8px;">
-                                <input type="text" class="input-field" placeholder="0.00" style="text-align: right;">
+                                <input type="number" step="0.01" name="sales_price" class="input-field"
+                                    placeholder="0.00" style="text-align: right;"
+                                    value="{{ product.sales_price if product else '' }}">
                                 <span style="font-size: 16px; color: #64748b; padding-bottom: 8px;">Rs</span>
                             </div>
                         </div>
@@ -231,7 +238,9 @@
                         <div class="compact-group">
                             <span class="label" style="min-width: 120px;">Purchase Price</span>
                             <div style="flex: 1; display: flex; align-items: flex-end; gap: 8px;">
-                                <input type="text" class="input-field" placeholder="0.00" style="text-align: right;">
+                                <input type="number" step="0.01" name="purchase_price" class="input-field"
+                                    placeholder="0.00" style="text-align: right;"
+                                    value="{{ product.purchase_price if product else '' }}">
                                 <span style="font-size: 16px; color: #64748b; padding-bottom: 8px;">Rs</span>
                             </div>
                         </div>

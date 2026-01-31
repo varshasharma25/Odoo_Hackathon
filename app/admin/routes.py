@@ -44,15 +44,36 @@ def contact_detail(id):
 
 @bp.route('/products')
 def products_list():
-    return render_template('admin/products_list.html')
+    products = Product.query.filter_by(is_archived=False).all()
+    return render_template('admin/products_list.html', products=products)
 
 @bp.route('/product/new', methods=['GET', 'POST'])
 def product_new():
-    return render_template('admin/product_form.html')
+    if request.method == 'POST':
+        product = Product(
+            name=request.form.get('name'),
+            category=request.form.get('category'),
+            sales_price=request.form.get('sales_price'),
+            purchase_price=request.form.get('purchase_price')
+        )
+        db.session.add(product) 
+        db.session.commit()
+        flash('Product created successfully!', 'success')
+        return redirect(url_for('admin.products_list'))
+    return render_template('admin/product_form.html', product=None)
 
 @bp.route('/product/<int:id>', methods=['GET', 'POST'])
 def product_detail(id):
-    return render_template('admin/product_form.html')
+    product = Product.query.get_or_404(id)
+    if request.method == 'POST':
+        product.name = request.form.get('name')
+        product.category = request.form.get('category')
+        product.sales_price = request.form.get('sales_price')
+        product.purchase_price = request.form.get('purchase_price')
+        db.session.commit()
+        flash('Product updated successfully!', 'success')
+        return redirect(url_for('admin.products_list'))
+    return render_template('admin/product_form.html', product=product)
 
 @bp.route('/analytical-accounts')
 def analytical_accounts_list():

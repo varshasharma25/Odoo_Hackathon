@@ -36,9 +36,12 @@ class Product(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
+    category = db.Column(db.String(128))
     description = db.Column(db.Text)
-    price = db.Column(db.Float, nullable=False)
-    cost = db.Column(db.Float)
+    sales_price = db.Column(db.Float)
+    purchase_price = db.Column(db.Float)
+    price = db.Column(db.Float)  # Keep for backward compatibility
+    cost = db.Column(db.Float)   # Keep for backward compatibility
     quantity = db.Column(db.Integer, default=0)
     image_url = db.Column(db.String(255))
     is_archived = db.Column(db.Boolean, default=False)
@@ -52,7 +55,10 @@ class Product(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'category': self.category,
             'description': self.description,
+            'sales_price': self.sales_price,
+            'purchase_price': self.purchase_price,
             'price': self.price,
             'cost': self.cost,
             'quantity': self.quantity,
