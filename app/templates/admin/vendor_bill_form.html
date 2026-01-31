@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Bill Form | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            /* Odoo Indigo */
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #333;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --accent-pink: #d63384;
+            --warning-orange: #ff9800;
+            --success-green: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 36px;
+            border: 1px solid #000;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #000;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .btn-confirm {
+            background-color: var(--primary-accent);
+            color: white;
+            border-color: var(--primary-accent);
+        }
+
+        .btn-pay {
+            background-color: var(--primary-accent);
+            color: white;
+            border-color: var(--primary-accent);
+        }
+
+        /* Status Breadcrumbs */
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .status-step {
+            padding: 8px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            position: relative;
+            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
+            margin-right: -10px;
+        }
+
+        .status-step.active {
+            background: #e2e8f0;
+            color: #000;
+        }
+
+        /* Status Badges */
+        .status-badges-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .status-badge {
+            padding: 4px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid #ddd;
+            color: #999;
+            background: #fff;
+        }
+
+        .status-badge.paid.active {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .status-badge.partial.active {
+            background: #fef9c3;
+            color: #854d0e;
+            border-color: #fef08a;
+        }
+
+        .status-badge.notpaid.active {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        /* Header Info */
+        .bill-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+
+        .info-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .label {
+            font-size: 16px;
+            color: var(--accent-pink);
+            font-weight: 500;
+            min-width: 140px;
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            border-bottom: 1.5px solid #a47c94;
+            padding: 4px 0;
+            font-size: 15px;
+            color: #333;
+            outline: none;
+            background: transparent;
+        }
+
+        /* Items Table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 32px;
+            border: 1px solid var(--border-color);
+        }
+
+        .items-table th {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+            background: #fafafa;
+            color: var(--accent-pink);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .items-table td {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .col-sr {
+            width: 60px;
+            text-align: center;
+        }
+
+        .col-prod {
+            width: 300px;
+        }
+
+        .col-qty,
+        .col-price,
+        .col-total {
+            width: 120px;
+            text-align: right;
+        }
+
+        .items-table input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: inherit;
+            font-family: inherit;
+            outline: none;
+        }
+
+        /* Payment Summary */
+        .summary-container {
+            margin-top: 32px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .summary-box {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid var(--border-color);
+            padding-top: 12px;
+            margin-top: 8px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .summary-row.due {
+            color: var(--warning-orange);
+            font-weight: 600;
+        }
+
+        .payment-input {
+            width: 100px;
+            text-align: right;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            outline: none;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        /* Warning */
+        .warning-box {
+            margin-top: 40px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            display: none;
+        }
+
+        .warning-header {
+            color: var(--warning-orange);
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .bill-header {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="form-card">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="btn-group">
+                    <button class="btn"
+                        onclick="window.location.href='{{ url_for('admin.vendor_bill_new') }}';">New</button>
+                    <div
+                        style="background: #e9f7ef; color: #27ae60; padding: 10px 16px; border-radius: 8px; font-weight: 600; border: 1px solid #27ae60; margin-left: 20px;">
+                        1234</div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button class="btn" onclick="window.history.back();">Back</button>
+                </div>
+            </div>
+
+            <!-- Header Grid -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px;">
+                <div style="flex: 1;">
+                    <div class="info-group">
+                        <span class="label">Vendor Bill No.</span>
+                        <input type="text" class="input-field" value="Bill/2025/0001">
+                    </div>
+                    <div class="info-group">
+                        <span class="label">Vendor Name</span>
+                        <input type="text" class="input-field" value="Azure Interior">
+                    </div>
+                    <div class="info-group">
+                        <span class="label">Bill Reference</span>
+                        <input type="text" class="input-field" value="SUP-25-001">
+                    </div>
+                </div>
+
+                <div style="text-align: right;">
+                    <div class="info-group" style="justify-content: flex-end;">
+                        <span class="label" style="min-width: auto; margin-right: 20px;">Bill Date</span>
+                        <input type="date" class="input-field" value="2025-01-30" style="width: 180px;">
+                    </div>
+                    <div class="info-group" style="justify-content: flex-end;">
+                        <span class="label" style="min-width: auto; margin-right: 20px;">Due Date</span>
+                        <input type="date" class="input-field" value="2025-02-15" style="width: 180px;">
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <span class="label" style="display: block; margin-bottom: 8px;">Status</span>
+                        <div class="status-badges-group" style="justify-content: flex-end;">
+                            <div class="status-badge paid" id="badge-paid">Paid</div>
+                            <div class="status-badge partial" id="badge-partial">Partial</div>
+                            <div class="status-badge notpaid active" id="badge-notpaid">Not Paid</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div
+                style="display: flex; gap: 12px; padding-bottom: 24px; border-bottom: 2px solid var(--border-color); margin-bottom: 32px;">
+                <button class="btn btn-confirm" onclick="confirmBill()">Confirm</button>
+                <button class="btn">Print</button>
+                <button class="btn">Send</button>
+                <button class="btn">Cancel</button>
+                <button class="btn btn-pay" style="margin-left: auto;"
+                    onclick="window.location.href='{{ url_for('admin.payment_detail', id=1) }}';">Pay</button>
+                <button class="btn" style="background: #fff9db; border-color: #fab005;">Budget</button>
+
+                <!-- Status Tabs -->
+                <div class="status-container" style="margin-left: 20px;">
+                    <div class="status-step active">Draft</div>
+                    <div class="status-step">Confirm</div>
+                    <div class="status-step">Cancelled</div>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th class="col-sr">Sr. No.</th>
+                        <th class="col-prod">Product</th>
+                        <th>Budget Analytics</th>
+                        <th class="col-qty">1 Qty</th>
+                        <th class="col-price">2 Unit Price</th>
+                        <th class="col-total">3 Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-sr">1</td>
+                        <td>Table</td>
+                        <td><span style="color: var(--warning-orange); font-weight: 600;">Deepawali</span></td>
+                        <td class="col-qty"><input type="number" value="6" onchange="calcBill()"></td>
+                        <td class="col-price"><input type="number" value="2300" onchange="calcBill()"></td>
+                        <td class="col-total">13,800</td>
+                    </tr>
+                    <tr>
+                        <td class="col-sr">2</td>
+                        <td>Chair</td>
+                        <td></td>
+                        <td class="col-qty"><input type="number" value="3" onchange="calcBill()"></td>
+                        <td class="col-price"><input type="number" value="850" onchange="calcBill()"></td>
+                        <td class="col-total">2,550</td>
+                    </tr>
+                    <tr class="total">
+                        <td colspan="5" style="text-align: right; font-weight: 600; color: var(--accent-pink);">Total
+                        </td>
+                        <td class="col-total" id="bill-total" style="font-weight: 600;">16,350</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Payment Summary -->
+            <div class="summary-container">
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span>Paid Via Cash</span>
+                        <input type="number" class="payment-input" id="pay-cash" value="0" onchange="calcBill()">
+                    </div>
+                    <div class="summary-row">
+                        <span>Paid Via Bank</span>
+                        <input type="number" class="payment-input" id="pay-bank" value="0" onchange="calcBill()">
+                    </div>
+                    <div class="summary-row total due">
+                        <span>Amount Due</span>
+                        <span id="amount-due">16,350</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning -->
+            <div class="warning-box" id="budget-warning">
+                <div class="warning-header">⚠️ Exceeds Approved Budget</div>
+                <p style="font-size: 14px; color: #666;">The entered amount is higher than the remaining budget amount
+                    for this budget line. Consider adjusting the value or revise the budget.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calcBill() {
+            let total = 0;
+            const rows = document.querySelectorAll('tbody tr:not(.total)');
+            rows.forEach(row => {
+                const qty = row.querySelector('.col-qty input').value;
+                const price = row.querySelector('.col-price input').value;
+                const rowTotal = qty * price;
+                row.querySelector('.col-total').innerText = rowTotal.toLocaleString();
+                total += rowTotal;
+            });
+
+            document.getElementById('bill-total').innerText = total.toLocaleString();
+
+            const cash = parseFloat(document.getElementById('pay-cash').value) || 0;
+            const bank = parseFloat(document.getElementById('pay-bank').value) || 0;
+            const due = total - (cash + bank);
+
+            document.getElementById('amount-due').innerText = Math.max(0, due).toLocaleString();
+
+            // Status Badge logic
+            const badges = {
+                paid: document.getElementById('badge-paid'),
+                partial: document.getElementById('badge-partial'),
+                notpaid: document.getElementById('badge-notpaid')
+            };
+
+            Object.values(badges).forEach(b => b.classList.remove('active'));
+
+            if (due <= 0 && total > 0) {
+                badges.paid.classList.add('active');
+            } else if (due < total && (cash + bank) > 0) {
+                badges.partial.classList.add('active');
+            } else {
+                badges.notpaid.classList.add('active');
+            }
+
+            // Simple budget warning trigger
+            if (total > 20000) {
+                document.getElementById('budget-warning').style.display = 'block';
+            } else {
+                document.getElementById('budget-warning').style.display = 'none';
+            }
+        }
+
+        function confirmBill() {
+            alert('Vendor Bill Bill/2025/0001 has been confirmed.');
+            const steps = document.querySelectorAll('.status-step');
+            steps[0].classList.remove('active');
+            steps[1].classList.add('active');
+        }
+
+        function openPayment() {
+            const total = parseFloat(document.getElementById('bill-total').innerText.replace(/,/g, ''));
+            document.getElementById('pay-bank').value = total;
+            calcBill();
+            alert('Full payment recorded via Bank.');
+        }
+
+        // Init
+        calcBill();
+    </script>
+</body>
+
+</html>

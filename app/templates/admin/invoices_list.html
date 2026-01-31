@@ -131,6 +131,12 @@
             font-size: 15px;
         }
 
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
         /* CUSTOM TABLE STYLE */
         .custom-table {
             width: 100%;
@@ -263,6 +269,11 @@
                 <p>Manage your billing history and settle outstanding payments.</p>
             </div>
 
+            <div class="toolbar">
+                <button class="btn-pay" style="height: 40px; padding: 0 24px;"
+                    onclick="window.location.href='{{ url_for('admin.invoice_new') }}';">New Invoice</button>
+            </div>
+
             <table class="custom-table">
                 <thead>
                     <tr>
@@ -274,24 +285,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr style="cursor: pointer;"
+                        onclick="window.location.href='{{ url_for('admin.invoice_detail', id=1) }}';">
                         <td style="font-weight: 600;">INV-001</td>
                         <td>Mar 15, 2024</td>
                         <td>₹25,000</td>
                         <td><span class="badge badge-unpaid">Not Paid</span></td>
                         <td>
-                            <a href="{{ url_for('portal.invoice_detail', invoice_id=1) }}" class="btn-link">View
+                            <a href="{{ url_for('admin.invoice_detail', id=1) }}" class="btn-link">View
                                 Details</a>
-                            <a href="{{ url_for('portal.invoice_pay', invoice_id=1) }}" class="btn-pay">Pay Now</a>
+                            <a href="#" class="btn-pay">Pay Now</a>
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="cursor: pointer;"
+                        onclick="window.location.href='{{ url_for('admin.invoice_detail', id=2) }}';">
                         <td style="font-weight: 600;">INV-002</td>
                         <td>Mar 18, 2024</td>
                         <td>₹12,500</td>
                         <td><span class="badge badge-paid">Paid</span></td>
                         <td>
-                            <a href="{{ url_for('portal.invoice_detail', invoice_id=2) }}" class="btn-link">View
+                            <a href="{{ url_for('admin.invoice_detail', id=2) }}" class="btn-link">View
                                 Details</a>
                         </td>
                     </tr>

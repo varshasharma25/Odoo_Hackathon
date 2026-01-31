@@ -342,9 +342,9 @@
                         <span style="font-size: 10px;">▼</span>
                     </button>
                     <div class="dropdown-content">
-                        <a href="#" class="dropdown-item">Purchase Order</a>
-                        <a href="#" class="dropdown-item">Purchase Bill</a>
-                        <a href="#" class="dropdown-item">Payment</a>
+                        <a href="{{ url_for('admin.po_list') }}" class="dropdown-item">Purchase Order</a>
+                        <a href="{{ url_for('admin.vendor_bills_list') }}" class="dropdown-item">Purchase Bill</a>
+                        <a href="{{ url_for('admin.payments_list') }}" class="dropdown-item">Payment</a>
                     </div>
                 </div>
 
@@ -355,8 +355,8 @@
                         <span style="font-size: 10px;">▼</span>
                     </button>
                     <div class="dropdown-content">
-                        <a href="#" class="dropdown-item">Sale Order</a>
-                        <a href="#" class="dropdown-item">Sale Invoice</a>
+                        <a href="{{ url_for('admin.so_list') }}" class="dropdown-item">Sale Order</a>
+                        <a href="{{ url_for('admin.invoice_new') }}" class="dropdown-item">Sale Invoice</a>
                         <a href="#" class="dropdown-item">Receipt</a>
                     </div>
                 </div>

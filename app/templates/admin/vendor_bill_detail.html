@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Detail | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            /* Odoo Indigo */
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #333;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --accent-pink: #d63384;
+            --success-green: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 36px;
+            border: 1px solid #000;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #000;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .btn-confirm {
+            background-color: var(--primary-accent);
+            color: white;
+            border-color: var(--primary-accent);
+        }
+
+        /* Avatars */
+        .avatar-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Status Breadcrumbs */
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .status-step {
+            padding: 8px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            position: relative;
+            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
+            margin-right: -10px;
+        }
+
+        .status-step.active {
+            background: #e2e8f0;
+            color: #000;
+        }
+
+        /* Header Info */
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .payment-no {
+            font-size: 20px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* Form Content */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .label {
+            font-size: 16px;
+            color: var(--accent-pink);
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #a47c94;
+            padding: 4px 0;
+            font-size: 16px;
+            color: #333;
+            outline: none;
+            background: transparent;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #2196f3;
+            font-weight: 500;
+        }
+
+        .radio-option input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .hint {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="form-card">
+
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="btn-group">
+                    <button class="btn"
+                        onclick="window.location.href='{{ url_for('admin.payment_detail', id=1) }}';">New</button>
+                    <span class="payment-no" style="margin-left: 20px;">Pay/25/0001</span>
+                </div>
+                <div class="btn-group">
+                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button class="btn" onclick="window.history.back();">Back</button>
+                </div>
+            </div>
+
+            <!-- Actions & Status -->
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 24px; margin-bottom: 40px;">
+                <div class="btn-group">
+                    <button class="btn btn-confirm" onclick="confirmPayment()">Confirm</button>
+                    <button class="btn">Print</button>
+                    <button class="btn">Send</button>
+                    <button class="btn">Cancel</button>
+                </div>
+
+                <div class="status-container">
+                    <div class="status-step active">Draft</div>
+                    <div class="status-step">Confirm</div>
+                    <div class="status-step">Cancelled</div>
+                </div>
+            </div>
+
+            <!-- Form Content -->
+            <div class="form-grid">
+                <!-- Left Column -->
+                <div>
+                    <div class="input-group">
+                        <span class="label">Payment Type</span>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="pay_type" checked> Send
+                            </label>
+                            <label class="radio-option" style="color: #ccc; cursor: not-allowed;">
+                                <input type="radio" name="pay_type" disabled> Receive
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="label">Partner</span>
+                        <div style="flex: 1;">
+                            <input type="text" class="input-field" value="Azure Interior"
+                                style="font-weight: 500; font-size: 18px;">
+                            <span class="hint">( auto fill partner name from Invoice/Bill )</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="label">Amount</span>
+                        <div style="flex: 1;">
+                            <input type="text" class="input-field" value="16,350"
+                                style="font-weight: 600; font-size: 20px;">
+                            <span class="hint">( auto fill amount due from Invoice/Bill )</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div>
+                    <div class="input-group">
+                        <span class="label">Date</span>
+                        <div style="flex: 1;">
+                            <input type="date" class="input-field" id="currentDate">
+                            <span class="hint">(Default Today Date)</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="label">Payment Via</span>
+                        <div style="flex: 1;">
+                            <select class="input-field" style="appearance: none; -webkit-appearance: none;">
+                                <option selected>Bank</option>
+                                <option>Cash</option>
+                            </select>
+                            <span class="hint">(Default Bank can be selectable to Cash)</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="label">Note</span>
+                        <div style="flex: 1;">
+                            <input type="text" class="input-field" placeholder="Note here">
+                            <span class="hint">Alpha numeric ( text )</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('currentDate').value = today;
+
+        function confirmPayment() {
+            alert('Payment Pay/25/0001 has been confirmed.');
+            const steps = document.querySelectorAll('.status-step');
+            steps[0].classList.remove('active');
+            steps[1].classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

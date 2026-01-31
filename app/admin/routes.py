@@ -60,3 +60,63 @@ def budget_revised():
 @bp.route('/budget/explanation')
 def budget_explanation():
     return render_template('admin/budget_achievement_lines.html')
+
+@bp.route('/purchase-orders')
+def po_list():
+    return render_template('admin/po_list.html')
+
+@bp.route('/purchase-order/new', methods=['GET', 'POST'])
+def po_new():
+    return render_template('admin/po_form.html')
+
+@bp.route('/purchase-order/<int:id>', methods=['GET', 'POST'])
+def po_detail(id):
+    return render_template('admin/po_form.html')
+
+@bp.route('/vendor-bills')
+def vendor_bills_list():
+    return render_template('admin/vendor_bills_list.html')
+
+@bp.route('/vendor-bill/new', methods=['GET', 'POST'])
+def vendor_bill_new():
+    return render_template('admin/vendor_bill_form.html')
+
+@bp.route('/vendor-bill/<int:id>', methods=['GET', 'POST'])
+def vendor_bill_detail(id):
+    return render_template('admin/vendor_bill_form.html')
+
+@bp.route('/vendor-bill/payment/<int:id>', methods=['GET', 'POST'])
+def payment_detail(id):
+    return render_template('admin/vendor_bill_detail.html')
+
+@bp.route('/payments')
+def payments_list():
+    return render_template('admin/vendor_bills_list.html')  # Reuse for now or create new
+
+@bp.route('/invoices')
+def invoices_list():
+    return render_template('admin/invoices_list.html')
+
+@bp.route('/invoice/new', methods=['GET', 'POST'])
+def invoice_new():
+    return render_template('admin/invoice_detail.html')
+
+@bp.route('/invoice/<int:id>', methods=['GET', 'POST'])
+def invoice_detail(id):
+    return render_template('admin/invoice_detail.html')
+
+@bp.route('/invoice/pay/<int:id>', methods=['GET', 'POST'])
+def invoice_pay(id):
+    return render_template('admin/invoice_pay.html')
+
+@bp.route('/sale-orders')
+def so_list():
+    return render_template('admin/so_list.html')
+
+@bp.route('/sale-order/new', methods=['GET', 'POST'])
+def so_new():
+    return render_template('admin/so_form.html')
+
+@bp.route('/sale-order/<int:id>', methods=['GET', 'POST'])
+def so_detail(id):
+    return render_template('admin/so_form.html')
