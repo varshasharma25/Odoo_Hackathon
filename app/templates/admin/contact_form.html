@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Contact Master - Odoo Hackathon</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            /* Odoo Indigo */
+            --primary-hover: #5d3d55;
+            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #1F2937;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+            --input-focus: #714B67;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            padding: 40px 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .contact-card {
+            max-width: 960px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .contact-header-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--primary-accent);
+            letter-spacing: -0.01em;
+        }
+
+        .contact-header-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .top-btn {
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            color: var(--text-dark);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .top-btn:hover {
+            background: #f9fafb;
+            border-color: var(--primary-accent);
+            color: var(--primary-accent);
+        }
+
+        .top-btn-primary {
+            background: var(--primary-accent);
+            border-color: var(--primary-accent);
+            color: #fff;
+        }
+
+        .top-btn-primary:hover {
+            background: var(--primary-hover);
+            color: #fff;
+        }
+
+        .contact-body {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .contact-left {
+            flex: 1 1 500px;
+        }
+
+        .contact-right {
+            flex: 0 0 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .field-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .field-input,
+        .tags-input {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            background: #fff;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .field-input:focus,
+        .tags-input:focus {
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 3px rgba(113, 75, 103, 0.1);
+        }
+
+        .field-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .address-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .address-grid input:first-child {
+            grid-column: span 2;
+        }
+
+        .upload-box {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 15px;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            padding: 24px;
+        }
+
+        .upload-box:hover {
+            border-color: var(--primary-accent);
+            color: var(--primary-accent);
+            background: #fff;
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .tags-hint {
+            font-size: 12px;
+            color: #d08b00;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .hint-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            text-transform: none;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .contact-body {
+                flex-direction: column;
+            }
+
+            .contact-right {
+                order: -1;
+                margin-bottom: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <div class="contact-card">
+            <div class="contact-header">
+                <div class="contact-header-title">Contact Master</div>
+                <div class="contact-header-buttons">
+                    <button type="button" class="top-btn top-btn-primary">New</button>
+                    <button type="submit" form="contact-form" class="top-btn">Confirm</button>
+                    <button type="button" class="top-btn">Archived</button>
+                    <button type="button" class="top-btn">Home</button>
+                    <button type="button" class="top-btn">Back</button>
+                </div>
+            </div>
+
+            <div class="contact-body">
+                <div class="contact-left">
+                    <form id="contact-form" method="post">
+                        <div class="field-group">
+                            <label class="field-label">Contact Name</label>
+                            <input class="field-input" name="name" placeholder="Enter name..." required>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label">
+                                Email <span class="hint-text">unique identifier</span>
+                            </label>
+                            <input class="field-input" type="email" name="email" placeholder="example@domain.com">
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label">
+                                Phone <span class="hint-text">contact number</span>
+                            </label>
+                            <input class="field-input" name="phone" placeholder="+1 (000) 000-0000">
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label">Address Details</label>
+                            <div class="address-grid">
+                                <input class="field-input" name="street" placeholder="Street Address">
+                                <input class="field-input" name="city" placeholder="City">
+                                <input class="field-input" name="state" placeholder="State/Province">
+                                <input class="field-input" name="country" placeholder="Country">
+                                <input class="field-input" name="pincode" placeholder="Postal Code">
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" style="margin-bottom:0;">Tags</label>
+                            <input class="tags-input" name="tags" placeholder="Retailer, B2B, VVIP...">
+                            <div class="tags-hint">
+                                * Tags can be created and saved on the fly.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="contact-right">
+                    <div class="upload-box">
+                        <div class="upload-icon">📸</div>
+                        Upload Profile Image
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
