@@ -120,12 +120,14 @@ def budgets_list():
     return render_template('admin/budgets_list.html', budgets=budgets)
 
 @bp.route('/budget/new', methods=['GET', 'POST'])
+@login_required
 def budget_new():
+    analytical_accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
     if request.method == 'POST':
         budget = Budget(
             name=request.form.get('name'),
-            period_start=request.form.get('period_start'),
-            period_end=request.form.get('period_end'),
+            period_start=request.form.get('period_start') or None,
+            period_end=request.form.get('period_end') or None,
             analytical_account=request.form.get('analytical_account'),
             total_amount=request.form.get('total_amount'),
             description=request.form.get('description')
@@ -134,22 +136,24 @@ def budget_new():
         db.session.commit()
         flash('Budget created successfully!', 'success')
         return redirect(url_for('admin.budgets_list'))
-    return render_template('admin/budget_detail.html', budget=None)
+    return render_template('admin/budget_detail.html', budget=None, analytical_accounts=analytical_accounts)
 
 @bp.route('/budget/<int:id>', methods=['GET', 'POST'])
+@login_required
 def budget_detail(id):
     budget = Budget.query.get_or_404(id)
+    analytical_accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
     if request.method == 'POST':
         budget.name = request.form.get('name')
-        budget.period_start = request.form.get('period_start')
-        budget.period_end = request.form.get('period_end')
+        budget.period_start = request.form.get('period_start') or None
+        budget.period_end = request.form.get('period_end') or None
         budget.analytical_account = request.form.get('analytical_account')
         budget.total_amount = request.form.get('total_amount')
         budget.description = request.form.get('description')
         db.session.commit()
         flash('Budget updated successfully!', 'success')
         return redirect(url_for('admin.budgets_list'))
-    return render_template('admin/budget_detail.html', budget=budget)
+    return render_template('admin/budget_detail.html', budget=budget, analytical_accounts=analytical_accounts)
 
 @bp.route('/budget/revised')
 def budget_revised():

@@ -290,8 +290,15 @@
                     <div class="right-col">
                         <div class="input-group">
                             <span class="label" style="min-width: 160px;">Analytical Account</span>
-                            <input type="text" name="analytical_account" class="input-field" placeholder="Account name"
-                                value="{{ budget.analytical_account if budget else '' }}">
+                            <select name="analytical_account" id="analytical_account" class="input-field" required>
+                                <option value="" disabled {% if not budget %}selected{% endif %}>Select Account</option>
+                                {% for account in analytical_accounts %}
+                                <option value="{{ account.name }}" {% if budget and
+                                    budget.analytical_account==account.name %}selected{% endif %}>
+                                    {{ account.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="input-group">
                             <span class="label" style="min-width: 160px;">Total Amount</span>
@@ -307,6 +314,59 @@
                 </div>
             </form>
 
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const nameInput = document.querySelector('input[name="name"]');
+                    const accountSelect = document.getElementById('analytical_account');
+                    const options = Array.from(accountSelect.options);
+
+                    nameInput.addEventListener('input', function () {
+                        const val = this.value.toLowerCase().trim();
+                        if (!val) return;
+
+                        // Matching logic
+                        let bestMatch = null;
+                        let maxScore = 0;
+
+                        options.forEach((opt, index) => {
+                            if (index === 0) return; // Skip placeholder
+                            const name = opt.text.toLowerCase();
+
+                            // Simple substring match
+                            if (val.includes(name) || name.includes(val)) {
+                                bestMatch = opt.value;
+                                return;
+                            }
+
+                            // Keyword mapping for common suggestions
+                            const keywordMap = {
+                                'diwali': ['deepawali', 'dipawali', 'festive'],
+                                'marriage': ['wedding', 'marriage', 'function'],
+                                'expo': ['exhibition', 'expo', 'event'],
+                                'maintenance': ['office', 'repairs', 'maintenance']
+                            };
+
+                            for (const [key, aliases] of Object.entries(keywordMap)) {
+                                if (val.includes(key)) {
+                                    if (aliases.some(a => name.includes(a))) {
+                                        bestMatch = opt.value;
+                                    }
+                                }
+                            }
+                        });
+
+                        if (bestMatch) {
+                            accountSelect.value = bestMatch;
+                            // Add a subtle visual feedback
+                            accountSelect.style.borderColor = 'var(--accent-green)';
+                            setTimeout(() => {
+                                accountSelect.style.borderColor = '#a47c94';
+                            }, 1000);
+                        }
+                    });
+                });
+            </script>
+
             <!-- Analyticals Table -->
             <table class="analytic-table">
                 <thead>
@@ -320,62 +380,40 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for account in analytical_accounts %}
                     <tr>
-                        <td>Deepawali</td>
-                        <td>Income</td>
-                        <td>4,00,000/-</td>
-                        <td><span class="achieved-val">21,600/-</span> <span class="view-link"
-                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
-                        </td>
-                        <td></td>
-                        <td>3,78,400/-</td>
-                    </tr>
-                    <tr>
-                        <td>Marriage Session 2026</td>
-                        <td>Income</td>
+                        <td>{{ account.name }}</td>
+                        <td>Income</td> <!-- Defaulting to Income for now as model doesn't specify -->
                         <td class="monetary-val">Monetary</td>
-                        <td class="monetary-val">Compute <span class="view-link"
+                        <td class="monetary-val">
+                            Compute
+                            <span class="view-link"
                                 onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
                         </td>
-                        <td></td>
-                        <td></td>
+                        <td>-</td>
+                        <td>-</td>
                     </tr>
                     <tr>
-                        <td>Furniture Expo 2026</td>
-                        <td>Income</td>
+                        <td>{{ account.name }}</td>
+                        <td>Expense</td> <!-- Showing both legs for each account -->
                         <td class="monetary-val">Monetary</td>
-                        <td class="monetary-val">Compute <span class="view-link"
+                        <td class="monetary-val">
+                            Compute
+                            <span class="view-link"
                                 onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
                         </td>
-                        <td></td>
-                        <td></td>
+                        <td>-</td>
+                        <td>-</td>
                     </tr>
+                    {% endfor %}
+                    {% if not analytical_accounts %}
                     <tr>
-                        <td>Deepawali</td>
-                        <td>Expense</td>
-                        <td>2,80,000/-</td>
-                        <td>16,350/- <span class="view-link"
-                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
-                        </td>
-                        <td>5.84 %</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4"></td>
-                        <td colspan="2" style="font-size: 11px; color: var(--accent-orange); font-style: italic;">
-                            (Achieved Amount / Budgeted Amount) * 100
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                            No Analytical Accounts found. Please <a
+                                href="{{ url_for('admin.analytical_account_new') }}">create one</a> first.
                         </td>
                     </tr>
-                    <tr>
-                        <td>Marriage Session 2026</td>
-                        <td>Expense</td>
-                        <td class="monetary-val">Monetary</td>
-                        <td class="monetary-val">Compute <span class="view-link"
-                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
-                        </td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>
