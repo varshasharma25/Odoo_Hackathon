@@ -25,7 +25,11 @@ def login():
             
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for('portal.home'))
+            # Role-based redirection
+            if user.role == 'admin':
+                return redirect(url_for('admin.dashboard'))
+            else:
+                return redirect(url_for('portal.home'))
         else:
             flash('Invalid username or password.', 'error')
             
