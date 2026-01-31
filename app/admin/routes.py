@@ -1,18 +1,22 @@
 from flask import render_template, request, redirect, url_for, flash
+from flask_login import login_required
 from app.admin import bp
 from app import db
 from app.models import Contact, Product, Budget
 
 @bp.route('/dashboard')
+@login_required
 def dashboard():
     return render_template('admin/dashboard.html')
 
 @bp.route('/contacts')
+@login_required
 def contacts_list():
     contacts = Contact.query.filter_by(is_archived=False).all()
     return render_template('admin/contacts_list.html', contacts=contacts)
 
 @bp.route('/contact/new', methods=['GET', 'POST'])
+@login_required
 def contact_new():
     if request.method == 'POST':
         contact = Contact(
@@ -29,6 +33,7 @@ def contact_new():
     return render_template('admin/contact_form.html', contact=None)
 
 @bp.route('/contact/<int:id>', methods=['GET', 'POST'])
+@login_required
 def contact_detail(id):
     contact = Contact.query.get_or_404(id)
     if request.method == 'POST':
@@ -43,6 +48,7 @@ def contact_detail(id):
     return render_template('admin/contact_form.html', contact=contact)
 
 @bp.route('/products')
+@login_required
 def products_list():
     products = Product.query.filter_by(is_archived=False).all()
     return render_template('admin/products_list.html', products=products)

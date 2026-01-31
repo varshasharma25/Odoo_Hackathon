@@ -203,6 +203,16 @@
                 <p>Please enter your details to sign in</p>
             </div>
 
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}"
+                style="background-color: {% if category == 'error' or category == 'warning' %}#fee2e2{% else %}#dcfce7{% endif %}; color: {% if category == 'error' or category == 'warning' %}#dc2626{% else %}#16a34a{% endif %}; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; border: 1px solid rgba(0,0,0,0.05);">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
             <form action="{{ url_for('auth.login') }}" method="post">
 
 

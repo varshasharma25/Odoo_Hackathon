@@ -1,24 +1,71 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required, current_user
 from app.auth import bp
+from app import db
+from app.models import User
 
 @bp.route('/forgot-password')
 def forgot_password():
-    return "Forgot Password Page"
+    return render_template('auth/forgot_password.html')
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET' and current_user.is_authenticated:
+        logout_user()
+    
     if request.method == 'POST':
-        return redirect(url_for('portal.home'))
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if not user:
+            flash('Please create your new user account first.', 'warning')
+            return redirect(url_for('auth.create_user'))
+            
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for('portal.home'))
+        else:
+            flash('Invalid username or password.', 'error')
+            
     return render_template('auth/login.html')
+
+@bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('auth.login'))
 
 @bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
-        return redirect(url_for('portal.home'))
-    return render_template('auth/signup.html')
+    return redirect(url_for('auth.create_user'))
 
-@bp.route('/auth/create-user', methods=['GET', 'POST'])
+@bp.route('/create-user', methods=['GET', 'POST'])
 def create_user():
     if request.method == 'POST':
-        return redirect(url_for('portal.home'))
+        username = request.form.get('login_id')
+        email = request.form.get('email_id')
+        name = request.form.get('name')
+        password = request.form.get('password')
+        re_password = request.form.get('re_password')
+        role = request.form.get('role', 'portal')
+
+        if password != re_password:
+            flash('Passwords do not match.', 'error')
+            return render_template('auth/create_user.html')
+
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists.', 'error')
+            return render_template('auth/create_user.html')
+
+        user = User(username=username, email=email, name=name, role=role)
+        user.set_password(password)
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        flash('User created successfully! Please login.', 'success')
+        return redirect(url_for('auth.login'))
+        
     return render_template('auth/create_user.html')

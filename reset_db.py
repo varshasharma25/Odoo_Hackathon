@@ -10,14 +10,14 @@ def reset_database():
     with app.app_context():
         print("Dropping all tables...")
         # Use raw SQL to drop all tables with CASCADE
-        db.session.execute(text("DROP SCHEMA public CASCADE"))
+        db.session.execute(text("DROP SCHEMA IF EXISTS public CASCADE"))
         db.session.execute(text("CREATE SCHEMA public"))
         db.session.commit()
-        print("✓ All tables dropped")
+        print("- All tables dropped and schema recreated")
         
         print("\nCreating tables with correct schema...")
         db.create_all()
-        print("✓ Tables created successfully!")
+        print("- Tables created successfully!")
         
         print("\nDatabase reset complete!")
         print("Now run: python init_db.py to add sample data")

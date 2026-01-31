@@ -177,7 +177,18 @@
             <h1>Create User</h1>
         </div>
 
-        <form action="/create-user" method="post">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}"
+            style="padding: 16px; margin: 20px 40px 0; border-radius: 8px; text-align: center; background-color: {% if category == 'error' %}#fee2e2{% else %}#dcfce7{% endif %}; color: {% if category == 'error' %}#dc2626{% else %}#16a34a{% endif %}; border: 1px solid rgba(0, 0, 0, 0.05);">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('auth.create_user') }}" method="post">
             <div class="form-body">
                 <div class="form-grid">
                     <!-- Column 1 -->

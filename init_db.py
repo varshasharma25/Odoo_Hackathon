@@ -11,7 +11,7 @@ def init_database():
     with app.app_context():
         print("Creating database tables...")
         db.create_all()
-        print("✓ Database tables created successfully!")
+        print("- Database tables created successfully!")
         
         # Check if we should seed data
         try:
@@ -19,7 +19,7 @@ def init_database():
             if contact_count == 0:
                 print("\nSeeding sample data...")
                 seed_data()
-                print("✓ Sample data added successfully!")
+                print("- Sample data added successfully!")
             else:
                 print(f"\nDatabase already has {contact_count} contacts. Skipping seed.")
         except Exception as e:
