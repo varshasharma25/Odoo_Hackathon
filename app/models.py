@@ -133,3 +133,35 @@ class Users(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+
+class PurchaseOrder(db.Model):
+    __tablename__ = 'purchase_orders'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    order_number = db.Column(db.String(50), unique=True)
+    vendor_name = db.Column(db.String(128), nullable=False)
+    order_date = db.Column(db.Date)
+    expected_delivery = db.Column(db.Date)
+    total_amount = db.Column(db.Float)
+    status = db.Column(db.String(20), default='draft')  # draft, confirmed, received, cancelled
+    notes = db.Column(db.Text)
+    is_archived = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<PurchaseOrder {self.order_number}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'order_number': self.order_number,
+            'vendor_name': self.vendor_name,
+            'order_date': self.order_date.isoformat() if self.order_date else None,
+            'expected_delivery': self.expected_delivery.isoformat() if self.expected_delivery else None,
+            'total_amount': self.total_amount,
+            'status': self.status,
+            'notes': self.notes,
+            'is_archived': self.is_archived
+        }

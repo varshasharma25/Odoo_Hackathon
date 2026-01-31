@@ -201,46 +201,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.po_detail', id=1) }}';">
-                        <td>P00001</td>
-                        <td>2024-05-20</td>
-                        <td>Azure Interior</td>
-                        <td class="hide-mobile">REQ-25-0001</td>
-                        <td>₹16,350</td>
-                        <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                    {% if purchase_orders %}
+                    {% for po in purchase_orders %}
+                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.po_detail', id=po.id) }}';">
+                        <td>{{ po.order_number or 'N/A' }}</td>
+                        <td>{{ po.order_date.strftime('%Y-%m-%d') if po.order_date else 'N/A' }}</td>
+                        <td>{{ po.vendor_name }}</td>
+                        <td class="hide-mobile">-</td>
+                        <td>₹{{ "%.2f"|format(po.total_amount) if po.total_amount else '0.00' }}</td>
+                        <td>
+                            <span class="status-badge status-{{ po.status }}">{{ po.status }}</span>
+                        </td>
                     </tr>
-                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.po_detail', id=2) }}';">
-                        <td>P00002</td>
-                        <td>2024-05-21</td>
-                        <td>Deco Addict</td>
-                        <td class="hide-mobile">REQ-25-0002</td>
-                        <td>₹8,500</td>
-                        <td><span class="status-badge status-draft">Draft</span></td>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
+                            No purchase orders found. Click "New" to create your first purchase order.
+                        </td>
                     </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

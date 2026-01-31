@@ -10,7 +10,6 @@
     <style>
         :root {
             --primary-accent: #714B67;
-            /* Odoo Indigo */
             --primary-hover: #5d3d55;
             --body-bg: #f8fafc;
             --card-white: #ffffff;
@@ -19,7 +18,6 @@
             --border-color: #e2e8f0;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --accent-pink: #d63384;
-            --warning-orange: #ff9800;
         }
 
         * {
@@ -36,7 +34,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -46,10 +44,8 @@
             border: 1px solid #000;
             box-shadow: var(--shadow);
             padding: 40px;
-            position: relative;
         }
 
-        /* Toolbar */
         .toolbar {
             display: flex;
             justify-content: space-between;
@@ -91,166 +87,42 @@
             background-color: var(--primary-hover);
         }
 
-        /* Status Breadcrumbs */
-        .status-container {
-            display: flex;
-            align-items: center;
-            gap: 0;
+        .form-group {
+            margin-bottom: 24px;
         }
 
-        .status-step {
-            padding: 8px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
-            background: #f1f5f9;
-            position: relative;
-            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
-            margin-right: -10px;
-        }
-
-        .status-step.active {
-            background: #e2e8f0;
-            color: #000;
-        }
-
-        /* Header Info */
-        .po-header {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            margin-bottom: 40px;
-        }
-
-        .info-group {
-            display: flex;
-            align-items: flex-end;
-            gap: 24px;
-            margin-bottom: 20px;
-        }
-
-        .label {
-            font-size: 18px;
+        .form-label {
+            display: block;
+            font-size: 16px;
             color: var(--accent-pink);
             font-weight: 500;
-            min-width: 140px;
+            margin-bottom: 8px;
         }
 
-        .input-field {
-            flex: 1;
+        .form-input {
+            width: 100%;
             border: none;
             border-bottom: 2px solid #a47c94;
-            padding: 4px 0;
+            padding: 8px 0;
             font-size: 16px;
             color: #333;
             outline: none;
             background: transparent;
-        }
-
-        .input-text {
-            flex: 1;
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 4px;
-        }
-
-        /* Line Items Table */
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .items-table th {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid var(--border-color);
-            background: #fafafa;
-            color: var(--accent-pink);
-            font-weight: 600;
-        }
-
-        .items-table td {
-            padding: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .col-sr {
-            width: 60px;
-            text-align: center;
-        }
-
-        .col-prod {
-            width: 300px;
-        }
-
-        .col-qty,
-        .col-price,
-        .col-total {
-            width: 120px;
-            text-align: right;
-        }
-
-        .items-table input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            text-align: inherit;
             font-family: inherit;
-            font-size: 14px;
-            outline: none;
         }
 
-        /* Warning Message */
-        .warning-box {
-            margin-top: 40px;
-            color: #714B67;
-            display: none;
-            /* Toggle via JS */
+        textarea.form-input {
+            border: 1px solid #a47c94;
+            padding: 12px;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
         }
 
-        .warning-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--warning-orange);
-        }
-
-        .warning-desc {
-            font-size: 15px;
-            line-height: 1.6;
-            color: #4a3143;
-        }
-
-        /* Totals */
-        .total-section {
-            margin-top: 24px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 48px;
-            padding-right: 12px;
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        .total-label {
-            color: var(--accent-pink);
-        }
-
-        @media (max-width: 768px) {
-            .po-header {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .toolbar {
-                flex-direction: column;
-                gap: 20px;
-                align-items: flex-start;
-            }
+        select.form-input {
+            border: 1px solid #a47c94;
+            padding: 8px 12px;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -259,152 +131,78 @@
 
     <div class="container">
         <div class="form-card">
-            <!-- Toolbar & Status -->
             <div class="toolbar">
                 <div class="btn-group">
-                    <button class="btn" onclick="window.location.href='{{ url_for('admin.po_new') }}';">New</button>
+                    <button type="button" class="btn"
+                        onclick="window.location.href='{{ url_for('admin.po_new') }}';">New</button>
+                    <button type="submit" form="poForm" class="btn btn-primary">
+                        {% if po %}Save{% else %}Create{% endif %}
+                    </button>
                 </div>
                 <div class="btn-group">
-                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
-                    <button class="btn" onclick="window.history.back();">Back</button>
+                    <button type="button" class="btn"
+                        onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button type="button" class="btn" onclick="window.history.back();">Back</button>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
-                <div style="flex: 1;">
-                    <h2 style="color: var(--accent-pink); margin-bottom: 8px;">PO No. <span
-                            style="color: #333; font-weight: normal; font-size: 0.8em; margin-left: 10px;">P00001
-                            (Auto-generated)</span></h2>
+            <h2 style="color: var(--accent-pink); margin-bottom: 32px;">
+                {% if po %}Edit Purchase Order{% else %}New Purchase Order{% endif %}
+            </h2>
 
-                    <div style="margin-top: 24px;">
-                        <div class="info-group">
-                            <span class="label">Vendor Name</span>
-                            <input type="text" class="input-field" placeholder="Azure Interior" value="Azure Interior">
-                        </div>
-                        <div class="info-group">
-                            <span class="label">Reference</span>
-                            <input type="text" class="input-field" placeholder="REQ-25-0001" value="REQ-25-0001">
-                        </div>
-                    </div>
+            <form id="poForm" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Order Number</label>
+                    <input type="text" name="order_number" class="form-input" placeholder="e.g. PO/2026/001"
+                        value="{{ po.order_number if po else '' }}">
                 </div>
 
-                <div style="text-align: right;">
-                    <div class="info-group" style="justify-content: flex-end;">
-                        <span class="label" style="min-width: auto; margin-right: 20px;">PO Date</span>
-                        <input type="date" class="input-field" value="2024-05-20" style="width: 200px;">
-                    </div>
-
-                    <div class="status-container" style="margin-top: 40px; justify-content: flex-end;">
-                        <div class="status-step active">Draft</div>
-                        <div class="status-step">Confirm</div>
-                        <div class="status-step">Cancelled</div>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Vendor Name *</label>
+                    <input type="text" name="vendor_name" class="form-input" placeholder="Enter vendor name"
+                        value="{{ po.vendor_name if po else '' }}" required>
                 </div>
-            </div>
 
-            <!-- Action Bar -->
-            <div style="margin-bottom: 32px; display: flex; gap: 12px; border-top: 1px solid #eee; padding-top: 24px;">
-                <button class="btn btn-primary" onclick="confirmOrder()">Confirm</button>
-                <button class="btn">Print</button>
-                <button class="btn">Send</button>
-                <button class="btn">Cancel</button>
-                <button class="btn btn-primary" style="margin-left: auto;">Create Bill</button>
-                <button class="btn" style="background: #fff9db; border-color: #fab005;">Budget</button>
-            </div>
-
-            <!-- Items Table -->
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th class="col-sr">Sr No</th>
-                        <th class="col-prod">Product</th>
-                        <th>Budget Analytics</th>
-                        <th class="col-qty">1 Qty</th>
-                        <th class="col-price">2 Unit Price</th>
-                        <th class="col-total">3 Total</th>
-                    </tr>
-                </thead>
-                <tbody id="po-lines">
-                    <tr>
-                        <td class="col-sr">1</td>
-                        <td><input type="text" placeholder="Table" value="Table"></td>
-                        <td><input type="text" value="Deepawali"></td>
-                        <td class="col-qty"><input type="number" value="6" onchange="updateRow(this)"></td>
-                        <td class="col-price"><input type="number" value="2300" onchange="updateRow(this)"></td>
-                        <td class="col-total">13,800</td>
-                    </tr>
-                    <tr>
-                        <td class="col-sr">2</td>
-                        <td><input type="text" placeholder="Chair" value="Chair"></td>
-                        <td><input type="text" value="Auto Compute"></td>
-                        <td class="col-qty"><input type="number" value="3" onchange="updateRow(this)"></td>
-                        <td class="col-price"><input type="number" value="850" onchange="updateRow(this)"></td>
-                        <td class="col-total">2,550</td>
-                    </tr>
-                    <!-- Interactive Warning Trigger Row -->
-                    <tr style="background: #fff5f2;">
-                        <td class="col-sr">3</td>
-                        <td><input type="text" value="Cabinet"></td>
-                        <td><input type="text" value="Deepawali" style="color: #ff9800; font-weight: 600;"></td>
-                        <td class="col-qty"><input type="number" value="100"
-                                onchange="updateRow(this); triggerWarning()"></td>
-                        <td class="col-price"><input type="number" value="4800"
-                                onchange="updateRow(this); triggerWarning()"></td>
-                        <td class="col-total">480,000</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="total-section">
-                <span class="total-label">Total</span>
-                <span id="grand-total">16,350</span>
-            </div>
-
-            <!-- Warning Box -->
-            <div class="warning-box" id="budget-warning">
-                <div class="warning-header">
-                    ⚠️ Exceeds Approved Budget
+                <div class="form-group">
+                    <label class="form-label">Order Date</label>
+                    <input type="date" name="order_date" class="form-input"
+                        value="{{ po.order_date.strftime('%Y-%m-%d') if po and po.order_date else '' }}">
                 </div>
-                <div class="warning-desc">
-                    The entered amount is higher than the remaining budget amount for this budget line.
-                    Consider adjusting the value or revise the budget.
+
+                <div class="form-group">
+                    <label class="form-label">Expected Delivery</label>
+                    <input type="date" name="expected_delivery" class="form-input"
+                        value="{{ po.expected_delivery.strftime('%Y-%m-%d') if po and po.expected_delivery else '' }}">
                 </div>
-            </div>
+
+                <div class="form-group">
+                    <label class="form-label">Total Amount</label>
+                    <input type="number" step="0.01" name="total_amount" class="form-input" placeholder="0.00"
+                        value="{{ po.total_amount if po else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-input">
+                        <option value="draft" {% if not po or po.status=='draft' %}selected{% endif %}>Draft</option>
+                        <option value="confirmed" {% if po and po.status=='confirmed' %}selected{% endif %}>Confirmed
+                        </option>
+                        <option value="received" {% if po and po.status=='received' %}selected{% endif %}>Received
+                        </option>
+                        <option value="cancelled" {% if po and po.status=='cancelled' %}selected{% endif %}>Cancelled
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea name="notes" class="form-input"
+                        placeholder="Additional notes">{{ po.notes if po else '' }}</textarea>
+                </div>
+            </form>
         </div>
     </div>
 
-    <script>
-        function updateRow(input) {
-            const row = input.closest('tr');
-            const qty = row.querySelector('.col-qty input').value || 0;
-            const price = row.querySelector('.col-price input').value || 0;
-            const totalCell = row.querySelector('.col-total');
-
-            const total = qty * price;
-            totalCell.innerText = total.toLocaleString();
-
-            calculateGrandTotal();
-        }
-
-        function calculateGrandTotal() {
-            let sum = 0;
-            document.querySelectorAll('.col-total').forEach(cell => {
-                sum += parseFloat(cell.innerText.replace(/,/g, '')) || 0;
-            });
-            document.getElementById('grand-total').innerText = sum.toLocaleString();
-        }
-
-        function triggerWarning() {
-            document.getElementById('budget-warning').style.display = 'block';
-        }
-
-        function confirmOrder() {
-            alert('Purchase Order P00001 has been confirmed.');
-            const steps = document.querySelectorAll('.status-step');
-            steps[0].classList.remove('active');
-            steps[1].classList.add('active');
-        }
-    </script>
 </body>
 
 </html>

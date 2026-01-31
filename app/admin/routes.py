@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from app.admin import bp
 from app import db
-from app.models import Contact, Product, Budget, AnalyticalAccount
+from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder
 
 @bp.route('/dashboard')
 @login_required
@@ -161,15 +161,42 @@ def budget_explanation():
 
 @bp.route('/purchase-orders')
 def po_list():
-    return render_template('admin/po_list.html')
+    purchase_orders = PurchaseOrder.query.filter_by(is_archived=False).all()
+    return render_template('admin/po_list.html', purchase_orders=purchase_orders)
 
 @bp.route('/purchase-order/new', methods=['GET', 'POST'])
 def po_new():
-    return render_template('admin/po_form.html')
+    if request.method == 'POST':
+        po = PurchaseOrder(
+            order_number=request.form.get('order_number'),
+            vendor_name=request.form.get('vendor_name'),
+            order_date=request.form.get('order_date'),
+            expected_delivery=request.form.get('expected_delivery'),
+            total_amount=request.form.get('total_amount'),
+            status=request.form.get('status', 'draft'),
+            notes=request.form.get('notes')
+        )
+        db.session.add(po)
+        db.session.commit()
+        flash('Purchase Order created successfully!', 'success')
+        return redirect(url_for('admin.po_list'))
+    return render_template('admin/po_form.html', po=None)
 
 @bp.route('/purchase-order/<int:id>', methods=['GET', 'POST'])
 def po_detail(id):
-    return render_template('admin/po_form.html')
+    po = PurchaseOrder.query.get_or_404(id)
+    if request.method == 'POST':
+        po.order_number = request.form.get('order_number')
+        po.vendor_name = request.form.get('vendor_name')
+        po.order_date = request.form.get('order_date')
+        po.expected_delivery = request.form.get('expected_delivery')
+        po.total_amount = request.form.get('total_amount')
+        po.status = request.form.get('status')
+        po.notes = request.form.get('notes')
+        db.session.commit()
+        flash('Purchase Order updated successfully!', 'success')
+        return redirect(url_for('admin.po_list'))
+    return render_template('admin/po_form.html', po=po)
 
 @bp.route('/vendor-bills')
 def vendor_bills_list():

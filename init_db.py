@@ -3,7 +3,7 @@ Database initialization script
 Creates all tables and optionally seeds with sample data
 """
 from app import create_app, db
-from app.models import Contact, Product, AnalyticalAccount
+from app.models import Contact, Product, AnalyticalAccount, Budget, User, PurchaseOrder
 
 def init_database():
     app = create_app()
@@ -82,9 +82,20 @@ def seed_data():
     for product in products:
         db.session.add(product)
     
+    # Create a default admin user
+    admin_user = User(
+        username='admin',
+        email='admin@example.com',
+        name='Administrator',
+        role='admin'
+    )
+    admin_user.set_password('admin123')
+    db.session.add(admin_user)
+    
     db.session.commit()
     print(f"  - Added {len(contacts)} contacts")
     print(f"  - Added {len(products)} products")
+    print(f"  - Added 1 admin user (username: admin, password: admin123)")
 
 if __name__ == '__main__':
     init_database()
