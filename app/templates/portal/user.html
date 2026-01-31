@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal | Dashboard</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            /* Odoo Indigo */
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --accent-pink: #d63384;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 50px;
+            text-align: center;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #94a3b8;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-accent);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);
+        }
+
+        /* ===== Main Content Area ===== */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 99px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* ===== Dashboard Grid ===== */
+        .dashboard-container {
+            padding: 40px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--card-white);
+            padding: 32px;
+            border-radius: 36px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-accent);
+            opacity: 0.1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .stat-subtext {
+            font-size: 13px;
+            color: var(--accent-pink);
+            font-weight: 500;
+        }
+
+        /* ===== Quick Actions ===== */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #0f172a;
+        }
+
+        .action-grid {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-action:hover {
+            background: var(--primary-accent);
+            color: #fff;
+            border-color: var(--primary-accent);
+            box-shadow: 0 4px 12px rgba(113, 75, 103, 0.2);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+                padding: 40px 10px;
+            }
+
+            .sidebar-logo,
+            .nav-item span {
+                display: none;
+            }
+
+            .main-wrapper {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 16px 20px;
+            }
+
+            .dashboard-container {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo"> USER PORTAL</div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('portal.home') }}" class="nav-item active">
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('portal.invoices_list') }}" class="nav-item">
+                <span>Bills & Invoices</span>
+            </a>
+            <a href="{{ url_for('portal.so_list') }}" class="nav-item">
+                <span>Purchased Draft</span>
+            </a>
+            <a href="{{ url_for('portal.payment_history') }}" class="nav-item">
+                <span>Payments</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <h1>Overview</h1>
+            <div class="user-badge">
+                <div class="user-avatar">PU</div>
+                <span>Portal User</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard-container">
+
+            <div class="grid-stats">
+                <div class="stat-card">
+                    <span class="stat-label">Total Invoices</span>
+                    <div class="stat-value">12</div>
+                    <div class="stat-subtext">Lifetime history</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Unpaid Bills</span>
+                    <div class="stat-value">₹ 18,500</div>
+                    <div class="stat-subtext">Attention required</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Active Orders</span>
+                    <div class="stat-value">07</div>
+                    <div class="stat-subtext">SO / PO tracking</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Payments Made</span>
+                    <div class="stat-value">₹ 92,000</div>
+                    <div class="stat-subtext">Verified transactions</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <section>
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="action-grid">
+                    <a href="{{ url_for('portal.invoices_list') }}" class="btn-action">
+                        View Invoices
+                    </a>
+                    <a href="{{ url_for('portal.invoices_list') }}" class="btn-action"
+                        style="background: var(--primary-accent); color: #fff;">
+                        Pay Outstandings
+                    </a>
+                    <a href="{{ url_for('portal.so_list') }}" class="btn-action">
+                        Order History
+                    </a>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

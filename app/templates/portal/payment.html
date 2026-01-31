@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Portal | My Orders</title>
+    <title>Customer Portal | Payment History</title>
     <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -18,7 +18,6 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --accent-pink: #d63384;
             --sidebar-width: 280px;
         }
 
@@ -36,7 +35,7 @@
             min-height: 100vh;
         }
 
-        /* ===== Sidebar ===== */
+        /* ===== Sidebar (Consistent with other portal pages) ===== */
         .sidebar {
             width: var(--sidebar-width);
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
@@ -117,15 +116,15 @@
             color: #0f172a;
         }
 
-        /* ===== Table Content ===== */
-        .table-container {
+        /* ===== Content ===== */
+        .content-container {
             padding: 40px;
-            max-width: 1200px;
+            max-width: 1000px;
             width: 100%;
             margin: 0 auto;
         }
 
-        .order-card {
+        .payment-card {
             background: var(--card-white);
             border-radius: 36px;
             border: 1px solid var(--border-color);
@@ -163,25 +162,17 @@
             font-weight: 500;
         }
 
-        tr:hover td {
-            background: #f8fafc;
+        tr:last-child td {
+            border-bottom: none;
         }
 
-        .status-pill {
+        .method-badge {
             padding: 6px 16px;
             border-radius: 99px;
             font-size: 13px;
             font-weight: 600;
-        }
-
-        .status-confirmed {
-            background: #eff6ff;
-            color: #2563eb;
-        }
-
-        .status-delivered {
-            background: #ecfdf5;
-            color: #059669;
+            background: #f1f5f9;
+            color: #475569;
         }
 
         @media (max-width: 768px) {
@@ -207,10 +198,10 @@
             <a href="{{ url_for('portal.invoices_list') }}" class="nav-item">
                 <span>Bills & Invoices</span>
             </a>
-            <a href="{{ url_for('portal.so_list') }}" class="nav-item active">
+            <a href="{{ url_for('portal.so_list') }}" class="nav-item">
                 <span>Purchased Draft</span>
             </a>
-            <a href="{{ url_for('portal.payment_history') }}" class="nav-item">
+            <a href="{{ url_for('portal.payment_history') }}" class="nav-item active">
                 <span>Payments</span>
             </a>
         </nav>
@@ -218,33 +209,33 @@
 
     <div class="main-wrapper">
         <header class="header">
-            <h1>My Orders</h1>
+            <h1>Payment History</h1>
         </header>
 
-        <main class="table-container">
-            <div class="order-card">
+        <main class="content-container">
+            <div class="payment-card">
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
-                                <th>Order Ref</th>
-                                <th>Order Date</th>
                                 <th>Amount</th>
-                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Method</th>
+                                <th>Reference</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>SO/2026/045</td>
-                                <td>28-Jan-2026</td>
-                                <td>₹ 15,400</td>
-                                <td><span class="status-pill status-delivered">Delivered</span></td>
+                                <td style="font-weight: 600; color: var(--primary-accent);">₹ 5,000</td>
+                                <td>01-Feb-2026</td>
+                                <td><span class="method-badge">UPI</span></td>
+                                <td style="color: var(--text-muted);">PAY-992123</td>
                             </tr>
                             <tr>
-                                <td>SO/2026/058</td>
-                                <td>02-Feb-2026</td>
-                                <td>₹ 8,200</td>
-                                <td><span class="status-pill status-confirmed">Confirmed</span></td>
+                                <td style="font-weight: 600; color: var(--primary-accent);">₹ 1,200</td>
+                                <td>15-Feb-2026</td>
+                                <td><span class="method-badge">Card</span></td>
+                                <td style="color: var(--text-muted);">PAY-883920</td>
                             </tr>
                         </tbody>
                     </table>
