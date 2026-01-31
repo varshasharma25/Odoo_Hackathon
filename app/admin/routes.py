@@ -21,7 +21,7 @@ def contact_new():
     if request.method == 'POST':
         contact = Contact(
             name=request.form.get('name'),
-            email=request.form.get('email'),
+            email=request.form.get('email'), 
             phone=request.form.get('phone'),
             company=request.form.get('company'),
             address=request.form.get('address')
@@ -47,6 +47,8 @@ def contact_detail(id):
         return redirect(url_for('admin.contacts_list'))
     return render_template('admin/contact_form.html', contact=contact)
 
+
+
 @bp.route('/products')
 @login_required
 def products_list():
@@ -57,10 +59,10 @@ def products_list():
 def product_new():
     if request.method == 'POST':
         product = Product(
-            name=request.form.get('name'),
-            category=request.form.get('category'),
-            sales_price=request.form.get('sales_price'),
-            purchase_price=request.form.get('purchase_price')
+            name=request.form['name'],
+            category=request.form.get('category', ''),
+            sales_price=request.form.get('sales_price', ''),
+            purchase_price=request.form.get('purchase_price', '')
         )
         db.session.add(product) 
         db.session.commit()
@@ -71,7 +73,7 @@ def product_new():
 @bp.route('/product/<int:id>', methods=['GET', 'POST'])
 def product_detail(id):
     product = Product.query.get_or_404(id)
-    if request.method == 'POST':
+    if request.method == 'POST': 
         product.name = request.form.get('name')
         product.category = request.form.get('category')
         product.sales_price = request.form.get('sales_price')
