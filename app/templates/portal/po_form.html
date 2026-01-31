@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Specification | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --sidebar-width: 280px;
+            --accent-pink: #d63384;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 50px;
+            text-align: center;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #94a3b8;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-accent);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);
+        }
+
+        /* ===== Main Content Area ===== */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .dashboard-container {
+            padding: 40px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 32px;
+            text-align: left;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-accent);
+            color: #fff;
+            border-color: var(--primary-accent);
+        }
+
+        .status-badge {
+            padding: 6px 16px;
+            background: #f1f5f9;
+            font-size: 13px;
+            border-radius: 99px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .form-header-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .label {
+            width: 140px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid var(--border-color);
+            padding: 8px 0;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary-accent);
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .items-table td {
+            padding: 16px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .line-input {
+            width: 100%;
+            border: 1px solid transparent;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: #f8fafc;
+            font-family: inherit;
+        }
+
+        .line-input:focus {
+            background: #fff;
+            border-color: var(--primary-accent);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+                padding: 40px 10px;
+            }
+
+            .sidebar-logo,
+            .nav-item span {
+                display: none;
+            }
+
+            .main-wrapper {
+                margin-left: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">USER PORTAL</div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('portal.home') }}" class="nav-item">
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('portal.invoices_list') }}" class="nav-item">
+                <span>Bills & Invoices</span>
+            </a>
+            <a href="{{ url_for('portal.po_list') }}" class="nav-item active">
+                <span>Purchase Specification</span>
+            </a>
+            <a href="{{ url_for('portal.payment_history') }}" class="nav-item">
+                <span>Payments</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="header">
+            <h1>{{ 'Specification Detail' if po else 'New Specification' }}</h1>
+            <div class="user-badge"
+                style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #fff; border: 1px solid var(--border-color); border-radius: 99px; font-size: 14px; font-weight: 500;">
+                <div
+                    style="width: 32px; height: 32px; background: var(--primary-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    {{ current_user.name[0] if current_user.name else 'U' }}</div>
+                <span>{{ current_user.name or current_user.email }}</span>
+            </div>
+        </header>
+
+        <main class="dashboard-container">
+            <div class="form-card">
+                <form id="poForm" method="POST">
+                    <div class="toolbar">
+                        <div style="display: flex; gap: 12px;">
+                            <a href="{{ url_for('portal.po_list') }}" class="btn">View All Drafts</a>
+                            {% if not po %}
+                            <button type="submit" class="btn btn-submit">Submit Review Request</button>
+                            {% endif %}
+                        </div>
+                        <span class="status-badge"
+                            style="background: {% if po and po.status=='confirmed' %}#ecfdf5{% else %}#f1f5f9{% endif %}; color: {% if po and po.status=='confirmed' %}#059669{% else %}#64748b{% endif %};">
+                            Status: {{ po.status if po else 'New' }}
+                        </span>
+                    </div>
+
+                    <div class="form-header-grid">
+                        <div>
+                            <div class="input-row">
+                                <span class="label">Reference</span>
+                                <input type="text" name="reference" class="input-field" placeholder="e.g. Office chairs"
+                                    value="{{ po.reference if po else '' }}" {% if po %}readonly{% endif %}>
+                            </div>
+                            <div class="input-row">
+                                <span class="label">Vendor</span>
+                                <select name="vendor_name" class="input-field" required {% if po %}disabled{% endif %}>
+                                    <option value="" disabled selected>Select Vendor</option>
+                                    {% for vendor in vendors %}
+                                    <option value="{{ vendor.name }}" {% if po and po.vendor_name==vendor.name
+                                        %}selected{% endif %}>{{ vendor.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="input-row">
+                                <span class="label">Desired Date</span>
+                                <input type="date" name="order_date" class="input-field" required
+                                    value="{{ po.order_date.strftime('%Y-%m-%d') if po and po.order_date else '' }}" {%
+                                    if po %}readonly{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="items-table" id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">#</th>
+                                <th>Requirement</th>
+                                <th>Category</th>
+                                <th style="width: 100px;">Qty</th>
+                                <th style="width: 150px;">Est. Unit Price</th>
+                                <th style="width: 150px; text-align: right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if po and po.lines %}
+                            {% for line in po.lines %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ line.product_name }}</td>
+                                <td>{{ line.budget_analytics }}</td>
+                                <td>{{ line.quantity }}</td>
+                                <td>₹{{ "{:,.2f}".format(line.unit_price) }}</td>
+                                <td style="text-align: right; font-weight: 600;">₹{{ "{:,.2f}".format(line.total) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td style="text-align: center;">1</td>
+                                <td><input type="text" name="product_name[]" class="line-input"
+                                        placeholder="e.g. Desk Lamp" list="productList" required></td>
+                                <td>
+                                    <select name="budget_analytics[]" class="line-input" required>
+                                        <option value="" disabled selected>Select Category</option>
+                                        {% for account in analytical_accounts %}
+                                        <option value="{{ account.name }}">{{ account.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td><input type="number" name="quantity[]" class="line-input qty" placeholder="1"
+                                        required></td>
+                                <td><input type="number" name="unit_price[]" class="line-input price" placeholder="0.00"
+                                        required></td>
+                                <td style="text-align: right; font-weight: 600; color: var(--primary-accent);">₹ <span
+                                        class="line-total">0.00</span></td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                        {% if not po %}
+                        <tfoot>
+                            <tr>
+                                <td colspan="6" style="padding: 12px 0;">
+                                    <span id="addLine"
+                                        style="color: var(--primary-accent); cursor: pointer; font-weight: 600; font-size: 14px;">+
+                                        Add line item</span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                        {% endif %}
+                    </table>
+
+                    <div
+                        style="display: flex; justify-content: flex-end; margin-bottom: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                        <div style="text-align: right;">
+                            <span
+                                style="font-size: 14px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Estimated
+                                Total</span>
+                            <div style="font-size: 28px; font-weight: 600; color: var(--primary-accent);">₹ <span
+                                    id="grandTotal">{{ "{:,.2f}".format(po.total_amount) if po else '0.00' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-row" style="flex-direction: column; align-items: flex-start;">
+                        <span class="label" style="margin-bottom: 12px; display: block;">Specifications / Special
+                            Requirements</span>
+                        <textarea name="notes" class="line-input" rows="4" style="width: 100%; padding: 16px;"
+                            placeholder="Add brand preferences, dimension requirements, or other notes..." {% if po
+                            %}readonly{% endif %}>{{ po.notes if po else '' }}</textarea>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <datalist id="productList">
+        {% for prod in products %}<option value="{{ prod.name }}">{% endfor %}
+    </datalist>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('itemsTable');
+            const tbody = table.querySelector('tbody');
+            const addLineBtn = document.getElementById('addLine');
+
+            function updateTotals() {
+                let grandTotal = 0;
+                tbody.querySelectorAll('tr').forEach(row => {
+                    const qty = parseFloat(row.querySelector('.qty')?.value) || 0;
+                    const price = parseFloat(row.querySelector('.price')?.value) || 0;
+                    const lineTotalSpan = row.querySelector('.line-total');
+                    if (lineTotalSpan) {
+                        const total = qty * price;
+                        lineTotalSpan.textContent = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                        grandTotal += total;
+                    }
+                });
+                document.getElementById('grandTotal').textContent = grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            }
+
+            if (addLineBtn) {
+                addLineBtn.addEventListener('click', function () {
+                    const rowCount = tbody.rows.length;
+                    const newRow = tbody.insertRow();
+                    newRow.innerHTML = `
+                        <td style="text-align: center;">${rowCount + 1}</td>
+                        <td><input type="text" name="product_name[]" class="line-input" list="productList" required></td>
+                        <td>
+                            <select name="budget_analytics[]" class="line-input" required>
+                                <option value="" disabled selected>Category</option>
+                                {% for account in analytical_accounts %}<option value="{{ account.name }}">{{ account.name }}</option>{% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="number" name="quantity[]" class="line-input qty" required></td>
+                        <td><input type="number" name="unit_price[]" class="line-input price" required></td>
+                        <td style="text-align: right; font-weight: 600; color: var(--primary-accent);">₹ <span class="line-total">0.00</span></td>
+                    `;
+                });
+            }
+
+            table.addEventListener('input', function (e) {
+                if (e.target.classList.contains('qty') || e.target.classList.contains('price')) {
+                    updateTotals();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

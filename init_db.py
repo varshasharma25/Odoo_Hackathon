@@ -16,12 +16,13 @@ def init_database():
         # Check if we should seed data
         try:
             contact_count = db.session.query(Contact).count()
-            if contact_count == 0:
-                print("\nSeeding sample data...")
+            account_count = db.session.query(AnalyticalAccount).count()
+            if contact_count == 0 or account_count == 0:
+                print("\nSeeding missing sample data...")
                 seed_data()
                 print("- Sample data added successfully!")
             else:
-                print(f"\nDatabase already has {contact_count} contacts. Skipping seed.")
+                print(f"\nDatabase already has {contact_count} contacts and {account_count} categories. Skipping seed.")
         except Exception as e:
             print(f"\nNote: Could not check existing data: {e}")
             print("You can manually add data through the web interface.")
@@ -81,6 +82,37 @@ def seed_data():
     
     for product in products:
         db.session.add(product)
+
+    # Sample Analytical Accounts (Categories)
+    analytical_accounts = [
+        AnalyticalAccount(
+            name="Office Supplies",
+            code="EXP-OFF-01",
+            account_type="expense",
+            description="General office stationery and supplies"
+        ),
+        AnalyticalAccount(
+            name="Raw Materials",
+            code="EXP-RAW-01",
+            account_type="expense",
+            description="Timber, fabric, and other raw materials"
+        ),
+        AnalyticalAccount(
+            name="Maintenance & Repairs",
+            code="EXP-MNT-01",
+            account_type="expense",
+            description="Office and factory maintenance"
+        ),
+        AnalyticalAccount(
+            name="Marketing & Promotion",
+            code="EXP-MKT-01",
+            account_type="expense",
+            description="Advertising and brand promotion"
+        )
+    ]
+    
+    for account in analytical_accounts:
+        db.session.add(account)
     
     # Create a default admin user
     admin_user = Users(

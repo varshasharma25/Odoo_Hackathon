@@ -3,14 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db
 
-class Users(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password = db.Column(db.String(128))
-    role = db.Column(db.String(20))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 class Contact(db.Model):
     __tablename__ = 'contacts'
@@ -157,11 +150,13 @@ class PurchaseOrder(db.Model):
     total_amount = db.Column(db.Float, default=0.0)
     status = db.Column(db.String(20), default='draft')  # draft, confirmed, received, cancelled
     notes = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     is_archived = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     lines = db.relationship('PurchaseOrderLine', backref='order', lazy=True, cascade="all, delete-orphan")
+    created_by = db.relationship('Users', backref='purchase_orders', lazy=True)
     
     def __repr__(self):
         return f'<PurchaseOrder {self.order_number}>'
@@ -202,3 +197,40 @@ class PurchaseOrderLine(db.Model):
             'unit_price': self.unit_price,
             'total': self.total
         }
+
+
+class VendorBill(db.Model):
+    __tablename__ = 'vendor_bills'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    bill_number = db.Column(db.String(50), unique=True)
+    vendor_name = db.Column(db.String(128), nullable=False)
+    bill_date = db.Column(db.Date)
+    due_date = db.Column(db.Date)
+    reference = db.Column(db.String(128))
+    total_amount = db.Column(db.Float, default=0.0)
+    amount_paid = db.Column(db.Float, default=0.0)
+    status = db.Column(db.String(20), default='draft')  # draft, confirmed, cancelled
+    payment_status = db.Column(db.String(20), default='not_paid')  # not_paid, partial, paid
+    po_id = db.Column(db.Integer, db.ForeignKey('purchase_orders.id'), nullable=True)
+    is_archived = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    lines = db.relationship('VendorBillLine', backref='bill', lazy=True, cascade="all, delete-orphan")
+    purchase_order = db.relationship('PurchaseOrder', backref='bills', lazy=True)
+    
+    def __repr__(self):
+        return f'<VendorBill {self.bill_number}>'
+
+
+class VendorBillLine(db.Model):
+    __tablename__ = 'vendor_bill_lines'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    bill_id = db.Column(db.Integer, db.ForeignKey('vendor_bills.id'), nullable=False)
+    product_name = db.Column(db.String(128))
+    budget_analytics = db.Column(db.String(128))
+    quantity = db.Column(db.Float, default=1.0)
+    unit_price = db.Column(db.Float, default=0.0)
+    total = db.Column(db.Float, default=0.0)

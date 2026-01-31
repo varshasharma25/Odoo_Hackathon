@@ -395,25 +395,26 @@
             </div>
 
             <div class="card">
-                <div class="card-icon">📦</div>
-                <h3>Order Tracking</h3>
+                <div class="card-icon">🚀</div>
+                <h3>Portal Submissions</h3>
                 <p>
-                    Stay updated on your active sales and purchase orders. Access detailed breakdowns of items, delivery
-                    dates, and current progress.
+                    There are <strong>{{ portal_drafts_count }}</strong> new purchase specifications submitted via the
+                    portal that require your review and confirmation.
                 </p>
-                <a href="{{ url_for('portal.so_list') }}" class="btn-link">Track Orders →</a>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">💳</div>
-                <h3>Secure Payments</h3>
-                <p>
-                    Process payments for pending bills instantly using our encrypted payment system. Fast, secure, and
-                    fully recorded in your history.
-                </p>
-                <a href="{{ url_for('portal.invoices_list') }}" class="btn-link">Settle Balances →</a>
+                <a href="{{ url_for('admin.po_list') }}" class="btn-link">Review Specifications →</a>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card-icon">💳</div>
+            <h3>Secure Payments</h3>
+            <p>
+                Process payments for pending bills instantly using our encrypted payment system. Fast, secure, and
+                fully recorded in your history.
+            </p>
+            <a href="{{ url_for('portal.invoices_list') }}" class="btn-link">Settle Balances →</a>
+        </div>
+    </div>
     </div>
 
     <script>

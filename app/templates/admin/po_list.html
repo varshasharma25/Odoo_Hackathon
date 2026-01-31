@@ -196,6 +196,7 @@
                         <th style="width: 150px;">Date</th>
                         <th>Vendor</th>
                         <th class="hide-mobile">Reference</th>
+                        <th style="width: 120px;">Created By</th>
                         <th style="width: 120px;">Total</th>
                         <th style="width: 120px;">Status</th>
                     </tr>
@@ -208,6 +209,13 @@
                         <td>{{ po.order_date.strftime('%Y-%m-%d') if po.order_date else 'N/A' }}</td>
                         <td>{{ po.vendor_name }}</td>
                         <td class="hide-mobile">{{ po.reference or '-' }}</td>
+                        <td>
+                            {% if po.user_id %}
+                            <span style="color: var(--primary-accent); font-weight: 500;">Portal</span>
+                            {% else %}
+                            <span style="color: #64748b;">Admin</span>
+                            {% endif %}
+                        </td>
                         <td>₹{{ "{:,.2f}".format(po.total_amount) if po.total_amount else '0.00' }}</td>
                         <td>
                             <span class="status-badge status-{{ po.status }}">{{ po.status }}</span>

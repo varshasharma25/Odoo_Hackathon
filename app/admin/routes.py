@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from app.admin import bp
 from app import db
-from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine
+from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine, VendorBill, VendorBillLine
 from sqlalchemy.exc import IntegrityError
 
 def save_image(file):
@@ -26,7 +26,13 @@ def save_image(file):
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('admin/dashboard.html')
+    portal_drafts_count = PurchaseOrder.query.filter(PurchaseOrder.user_id.isnot(None), PurchaseOrder.status == 'draft').count()
+    total_po_count = PurchaseOrder.query.count()
+    pending_bills_count = 5 # Placeholder as we don't have a bill model yet or it's not fully used
+    return render_template('admin/dashboard.html', 
+                           portal_drafts_count=portal_drafts_count,
+                           total_po_count=total_po_count,
+                           pending_bills_count=pending_bills_count)
 
 @bp.route('/contacts')
 @login_required
@@ -349,20 +355,69 @@ def po_update_status(id, status):
         flash(f'Purchase Order {status} successfully!', 'success')
     return redirect(url_for('admin.po_detail', id=po.id))
 
+@bp.route('/purchase-order/<int:id>/create-bill')
+@login_required
+def po_create_bill(id):
+    po = PurchaseOrder.query.get_or_404(id)
+    
+    # Generate Bill Number
+    last_bill = VendorBill.query.order_by(VendorBill.id.desc()).first()
+    if last_bill and last_bill.bill_number and last_bill.bill_number.startswith('Bill'):
+        try:
+            last_num = int(last_bill.bill_number.split('/')[-1])
+            bill_number = f"Bill/{datetime.now().year}/{last_num + 1:04d}"
+        except (ValueError, IndexError):
+            bill_number = f"Bill/{datetime.now().year}/0001"
+    else:
+        bill_number = f"Bill/{datetime.now().year}/0001"
+        
+    bill = VendorBill(
+        bill_number=bill_number,
+        vendor_name=po.vendor_name,
+        bill_date=datetime.now().date(),
+        reference=po.order_number,
+        total_amount=po.total_amount,
+        po_id=po.id,
+        status='draft'
+    )
+    db.session.add(bill)
+    db.session.flush()
+    
+    for line in po.lines:
+        bill_line = VendorBillLine(
+            bill_id=bill.id,
+            product_name=line.product_name,
+            budget_analytics=line.budget_analytics,
+            quantity=line.quantity,
+            unit_price=line.unit_price,
+            total=line.total
+        )
+        db.session.add(bill_line)
+        
+    db.session.commit()
+    flash('Vendor Bill created from Purchase Order!', 'success')
+    return redirect(url_for('admin.vendor_bill_detail', id=bill.id))
+
 @bp.route('/vendor-bills')
 @login_required
 def vendor_bills_list():
-    return render_template('admin/vendor_bills_list.html')
+    bills = VendorBill.query.filter_by(is_archived=False).all()
+    return render_template('admin/vendor_bills_list.html', bills=bills)
 
 @bp.route('/vendor-bill/new', methods=['GET', 'POST'])
 @login_required
 def vendor_bill_new():
-    return render_template('admin/vendor_bill_form.html')
+    # Similar to po_new but for bills
+    return render_template('admin/vendor_bill_form.html', bill=None)
 
 @bp.route('/vendor-bill/<int:id>', methods=['GET', 'POST'])
 @login_required
 def vendor_bill_detail(id):
-    return render_template('admin/vendor_bill_form.html')
+    bill = VendorBill.query.get_or_404(id)
+    if request.method == 'POST':
+        # Logic to update bill if needed
+        pass
+    return render_template('admin/vendor_bill_form.html', bill=bill)
 
 @bp.route('/vendor-bill/payment/<int:id>', methods=['GET', 'POST'])
 @login_required

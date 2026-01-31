@@ -201,40 +201,29 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if bills %}
+                    {% for bill in bills %}
                     <tr class="link-row"
-                        onclick="window.location.href='{{ url_for('admin.vendor_bill_detail', id=1) }}';">
-                        <td>Bill/2025/0001</td>
-                        <td>2025-01-30</td>
-                        <td>Azure Interior</td>
-                        <td class="hide-mobile">SUP-25-001</td>
-                        <td>₹16,350</td>
-                        <td><span class="status-badge status-paid">Paid</span></td>
+                        onclick="window.location.href='{{ url_for('admin.vendor_bill_detail', id=bill.id) }}';">
+                        <td>{{ bill.bill_number }}</td>
+                        <td>{{ bill.bill_date.strftime('%Y-%m-%d') if bill.bill_date else 'N/A' }}</td>
+                        <td>{{ bill.vendor_name }}</td>
+                        <td class="hide-mobile">{{ bill.reference or '-' }}</td>
+                        <td>₹{{ "{:,.2f}".format(bill.total_amount) }}</td>
+                        <td>
+                            <span class="status-badge status-{{ bill.payment_status.replace('_', '') }}">
+                                {{ bill.payment_status.replace('_', ' ').capitalize() }}
+                            </span>
+                        </td>
                     </tr>
-                    <tr class="link-row"
-                        onclick="window.location.href='{{ url_for('admin.vendor_bill_detail', id=2) }}';">
-                        <td>Bill/2025/0002</td>
-                        <td>2025-01-31</td>
-                        <td>Deco Addict</td>
-                        <td class="hide-mobile">SUP-25-002</td>
-                        <td>₹8,500</td>
-                        <td><span class="status-badge status-notpaid">Not Paid</span></td>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
+                            No vendor bills found. Create a bill from a confirmed Purchase Order.
+                        </td>
                     </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

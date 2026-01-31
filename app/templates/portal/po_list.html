@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Portal | My Invoices</title>
+    <title>My Purchase Drafts | Shiv Furniture</title>
     <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-accent: #714B67;
-            /* Odoo Indigo */
             --primary-hover: #5d3d55;
             --body-bg: #f8fafc;
             --card-white: #ffffff;
@@ -18,7 +17,6 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --accent-pink: #d63384;
             --sidebar-width: 280px;
         }
 
@@ -36,7 +34,7 @@
             min-height: 100vh;
         }
 
-        /* ===== Sidebar (Consistent with user.html) ===== */
+        /* ===== Sidebar ===== */
         .sidebar {
             width: var(--sidebar-width);
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
@@ -117,60 +115,64 @@
             color: #0f172a;
         }
 
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 99px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--primary-accent);
-            color: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        /* ===== Table Content ===== */
-        .table-container {
+        .dashboard-container {
             padding: 40px;
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
         }
 
-        .invoice-card {
-            background: var(--card-white);
-            border-radius: 36px;
+        .list-card {
+            background: white;
+            border-radius: 24px;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow);
-            padding: 32px;
+            padding: 24px 0;
             overflow: hidden;
         }
 
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
+        .toolbar {
+            padding: 0 32px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        table {
+        .btn {
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-new {
+            background-color: var(--primary-accent);
+            color: #fff;
+            border-color: var(--primary-accent);
+        }
+
+        .btn-new:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(113, 75, 103, 0.2);
+        }
+
+        .po-table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
         }
 
-        th {
-            padding: 16px;
+        .po-table th {
+            text-align: left;
+            padding: 16px 32px;
             font-size: 14px;
             font-weight: 600;
             color: var(--text-muted);
@@ -179,63 +181,38 @@
             border-bottom: 2px solid var(--border-color);
         }
 
-        td {
-            padding: 20px 16px;
-            font-size: 16px;
-            border-bottom: 1px solid var(--border-color);
+        .po-table td {
+            padding: 20px 32px;
+            font-size: 15px;
             color: var(--text-dark);
-            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
         }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
+        .po-table tr:hover td {
             background: #f8fafc;
         }
 
-        .status-pill {
+        .status-badge {
             padding: 6px 16px;
             border-radius: 99px;
             font-size: 13px;
             font-weight: 600;
-            display: inline-block;
+            text-transform: capitalize;
         }
 
-        .status-paid {
+        .status-draft {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .status-confirmed {
             background: #ecfdf5;
             color: #059669;
         }
 
-        .status-pending {
-            background: #fff7ed;
-            color: #ea580c;
-        }
-
-        .btn-view {
-            color: var(--primary-accent);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: color 0.2s;
-        }
-
-        .btn-view:hover {
-            color: var(--primary-hover);
-            text-decoration: underline;
-        }
-
-        /* Improved UX: Row pointer */
-        tbody tr[data-href] {
+        .link-row {
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .invoice-link {
-            color: inherit;
-            text-decoration: none;
-            display: inline-block;
         }
 
         @media (max-width: 1024px) {
@@ -253,47 +230,21 @@
                 margin-left: 80px;
             }
         }
-
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                padding: 20px;
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-            }
-
-            .header {
-                padding: 16px 20px;
-            }
-
-            .table-container {
-                padding: 24px 20px;
-            }
-        }
     </style>
 </head>
 
 <body>
 
-    <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="sidebar-logo">PORTAL</div>
+        <div class="sidebar-logo">USER PORTAL</div>
         <nav class="nav-menu">
             <a href="{{ url_for('portal.home') }}" class="nav-item">
                 <span>Dashboard</span>
             </a>
-            <a href="{{ url_for('portal.invoices_list') }}" class="nav-item active">
+            <a href="{{ url_for('portal.invoices_list') }}" class="nav-item">
                 <span>Bills & Invoices</span>
             </a>
-            <a href="{{ url_for('portal.po_list') }}" class="nav-item">
+            <a href="{{ url_for('portal.po_list') }}" class="nav-item active">
                 <span>Purchase Specification</span>
             </a>
             <a href="{{ url_for('portal.payment_history') }}" class="nav-item">
@@ -303,48 +254,71 @@
     </aside>
 
     <div class="main-wrapper">
-        <!-- Header -->
         <header class="header">
-            <h1>My Invoices</h1>
-            <div class="user-badge">
-                <div class="user-avatar">PU</div>
-                <span>Portal User</span>
+            <h1>Purchase Specifications</h1>
+            <div class="user-badge"
+                style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #fff; border: 1px solid var(--border-color); border-radius: 99px; font-size: 14px; font-weight: 500;">
+                <div
+                    style="width: 32px; height: 32px; background: var(--primary-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    {{ current_user.name[0] if current_user.name else 'U' }}</div>
+                <span>{{ current_user.name or current_user.email }}</span>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="table-container">
-            <div class="invoice-card">
-                <div class="table-wrapper">
-                    <table>
+        <main class="dashboard-container">
+            <div class="list-card">
+                <div class="toolbar">
+                    <h2 style="font-size: 18px; color: var(--text-dark);">My Submissions</h2>
+                    <a href="{{ url_for('portal.po_new') }}" class="btn btn-new">Create New Draft</a>
+                </div>
+
+                <!-- Flash Messages -->
+                <div style="padding: 0 32px;">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div
+                        style="padding: 12px; margin-bottom: 20px; border-radius: 12px; background: {% if category == 'success' %}#ecfdf5{% else %}#fef2f2{% endif %}; color: {% if category == 'success' %}#065f46{% else %}#991b1b{% endif %}; font-size: 14px; font-weight: 500;">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="po-table">
                         <thead>
                             <tr>
-                                <th>Invoice No</th>
+                                <th>Draft No</th>
                                 <th>Date</th>
-                                <th>Amount</th>
+                                <th>Vendor</th>
+                                <th>Total</th>
                                 <th>Status</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-href="{{ url_for('portal.invoice_detail', invoice_id=1) }}">
-                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=1) }}"
-                                        class="invoice-link">INV-001</a></td>
-                                <td>01-Feb-2026</td>
-                                <td>₹ 5,000</td>
-                                <td><span class="status-pill status-paid">Paid</span></td>
-                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=1) }}" class="btn-view">View
-                                        Detail</a></td>
+                            {% if purchase_orders %}
+                            {% for po in purchase_orders %}
+                            <tr class="link-row"
+                                onclick="window.location.href='{{ url_for('portal.po_detail', id=po.id) }}';">
+                                <td>{{ po.order_number or 'N/A' }}</td>
+                                <td>{{ po.order_date.strftime('%d-%b-%Y') if po.order_date else 'N/A' }}</td>
+                                <td>{{ po.vendor_name }}</td>
+                                <td style="font-weight: 600;">₹{{ "{:,.2f}".format(po.total_amount) if po.total_amount
+                                    else '0.00' }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ po.status }}">{{ po.status }}</span>
+                                </td>
                             </tr>
-                            <tr data-href="{{ url_for('portal.invoice_detail', invoice_id=2) }}">
-                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=2) }}"
-                                        class="invoice-link">INV-002</a></td>
-                                <td>15-Feb-2026</td>
-                                <td>₹ 3,200</td>
-                                <td><span class="status-pill status-pending">Pending</span></td>
-                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=2) }}" class="btn-view">View
-                                        Detail</a></td>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 60px; color: var(--text-muted);">
+                                    No purchase drafts found. Click "Create New Draft" to get started.
+                                </td>
                             </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
@@ -352,19 +326,6 @@
         </main>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const rows = document.querySelectorAll('tr[data-href]');
-            rows.forEach(row => {
-                row.addEventListener('click', (e) => {
-                    // Prevent navigation if an actual link or button was clicked
-                    if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON' && !e.target.closest('a')) {
-                        window.location.href = row.dataset.href;
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>

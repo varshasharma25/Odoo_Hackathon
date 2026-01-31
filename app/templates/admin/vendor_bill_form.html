@@ -316,10 +316,13 @@
                         onclick="window.location.href='{{ url_for('admin.vendor_bill_new') }}';">New</button>
                     <div
                         style="background: #e9f7ef; color: #27ae60; padding: 10px 16px; border-radius: 8px; font-weight: 600; border: 1px solid #27ae60; margin-left: 20px;">
-                        1234</div>
+                        {{ bill.bill_number if bill else 'New Bill' }}</div>
                 </div>
                 <div class="btn-group">
-                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button class="btn"
+                        onclick="window.location.href='{{ url_for('admin.dashboard') }}';">Dashboard</button>
+                    <button class="btn"
+                        onclick="window.location.href='{{ url_for('admin.vendor_bills_list') }}';">List</button>
                     <button class="btn" onclick="window.history.back();">Back</button>
                 </div>
             </div>
@@ -329,34 +332,41 @@
                 <div style="flex: 1;">
                     <div class="info-group">
                         <span class="label">Vendor Bill No.</span>
-                        <input type="text" class="input-field" value="Bill/2025/0001">
+                        <input type="text" class="input-field" value="{{ bill.bill_number if bill else '' }}" readonly>
                     </div>
                     <div class="info-group">
                         <span class="label">Vendor Name</span>
-                        <input type="text" class="input-field" value="Azure Interior">
+                        <input type="text" class="input-field" value="{{ bill.vendor_name if bill else '' }}">
                     </div>
                     <div class="info-group">
                         <span class="label">Bill Reference</span>
-                        <input type="text" class="input-field" value="SUP-25-001">
+                        <input type="text" class="input-field" value="{{ bill.reference if bill else '' }}">
                     </div>
                 </div>
 
                 <div style="text-align: right;">
                     <div class="info-group" style="justify-content: flex-end;">
                         <span class="label" style="min-width: auto; margin-right: 20px;">Bill Date</span>
-                        <input type="date" class="input-field" value="2025-01-30" style="width: 180px;">
+                        <input type="date" class="input-field"
+                            value="{{ bill.bill_date.strftime('%Y-%m-%d') if bill and bill.bill_date else '' }}"
+                            style="width: 180px;">
                     </div>
                     <div class="info-group" style="justify-content: flex-end;">
                         <span class="label" style="min-width: auto; margin-right: 20px;">Due Date</span>
-                        <input type="date" class="input-field" value="2025-02-15" style="width: 180px;">
+                        <input type="date" class="input-field"
+                            value="{{ bill.due_date.strftime('%Y-%m-%d') if bill and bill.due_date else '' }}"
+                            style="width: 180px;">
                     </div>
 
                     <div style="margin-top: 20px;">
-                        <span class="label" style="display: block; margin-bottom: 8px;">Status</span>
+                        <span class="label" style="display: block; margin-bottom: 8px;">Payment Status</span>
                         <div class="status-badges-group" style="justify-content: flex-end;">
-                            <div class="status-badge paid" id="badge-paid">Paid</div>
-                            <div class="status-badge partial" id="badge-partial">Partial</div>
-                            <div class="status-badge notpaid active" id="badge-notpaid">Not Paid</div>
+                            <div class="status-badge paid {% if bill and bill.payment_status == 'paid' %}active{% endif %}"
+                                id="badge-paid">Paid</div>
+                            <div class="status-badge partial {% if bill and bill.payment_status == 'partial' %}active{% endif %}"
+                                id="badge-partial">Partial</div>
+                            <div class="status-badge notpaid {% if not bill or bill.payment_status == 'not_paid' %}active{% endif %}"
+                                id="badge-notpaid">Not Paid</div>
                         </div>
                     </div>
                 </div>
@@ -375,9 +385,10 @@
 
                 <!-- Status Tabs -->
                 <div class="status-container" style="margin-left: 20px;">
-                    <div class="status-step active">Draft</div>
-                    <div class="status-step">Confirm</div>
-                    <div class="status-step">Cancelled</div>
+                    <div class="status-step {% if not bill or bill.status == 'draft' %}active{% endif %}">Draft</div>
+                    <div class="status-step {% if bill and bill.status == 'confirmed' %}active{% endif %}">Confirm</div>
+                    <div class="status-step {% if bill and bill.status == 'cancelled' %}active{% endif %}">Cancelled
+                    </div>
                 </div>
             </div>
 
@@ -394,26 +405,29 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if bill and bill.lines %}
+                    {% for line in bill.lines %}
                     <tr>
-                        <td class="col-sr">1</td>
-                        <td>Table</td>
-                        <td><span style="color: var(--warning-orange); font-weight: 600;">Deepawali</span></td>
-                        <td class="col-qty"><input type="number" value="6" onchange="calcBill()"></td>
-                        <td class="col-price"><input type="number" value="2300" onchange="calcBill()"></td>
-                        <td class="col-total">13,800</td>
+                        <td class="col-sr">{{ loop.index }}</td>
+                        <td>{{ line.product_name }}</td>
+                        <td><span style="color: var(--warning-orange); font-weight: 600;">{{ line.budget_analytics
+                                }}</span></td>
+                        <td class="col-qty"><input type="number" value="{{ line.quantity }}" onchange="calcBill()"></td>
+                        <td class="col-price"><input type="number" value="{{ line.unit_price }}" onchange="calcBill()">
+                        </td>
+                        <td class="col-total">{{ "{:,.2f}".format(line.total) }}</td>
                     </tr>
+                    {% endfor %}
+                    {% else %}
                     <tr>
-                        <td class="col-sr">2</td>
-                        <td>Chair</td>
-                        <td></td>
-                        <td class="col-qty"><input type="number" value="3" onchange="calcBill()"></td>
-                        <td class="col-price"><input type="number" value="850" onchange="calcBill()"></td>
-                        <td class="col-total">2,550</td>
+                        <td colspan="6" style="text-align: center; padding: 20px;">No lines found.</td>
                     </tr>
+                    {% endif %}
                     <tr class="total">
                         <td colspan="5" style="text-align: right; font-weight: 600; color: var(--accent-pink);">Total
                         </td>
-                        <td class="col-total" id="bill-total" style="font-weight: 600;">16,350</td>
+                        <td class="col-total" id="bill-total" style="font-weight: 600;">{{
+                            "{:,.2f}".format(bill.total_amount) if bill else '0.00' }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -431,7 +445,8 @@
                     </div>
                     <div class="summary-row total due">
                         <span>Amount Due</span>
-                        <span id="amount-due">16,350</span>
+                        <span id="amount-due">{{ "{:,.2f}".format(bill.total_amount - bill.amount_paid) if bill else
+                            '0.00' }}</span>
                     </div>
                 </div>
             </div>

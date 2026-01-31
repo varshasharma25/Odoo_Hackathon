@@ -240,7 +240,9 @@
                         <button type="button" class="btn" onclick="sendToVendor()">Send</button>
                         {% if po and po.status == 'confirmed' %}
                         <button type="button" class="btn" onclick="updateStatus('cancelled')">Cancel</button>
-                        <button type="button" id="createBillBtn">Create Bill</button>
+                        <button type="button" id="createBillBtn"
+                            onclick="window.location.href='{{ url_for('admin.po_create_bill', id=po.id) }}';">Create
+                            Bill</button>
                         {% endif %}
                         <button type="button" class="btn btn-confirm" style="background: var(--accent-orange);"
                             onclick="window.location.href='{{ url_for('admin.budgets_list') }}';">Budget</button>
