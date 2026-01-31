@@ -94,7 +94,8 @@ def analytical_account_new():
         account = AnalyticalAccount(
             name=request.form.get('name'),
             code=request.form.get('code'),
-            description=request.form.get('description')
+            description=request.form.get('description'),
+            account_type=request.form.get('account_type', 'income')
         )
         db.session.add(account)
         db.session.commit()
@@ -109,6 +110,7 @@ def analytical_account_detail(id):
         account.name = request.form.get('name')
         account.code = request.form.get('code')
         account.description = request.form.get('description')
+        account.account_type = request.form.get('account_type', 'income')
         db.session.commit()
         flash('Analytical Account updated successfully!', 'success')
         return redirect(url_for('admin.analytical_accounts_list'))

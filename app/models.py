@@ -76,6 +76,7 @@ class AnalyticalAccount(db.Model):
     name = db.Column(db.String(128), nullable=False)
     code = db.Column(db.String(32), unique=True)
     description = db.Column(db.Text)
+    account_type = db.Column(db.String(20), default='income') # income, expense
     is_archived = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     

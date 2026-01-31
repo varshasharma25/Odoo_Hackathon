@@ -383,19 +383,7 @@
                     {% for account in analytical_accounts %}
                     <tr>
                         <td>{{ account.name }}</td>
-                        <td>Income</td> <!-- Defaulting to Income for now as model doesn't specify -->
-                        <td class="monetary-val">Monetary</td>
-                        <td class="monetary-val">
-                            Compute
-                            <span class="view-link"
-                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
-                        </td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>{{ account.name }}</td>
-                        <td>Expense</td> <!-- Showing both legs for each account -->
+                        <td>{{ account.account_type|capitalize }}</td>
                         <td class="monetary-val">Monetary</td>
                         <td class="monetary-val">
                             Compute

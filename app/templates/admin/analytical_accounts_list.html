@@ -212,9 +212,9 @@
                     <tr>
                         <th style="width: 80px;">Select</th>
                         <th>Account Name</th>
+                        <th>Type</th>
                         <th class="hide-mobile">Reference</th>
-                        <th class="hide-mobile">Customer</th>
-                        <th>Plan</th>
+                        <th class="hide-mobile">Description</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -227,9 +227,14 @@
                             <div class="checkbox-container"></div>
                         </td>
                         <td>{{ account.name }}</td>
+                        <td>
+                            <span
+                                class="badge {% if account.account_type == 'income' %}badge-active{% else %}badge-pending{% endif %}">
+                                {{ account.account_type|capitalize }}
+                            </span>
+                        </td>
                         <td class="hide-mobile">{{ account.code or 'N/A' }}</td>
                         <td class="hide-mobile">{{ account.description or '-' }}</td>
-                        <td>-</td>
                         <td><span class="badge badge-active">Active</span></td>
                     </tr>
                     {% endfor %}

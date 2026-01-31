@@ -3,7 +3,7 @@ Database initialization script
 Creates all tables and optionally seeds with sample data
 """
 from app import create_app, db
-from app.models import Contact, Product, AnalyticalAccount, Budget, User, PurchaseOrder
+from app.models import Contact, Product, AnalyticalAccount, Budget, Users, PurchaseOrder
 
 def init_database():
     app = create_app()
@@ -34,19 +34,19 @@ def seed_data():
         Contact(
             name="Azure Interior",
             email="azure.interior24@example.com",
-            phone="+91 8080808080",
+            phone="8080808080",
             company="Azure Interior Design"
         ),
         Contact(
             name="Nimesh Pathak",
             email="nimesh.pathak@example.com",
-            phone="+91 9090909090",
+            phone="9090909090",
             company="Pathak Enterprises"
         ),
         Contact(
             name="Priya Sharma",
             email="priya.sharma@example.com",
-            phone="+91 9876543210",
+            phone="9876543210",
             company="Sharma Furniture"
         )
     ]
@@ -83,7 +83,7 @@ def seed_data():
         db.session.add(product)
     
     # Create a default admin user
-    admin_user = User(
+    admin_user = Users(
         username='admin',
         email='admin@example.com',
         name='Administrator',

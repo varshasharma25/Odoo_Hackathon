@@ -202,10 +202,15 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="color: var(--accent-pink); font-weight: 500;">Code</td>
+                            <td style="color: var(--accent-pink); font-weight: 500;">Type</td>
                             <td>
-                                <input type="text" name="code" class="input-field" placeholder="e.g. ANA/2026/001"
-                                    value="{{ account.code if account else '' }}">
+                                <select name="account_type" class="input-field"
+                                    style="width: 100%; border: none; background: transparent; cursor: pointer;">
+                                    <option value="income" {% if account and account.account_type=='income' %}selected{%
+                                        endif %}>Income</option>
+                                    <option value="expense" {% if account and account.account_type=='expense'
+                                        %}selected{% endif %}>Expense</option>
+                                </select>
                             </td>
                         </tr>
                         <tr>
