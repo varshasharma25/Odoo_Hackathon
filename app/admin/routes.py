@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for, flash, current_ap
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 import os
+from datetime import datetime
 from app.admin import bp
 from app import db
 from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine
@@ -79,8 +80,6 @@ def contact_detail(id):
         return redirect(url_for('admin.contacts_list'))
     return render_template('admin/contact_form.html', contact=contact)
 
-
-
 @bp.route('/products')
 @login_required
 def products_list():
@@ -88,6 +87,7 @@ def products_list():
     return render_template('admin/products_list.html', products=products)
 
 @bp.route('/product/new', methods=['GET', 'POST'])
+@login_required
 def product_new():
     if request.method == 'POST':
         product = Product(
@@ -103,6 +103,7 @@ def product_new():
     return render_template('admin/product_form.html', product=None)
 
 @bp.route('/product/<int:id>', methods=['GET', 'POST'])
+@login_required
 def product_detail(id):
     product = Product.query.get_or_404(id)
     if request.method == 'POST': 
@@ -116,11 +117,13 @@ def product_detail(id):
     return render_template('admin/product_form.html', product=product)
 
 @bp.route('/analytical-accounts')
+@login_required
 def analytical_accounts_list():
     accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
     return render_template('admin/analytical_accounts_list.html', accounts=accounts)
 
 @bp.route('/analytical-account/new', methods=['GET', 'POST'])
+@login_required
 def analytical_account_new():
     if request.method == 'POST':
         account = AnalyticalAccount(
@@ -136,6 +139,7 @@ def analytical_account_new():
     return render_template('admin/analytical_account_form.html', account=None)
 
 @bp.route('/analytical-account/<int:id>', methods=['GET', 'POST'])
+@login_required
 def analytical_account_detail(id):
     account = AnalyticalAccount.query.get_or_404(id)
     if request.method == 'POST':
@@ -149,6 +153,7 @@ def analytical_account_detail(id):
     return render_template('admin/analytical_account_form.html', account=account)
 
 @bp.route('/budgets')
+@login_required
 def budgets_list():
     budgets = Budget.query.filter_by(is_archived=False).all()
     return render_template('admin/budgets_list.html', budgets=budgets)
@@ -190,14 +195,17 @@ def budget_detail(id):
     return render_template('admin/budget_detail.html', budget=budget, analytical_accounts=analytical_accounts)
 
 @bp.route('/budget/revised')
+@login_required
 def budget_vs_actual():
     return render_template('admin/budget_vs_actual.html')
 
 @bp.route('/budget/explanation')
+@login_required
 def budget_achievement_lines():
     return render_template('admin/budget_achievement_lines.html')
 
 @bp.route('/purchase-orders')
+@login_required
 def po_list():
     purchase_orders = PurchaseOrder.query.filter_by(is_archived=False).all()
     return render_template('admin/po_list.html', purchase_orders=purchase_orders)
@@ -327,49 +335,61 @@ def po_update_status(id, status):
     return redirect(url_for('admin.po_detail', id=po.id))
 
 @bp.route('/vendor-bills')
+@login_required
 def vendor_bills_list():
     return render_template('admin/vendor_bills_list.html')
 
 @bp.route('/vendor-bill/new', methods=['GET', 'POST'])
+@login_required
 def vendor_bill_new():
     return render_template('admin/vendor_bill_form.html')
 
 @bp.route('/vendor-bill/<int:id>', methods=['GET', 'POST'])
+@login_required
 def vendor_bill_detail(id):
     return render_template('admin/vendor_bill_form.html')
 
 @bp.route('/vendor-bill/payment/<int:id>', methods=['GET', 'POST'])
+@login_required
 def payment_detail(id):
     return render_template('admin/vendor_bill_detail.html')
 
 @bp.route('/payments')
+@login_required
 def payments_list():
     return render_template('admin/payments_list.html')
 
 @bp.route('/invoices')
+@login_required
 def invoices_list():
     return render_template('admin/invoices_list.html')
 
 @bp.route('/invoice/new', methods=['GET', 'POST'])
+@login_required
 def invoice_new():
     return render_template('admin/invoice_detail.html')
 
 @bp.route('/invoice/<int:id>', methods=['GET', 'POST'])
+@login_required
 def invoice_detail(id):
     return render_template('admin/invoice_detail.html')
 
 @bp.route('/invoice/pay/<int:id>', methods=['GET', 'POST'])
+@login_required
 def invoice_pay(id):
     return render_template('admin/invoice_pay.html')
 
 @bp.route('/sale-orders')
+@login_required
 def so_list():
     return render_template('admin/so_list.html')
 
 @bp.route('/sale-order/new', methods=['GET', 'POST'])
+@login_required
 def so_new():
     return render_template('admin/so_form.html')
 
 @bp.route('/sale-order/<int:id>', methods=['GET', 'POST'])
+@login_required
 def so_detail(id):
     return render_template('admin/so_form.html')

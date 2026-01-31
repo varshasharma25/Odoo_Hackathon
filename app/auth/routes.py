@@ -69,7 +69,13 @@ def create_user():
         db.session.add(user)
         db.session.commit()
         
-        flash('User created successfully! Please login.', 'success')
-        return redirect(url_for('auth.login'))
+        # Auto-login after successful creation
+        login_user(user)
+        flash(f'Account created for {name}! Welcome to Shiv Furniture.', 'success')
+        
+        if user.role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        else:
+            return redirect(url_for('portal.home'))
         
     return render_template('auth/create_user.html')
