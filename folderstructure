@@ -1,0 +1,85 @@
+project_root/
+├─ venv/                       # (optional) virtualenv
+├─ config.py                   # Flask config (DB URI, secrets)
+├─ run.py                      # Entry point: from app import create_app()
+│
+├─ app/
+│  ├─ __init__.py              # create_app(), db init, blueprint register
+│  ├─ models.py                # SQLAlchemy models (User, Contact, Product, etc.)
+│  ├─ forms.py                 # (optional) WTForms or simple helpers
+│  │
+│  ├─ auth/                    # Auth blueprint
+│  │  ├─ __init__.py
+│  │  └─ routes.py             # /login, /logout
+│  │
+│  ├─ admin/                   # Admin (owner) blueprint
+│  │  ├─ __init__.py
+│  │  └─ routes.py             # /admin/... routes (dashboard, master, transactions, reports)
+│  │
+│  ├─ portal/                  # Customer portal blueprint
+│  │  ├─ __init__.py
+│  │  └─ routes.py             # /portal/... routes (invoices, orders, payments)
+│  │
+│  ├─ services/                # Business logic layer
+│  │  ├─ __init__.py
+│  │  ├─ budgeting.py          # budget vs actual, achievement %, revisions
+│  │  ├─ analytics_rules.py    # auto analytical models (rule matching)
+│  │  └─ payments.py           # payment status, reconciliation logic
+│  │
+│  ├─ templates/
+│  │  ├─ layout.html           # base layout (navbar + sidebar + blocks)
+│  │  ├─ auth/
+│  │  │  └─ login.html
+│  │  ├─ admin/
+│  │  │  ├─ dashboard.html
+│  │  │  ├─ contacts_list.html
+│  │  │  ├─ contact_form.html
+│  │  │  ├─ products_list.html
+│  │  │  ├─ product_form.html
+│  │  │  ├─ analytical_accounts_list.html
+│  │  │  ├─ analytical_account_form.html
+│  │  │  ├─ budgets_list.html
+│  │  │  ├─ budget_detail.html
+│  │  │  ├─ auto_analytical_models_list.html
+│  │  │  ├─ auto_analytical_model_form.html
+│  │  │  ├─ po_list.html
+│  │  │  ├─ po_form.html
+│  │  │  ├─ vendor_bills_list.html
+│  │  │  ├─ vendor_bill_detail.html
+│  │  │  ├─ so_list.html
+│  │  │  ├─ so_form.html
+│  │  │  ├─ invoices_list.html
+│  │  │  ├─ invoice_detail.html
+│  │  │  ├─ payments_list.html
+│  │  │  ├─ payment_form.html
+│  │  │  ├─ budget_vs_actual.html
+│  │  │  └─ budget_achievement_lines.html
+│  │  ├─ portal/
+│  │  │  ├─ home.html
+│  │  │  ├─ invoices_list.html
+│  │  │  ├─ invoice_detail.html
+│  │  │  ├─ invoice_pay.html
+│  │  │  ├─ so_list.html
+│  │  │  └─ so_detail.html
+│  │  └─ components/           # optional partials
+│  │     ├─ flash_messages.html
+│  │     ├─ pagination.html
+│  │     └─ table_filters.html
+│  │
+│  ├─ static/
+│  │  ├─ css/
+│  │  │  ├─ base.css           # layout, typography, colors
+│  │  │  ├─ admin.css          # admin-specific styles
+│  │  │  └─ portal.css         # portal-specific styles
+│  │  ├─ js/
+│  │  │  ├─ main.js            # global JS, sidebar toggles, etc.
+│  │  │  ├─ lines_table.js     # dynamic add/remove lines in forms
+│  │  │  ├─ budget_charts.js   # simple budget vs actual charts/bars
+│  │  │  └─ payments.js        # portal "Pay Now" interactions
+│  │  └─ img/                  # logos/icons if needed
+│  │
+│  └─ db_migrations/           # if you use Flask-Migrate (optional)
+│     └─ ...                   # migration scripts
+│
+├─ requirements.txt            # Flask, psycopg2-binary, SQLAlchemy, etc.
+└─ README.md                   # how to run + features
