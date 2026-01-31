@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Invoices | Budget Accounting System</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            /* Odoo Indigo */
+            --primary-hover: #5d3d55;
+            --sidebar-bg: #111827;
+            --body-bg: #f8fafc;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --success-bg: #dcfce7;
+            --success-text: #15803d;
+            --warning-bg: #fef9c3;
+            --warning-text: #a16207;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .sidebar-brand {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 48px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-dot {
+            width: 12px;
+            height: 12px;
+            background-color: var(--primary-accent);
+            border-radius: 50%;
+        }
+
+        .nav-link {
+            color: #9ca3af;
+            text-decoration: none;
+            padding: 12px 16px;
+            display: block;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-accent);
+        }
+
+        /* MAIN CONTENT */
+        .main-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            padding: 48px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .breadcrumb {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* TABLE CARD */
+        .content-card {
+            background-color: var(--card-white);
+            border-radius: 20px;
+            padding: 32px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            margin-bottom: 32px;
+        }
+
+        .card-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-header p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* CUSTOM TABLE STYLE */
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 24px;
+        }
+
+        .custom-table th {
+            text-align: left;
+            padding: 16px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .custom-table td {
+            padding: 20px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 15px;
+        }
+
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* STATUS BADGE */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-paid {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .badge-unpaid {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        /* ACTIONS */
+        .btn-link {
+            color: var(--primary-accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-pay {
+            background-color: var(--primary-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .btn-pay:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* LOG NOTE */
+        .note-box {
+            margin-top: 32px;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-left: 4px solid var(--primary-accent);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+                padding: 24px 16px;
+            }
+
+            .sidebar-brand span,
+            .nav-link span {
+                display: none;
+            }
+
+            .main-wrapper {
+                margin-left: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-dot"></div>
+            <span>Shiv Furniture</span>
+        </div>
+        <nav>
+            <a href="{{ url_for('portal.home') }}" class="nav-link"><span>Overview</span></a>
+            <a href="#" class="nav-link active"><span>Invoices</span></a>
+            <a href="{{ url_for('portal.so_list') }}" class="nav-link"><span>Orders</span></a>
+        </nav>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="main-wrapper">
+        <header>
+            <div class="breadcrumb">Portal / Invoices</div>
+            <div style="font-weight: 600;">Customer Portal</div>
+        </header>
+
+        <div class="content-card">
+            <div class="card-header">
+                <h2>Invoices & Bills</h2>
+                <p>Manage your billing history and settle outstanding payments.</p>
+            </div>
+
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Invoice No</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: 600;">INV-001</td>
+                        <td>Mar 15, 2024</td>
+                        <td>₹25,000</td>
+                        <td><span class="badge badge-unpaid">Not Paid</span></td>
+                        <td>
+                            <a href="{{ url_for('portal.invoice_detail', invoice_id=1) }}" class="btn-link">View
+                                Details</a>
+                            <a href="{{ url_for('portal.invoice_pay', invoice_id=1) }}" class="btn-pay">Pay Now</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">INV-002</td>
+                        <td>Mar 18, 2024</td>
+                        <td>₹12,500</td>
+                        <td><span class="badge badge-paid">Paid</span></td>
+                        <td>
+                            <a href="{{ url_for('portal.invoice_detail', invoice_id=2) }}" class="btn-link">View
+                                Details</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note-box">
+                <strong>Status Information:</strong> Payment records are synchronized in real-time.
+                Once a transaction is processed, your status will update automatically.
+                Partially paid invoices will remain marked until the full balance is reconciled.
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

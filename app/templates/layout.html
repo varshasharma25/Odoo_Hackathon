@@ -4,26 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Budget Accounting System</title>
-    <!-- Modern Typography & Icons -->
+    <title>Welcome | Budget Accounting System</title>
+    <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --sidebar-width: 280px;
             --primary-accent: #714B67;
             /* Odoo Indigo */
-            --primary-light: #fdf2f8;
             --primary-hover: #5d3d55;
-            --sidebar-bg: #111827;
-            --sidebar-hover: #1f2937;
             --body-bg: #f8fafc;
-            --card-bg: #ffffff;
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow: 0 20px 25px -5px rgba(113, 75, 103, 0.1);
         }
 
         * {
@@ -37,409 +30,225 @@
             background-color: var(--body-bg);
             color: var(--text-dark);
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* SIDEBAR STYLES */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--sidebar-bg);
-            color: white;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            padding: 24px 16px;
-            overflow-y: auto;
-            z-index: 100;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-brand {
-            padding: 0 12px 32px;
-            font-size: 22px;
-            font-weight: 600;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sidebar-brand .logo-icon {
-            background: linear-gradient(135deg, var(--primary-accent), var(--primary-hover));
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);
-        }
-
-        .nav-category {
-            padding: 24px 12px 8px;
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #4b5563;
-            letter-spacing: 0.1em;
-            font-weight: 600;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 14px;
-            color: #9ca3af;
-            text-decoration: none;
-            font-size: 15px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            margin-bottom: 2px;
-        }
-
-        .nav-link:hover {
-            background-color: var(--sidebar-hover);
-            color: #fff;
-        }
-
-        .nav-link.active {
-            background-color: var(--primary-accent);
-            color: #fff;
-        }
-
-        /* MAIN CONTENT AREA */
-        .main-wrapper {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        /* NAVBAR STYLES */
+        /* NAVIGATION */
         .navbar {
-            height: 72px;
-            background-color: #fff;
-            border-bottom: 1px solid var(--border-color);
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 40px;
-            position: sticky;
+            padding: 0 10%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
             top: 0;
-            z-index: 50;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .navbar-title {
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        .user-profile {
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-accent);
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 6px 14px;
-            border-radius: 10px;
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
         }
 
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background-color: var(--primary-accent);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-accent);
+            border-radius: 12px;
         }
 
-        /* PAGE CONTENT STYLES */
-        .content {
-            padding: 40px;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .hero-section {
-            background: linear-gradient(to right, #ffffff, #fef2f2);
-            padding: 48px;
-            border-radius: 20px;
-            margin-bottom: 40px;
-            border: 1px solid var(--border-color);
+        /* HERO SECTION */
+        .hero {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            box-shadow: var(--shadow-sm);
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 160px 20px 100px;
+            background: radial-gradient(circle at 50% 50%, rgba(113, 75, 103, 0.05) 0%, transparent 50%);
         }
 
-        .hero-section h1 {
-            font-size: 32px;
-            color: var(--text-dark);
+        .hero h1 {
+            font-size: clamp(40px, 8vw, 72px);
             font-weight: 600;
+            margin-bottom: 24px;
+            line-height: 1.1;
+            color: #1a1a1a;
         }
 
-        .hero-section p {
-            font-size: 17px;
+        .hero h1 span {
+            color: var(--primary-accent);
+        }
+
+        .hero p {
+            font-size: 20px;
             color: var(--text-muted);
-            max-width: 800px;
+            max-width: 700px;
+            margin-bottom: 48px;
             line-height: 1.6;
         }
 
-        .section-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 32px;
-            margin-bottom: 40px;
-        }
-
-        .glass-card {
-            background: #fff;
-            padding: 32px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-
-        .glass-card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-accent);
-        }
-
-        .glass-card h2 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--primary-accent);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .glass-card h2::before {
-            content: "";
-            width: 3px;
-            height: 18px;
-            background: var(--primary-accent);
-            border-radius: 10px;
-        }
-
-        .glass-card ul {
-            list-style: none;
-        }
-
-        .glass-card li {
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-            color: var(--text-muted);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .glass-card li:last-child {
-            border-bottom: none;
-        }
-
-        .glass-card li::before {
-            content: "•";
-            color: var(--primary-accent);
-            font-weight: bold;
-        }
-
-        .workflow-banner {
-            background-color: var(--sidebar-bg);
-            color: white;
-            padding: 40px;
-            border-radius: 20px;
+        /* ACTION BUTTONS */
+        .btn-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-            gap: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .workflow-banner h2 {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .workflow-steps {
-            display: flex;
-            align-items: center;
             gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
         }
 
-        .step {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(4px);
+        .btn-main {
+            padding: 18px 48px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .step-arrow {
+        .btn-create {
+            background-color: var(--primary-accent);
+            color: white;
+            box-shadow: 0 15px 30px rgba(113, 75, 103, 0.3);
+        }
+
+        .btn-create:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(113, 75, 103, 0.4);
+        }
+
+        .auth-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .btn-outline {
+            padding: 12px 32px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--text-dark);
+            border: 2px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary-accent);
             color: var(--primary-accent);
-            font-weight: bold;
+            background: rgba(113, 75, 103, 0.05);
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-            }
+        /* FEATURES SECTION */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            padding: 100px 10%;
+            background: white;
         }
 
-        @media (max-width: 768px) {
-            .content {
-                padding: 24px;
-            }
+        .feat-card {
+            padding: 40px;
+            border-radius: 24px;
+            background: #fdf2f8;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
 
-            .hero-section {
-                padding: 32px;
-            }
+        .feat-card:hover {
+            border-color: var(--primary-accent);
+            background: white;
+            box-shadow: var(--shadow);
+        }
 
-            .workflow-steps {
-                flex-direction: column;
-            }
+        .feat-card h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: var(--primary-accent);
+        }
 
-            .step-arrow {
-                transform: rotate(90deg);
-            }
+        .feat-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 60px 10%;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 14px;
         }
     </style>
 </head>
 
 <body>
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="logo-icon">S</div>
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"></div>
             Shiv Furniture
         </div>
+        <div class="nav-links">
+            <a href="{{ url_for('auth.login') }}" class="btn-outline" style="border: none;">Sign In</a>
+        </div>
+    </nav>
 
-        <nav>
-            <a href="#" class="nav-link active">🏠 Dashboard</a>
+    <!-- HERO SECTION -->
+    <main class="hero">
+        <h1>Smart <span>Accounting</span> for Smart Businesses.</h1>
+        <p>
+            The comprehensive Odoo-powered Budget Accounting System designed for Shiv Furniture.
+            Maintain financial discipline, monitor real-time budgets, and streamline your business operations.
+        </p>
 
-            <div class="nav-category">Core Masters</div>
-            <a href="#" class="nav-link">👥 Contacts & Partners</a>
-            <a href="#" class="nav-link">📦 Product Catalog</a>
-            <a href="#" class="nav-link">📊 Analytical Structure</a>
-            <a href="#" class="nav-link">💰 Budget Plans</a>
+        <div class="btn-container">
+            <!-- CREATE USER BUTTON -->
+            <a href="{{ url_for('auth.create_user') }}" class="btn-main btn-create">Get Started - Create User</a>
 
-            <div class="nav-category">Operations</div>
-            <a href="#" class="nav-link">🛒 Procurement</a>
-            <a href="#" class="nav-link">📄 Vendor Bills</a>
-            <a href="#" class="nav-link">🤝 Commercial Sales</a>
-            <a href="#" class="nav-link">🧾 Customer Invoices</a>
-            <a href="#" class="nav-link">💸 Financial Payments</a>
-
-            <div class="nav-category">Intelligence</div>
-            <a href="#" class="nav-link">📉 Analytics Dashboard</a>
-        </nav>
-    </aside>
-
-    <div class="main-wrapper">
-        <!-- TOP NAVBAR -->
-        <header class="navbar">
-            <div class="navbar-title">
-                Smart Budget Accounting System
+            <!-- AUTH GROUP (LOGIN & SIGNUP) -->
+            <div class="auth-group">
+                <a href="{{ url_for('auth.login') }}" class="btn-outline">Login to Account</a>
+                <a href="{{ url_for('auth.signup') }}" class="btn-outline">Sign Up</a>
             </div>
-            <div class="user-profile">
-                <div class="user-avatar">SF</div>
-                <span>Administrator</span>
-            </div>
-        </header>
+        </div>
+    </main>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="content">
+    <!-- FEATURES -->
+    <section class="features">
+        <div class="feat-card">
+            <h3>Budget Control</h3>
+            <p>Ensure every transaction is aligned with your approved cost-center budgets in real-time.</p>
+        </div>
+        <div class="feat-card">
+            <h3>Automated Workflows</h3>
+            <p>Streamline your SO and PO cycle with integrated analytical account posting.</p>
+        </div>
+        <div class="feat-card">
+            <h3>Financial Insights</h3>
+            <p>Access board-ready performance reports and budget-vs-actual achievement metrics.</p>
+        </div>
+    </section>
 
+    <footer>
+        &copy; 2024 Shiv Furniture Budget Accounting System. All rights reserved. Powered by Odoo.
+    </footer>
 
-
-            <div class="hero-section">
-                <h1>Welcome to Shiv Furniture Dashboard</h1>
-                <p>
-                    Experience the next generation of financial monitoring. Our centralized system empowers your
-                    business with real-time budget vs actual analysis, ensuring every transaction aligns with your
-                    strategic goals.
-                </p>
-            </div>
-
-            <div class="section-grid">
-                <div class="glass-card">
-                    <h2>Strategy & Objectives</h2>
-                    <ul>
-                        <li>Automated spending alignment with approved budgets</li>
-                        <li>Granular financial tracking per cost center</li>
-                        <li>Elimination of manual reconciliation bottlenecks</li>
-                        <li>Enhanced operational visibility for management</li>
-                    </ul>
-                </div>
-
-                <div class="glass-card">
-                    <h2>Core Capabilities</h2>
-                    <ul>
-                        <li>Full Lifecycle Transaction Processing</li>
-                        <li>Intelligent Master Data Governance</li>
-                        <li>Dynamic Achievement Percentage Metrics</li>
-                        <li>Integrated Customer & Vendor Portal Access</li>
-                    </ul>
-                </div>
-
-                <div class="glass-card">
-                    <h2>Business Impact</h2>
-                    <ul>
-                        <li>Real-time cash flow and budget insights</li>
-                        <li>Reduced risk of departmental budget overruns</li>
-                        <li>Standardized data entry across all modules</li>
-                        <li>Data-driven decision making capabilities</li>
-                    </ul>
-                </div>
-            </div>
-
-            <section class="workflow-banner">
-                <h2>Our Enterprise Workflow</h2>
-                <div class="workflow-steps">
-                    <div class="step">Purchase & Sales</div>
-                    <span class="step-arrow">→</span>
-                    <div class="step">Analytical Posting</div>
-                    <span class="step-arrow">→</span>
-                    <div class="step">Budget Validation</div>
-                    <span class="step-arrow">→</span>
-                    <div class="step">Payment & Reconciliation</div>
-                    <span class="step-arrow">→</span>
-                    <div class="step">Financial Intelligence</div>
-                </div>
-            </section>
-
-            {% endblock %}
-
-        </main>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 
 </html>
