@@ -91,7 +91,7 @@ def payment_detail(id):
 
 @bp.route('/payments')
 def payments_list():
-    return render_template('admin/vendor_bills_list.html')  # Reuse for now or create new
+    return render_template('admin/payments_list.html')
 
 @bp.route('/invoices')
 def invoices_list():
