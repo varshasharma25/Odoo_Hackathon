@@ -213,70 +213,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Sample Row 1 -->
-                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.contact_detail', id=1) }}';">
+                    {% if contacts %}
+                    {% for contact in contacts %}
+                    <tr class="link-row"
+                        onclick="window.location.href='{{ url_for('admin.contact_detail', id=contact.id) }}';">
                         <td>
                             <div class="checkbox-container"></div>
                         </td>
                         <td>
+                            {% if contact.image_url %}
+                            <div class="contact-img"
+                                style="background-image: url('{{ contact.image_url }}'); background-size: cover;"></div>
+                            {% else %}
                             <div class="contact-img"
                                 style="display: flex; align-items: center; justify-content: center; font-size: 10px; color: #714B67; font-weight: bold; border: 1px solid #714B67;">
-                                DECO</div>
+                                {{ contact.name[:4].upper() if contact.name else 'N/A' }}</div>
+                            {% endif %}
                         </td>
-                        <td>Azure Interior</td>
-                        <td class="hide-mobile">azure.interior24@example.com</td>
-                        <td class="hide-mobile">+91 8080808080</td>
+                        <td>{{ contact.name }}</td>
+                        <td class="hide-mobile">{{ contact.email or 'N/A' }}</td>
+                        <td class="hide-mobile">{{ contact.phone or 'N/A' }}</td>
                     </tr>
-                    <!-- Sample Row 2 -->
-                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.contact_detail', id=2) }}';">
-                        <td>
-                            <div class="checkbox-container"></div>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #64748b;">
+                            No contacts found. Click "New" to add your first contact.
                         </td>
-                        <td>
-                            <div class="contact-img"
-                                style="background-image: url('https://i.pravatar.cc/100?u=2'); background-size: cover;">
-                            </div>
-                        </td>
-                        <td>Nimesh Pathak</td>
-                        <td class="hide-mobile">brandon.freeman55@example.com</td>
-                        <td class="hide-mobile">+91 9090909090</td>
                     </tr>
-                    <!-- Empty rows to match image aesthetic -->
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="hide-mobile"></td>
-                        <td class="hide-mobile"></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="hide-mobile"></td>
-                        <td class="hide-mobile"></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="hide-mobile"></td>
-                        <td class="hide-mobile"></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="hide-mobile"></td>
-                        <td class="hide-mobile"></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="hide-mobile"></td>
-                        <td class="hide-mobile"></td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

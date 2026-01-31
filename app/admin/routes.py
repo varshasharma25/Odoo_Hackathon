@@ -1,5 +1,7 @@
-from flask import render_template
+from flask import render_template, request, redirect, url_for, flash
 from app.admin import bp
+from app import db
+from app.models import Contact, Product
 
 @bp.route('/dashboard')
 def dashboard():
@@ -7,15 +9,38 @@ def dashboard():
 
 @bp.route('/contacts')
 def contacts_list():
-    return render_template('admin/contacts_list.html')
+    contacts = Contact.query.filter_by(is_archived=False).all()
+    return render_template('admin/contacts_list.html', contacts=contacts)
 
 @bp.route('/contact/new', methods=['GET', 'POST'])
 def contact_new():
-    return render_template('admin/contact_form.html')
+    if request.method == 'POST':
+        contact = Contact(
+            name=request.form.get('name'),
+            email=request.form.get('email'),
+            phone=request.form.get('phone'),
+            company=request.form.get('company'),
+            address=request.form.get('address')
+        )
+        db.session.add(contact)
+        db.session.commit()
+        flash('Contact created successfully!', 'success')
+        return redirect(url_for('admin.contacts_list'))
+    return render_template('admin/contact_form.html', contact=None)
 
 @bp.route('/contact/<int:id>', methods=['GET', 'POST'])
 def contact_detail(id):
-    return render_template('admin/contact_form.html')
+    contact = Contact.query.get_or_404(id)
+    if request.method == 'POST':
+        contact.name = request.form.get('name')
+        contact.email = request.form.get('email')
+        contact.phone = request.form.get('phone')
+        contact.company = request.form.get('company')
+        contact.address = request.form.get('address')
+        db.session.commit()
+        flash('Contact updated successfully!', 'success')
+        return redirect(url_for('admin.contacts_list'))
+    return render_template('admin/contact_form.html', contact=contact)
 
 @bp.route('/products')
 def products_list():
