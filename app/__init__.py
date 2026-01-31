@@ -22,4 +22,6 @@ def create_app(config_class=Config):
     from app.portal import bp as portal_bp
     app.register_blueprint(portal_bp)
 
+    from app import models
+
     return app
