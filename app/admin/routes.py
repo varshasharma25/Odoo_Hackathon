@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 import os
 from app.admin import bp
 from app import db
-from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder
+from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine
 
 def save_image(file):
     if file and file.filename:
@@ -203,38 +203,128 @@ def po_list():
     return render_template('admin/po_list.html', purchase_orders=purchase_orders)
 
 @bp.route('/purchase-order/new', methods=['GET', 'POST'])
+@login_required
 def po_new():
+    vendors = Contact.query.filter_by(is_archived=False).all()
+    analytical_accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
+    products = Product.query.filter_by(is_archived=False).all()
+    
+    # Generate next serial PO Number
+    last_po = PurchaseOrder.query.order_by(PurchaseOrder.id.desc()).first()
+    if last_po and last_po.order_number and last_po.order_number.startswith('PO'):
+        try:
+            last_num = int(last_po.order_number[2:])
+            order_number = f"PO{last_num + 1:04d}"
+        except ValueError:
+            order_number = "PO0001"
+    else:
+        order_number = "PO0001"
+        
     if request.method == 'POST':
         po = PurchaseOrder(
             order_number=request.form.get('order_number'),
+            reference=request.form.get('reference'),
             vendor_name=request.form.get('vendor_name'),
-            order_date=request.form.get('order_date'),
-            expected_delivery=request.form.get('expected_delivery'),
-            total_amount=request.form.get('total_amount'),
-            status=request.form.get('status', 'draft'),
-            notes=request.form.get('notes')
+            order_date=datetime.strptime(request.form.get('order_date'), '%Y-%m-%d').date() if request.form.get('order_date') else None,
+            expected_delivery=datetime.strptime(request.form.get('expected_delivery'), '%Y-%m-%d').date() if request.form.get('expected_delivery') else None,
+            status='draft',
+            notes=request.form.get('notes'),
+            total_amount=0.0
         )
         db.session.add(po)
+        db.session.flush() # Get PO ID
+        
+        # Handle Line Items
+        line_products = request.form.getlist('product_name[]')
+        line_analytics = request.form.getlist('budget_analytics[]')
+        line_qtys = request.form.getlist('quantity[]')
+        line_prices = request.form.getlist('unit_price[]')
+        
+        total_amount = 0.0
+        for i in range(len(line_products)):
+            if not line_products[i]: continue
+            qty = float(line_qtys[i] or 0)
+            price = float(line_prices[i] or 0)
+            line_total = qty * price
+            total_amount += line_total
+            
+            line = PurchaseOrderLine(
+                po_id=po.id,
+                product_name=line_products[i],
+                budget_analytics=line_analytics[i],
+                quantity=qty,
+                unit_price=price,
+                total=line_total
+            )
+            db.session.add(line)
+            
+        po.total_amount = total_amount
         db.session.commit()
         flash('Purchase Order created successfully!', 'success')
         return redirect(url_for('admin.po_list'))
-    return render_template('admin/po_form.html', po=None)
+        
+    return render_template('admin/po_form.html', po=None, order_number=order_number, 
+                           vendors=vendors, analytical_accounts=analytical_accounts, products=products)
 
 @bp.route('/purchase-order/<int:id>', methods=['GET', 'POST'])
+@login_required
 def po_detail(id):
     po = PurchaseOrder.query.get_or_404(id)
+    vendors = Contact.query.filter_by(is_archived=False).all()
+    analytical_accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
+    products = Product.query.filter_by(is_archived=False).all()
+
     if request.method == 'POST':
-        po.order_number = request.form.get('order_number')
+        # Update header
+        po.reference = request.form.get('reference')
         po.vendor_name = request.form.get('vendor_name')
-        po.order_date = request.form.get('order_date')
-        po.expected_delivery = request.form.get('expected_delivery')
-        po.total_amount = request.form.get('total_amount')
-        po.status = request.form.get('status')
+        po.order_date = datetime.strptime(request.form.get('order_date'), '%Y-%m-%d').date() if request.form.get('order_date') else None
+        po.expected_delivery = datetime.strptime(request.form.get('expected_delivery'), '%Y-%m-%d').date() if request.form.get('expected_delivery') else None
         po.notes = request.form.get('notes')
+        
+        # Clear existing lines and re-add
+        PurchaseOrderLine.query.filter_by(po_id=po.id).delete()
+        
+        line_products = request.form.getlist('product_name[]')
+        line_analytics = request.form.getlist('budget_analytics[]')
+        line_qtys = request.form.getlist('quantity[]')
+        line_prices = request.form.getlist('unit_price[]')
+        
+        total_amount = 0.0
+        for i in range(len(line_products)):
+            if not line_products[i]: continue
+            qty = float(line_qtys[i] or 0)
+            price = float(line_prices[i] or 0)
+            line_total = qty * price
+            total_amount += line_total
+            
+            line = PurchaseOrderLine(
+                po_id=po.id,
+                product_name=line_products[i],
+                budget_analytics=line_analytics[i],
+                quantity=qty,
+                unit_price=price,
+                total=line_total
+            )
+            db.session.add(line)
+            
+        po.total_amount = total_amount
         db.session.commit()
         flash('Purchase Order updated successfully!', 'success')
         return redirect(url_for('admin.po_list'))
-    return render_template('admin/po_form.html', po=po)
+        
+    return render_template('admin/po_form.html', po=po, order_number=po.order_number, 
+                           vendors=vendors, analytical_accounts=analytical_accounts, products=products)
+
+@bp.route('/purchase-order/<int:id>/status/<status>')
+@login_required
+def po_update_status(id, status):
+    po = PurchaseOrder.query.get_or_404(id)
+    if status in ['confirmed', 'cancelled', 'received']:
+        po.status = status
+        db.session.commit()
+        flash(f'Purchase Order {status} successfully!', 'success')
+    return redirect(url_for('admin.po_detail', id=po.id))
 
 @bp.route('/vendor-bills')
 def vendor_bills_list():

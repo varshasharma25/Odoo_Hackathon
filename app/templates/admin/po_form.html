@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Order Form | Shiv Furniture</title>
+    <title>Purchase Order | Shiv Furniture</title>
     <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -18,6 +18,9 @@
             --border-color: #e2e8f0;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --accent-pink: #d63384;
+            --accent-orange: #ff9800;
+            --accent-green: #22c55e;
+            --bg-gray: #f1f5f9;
         }
 
         * {
@@ -34,25 +37,36 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            color: #000;
         }
 
         .form-card {
             background: white;
-            border-radius: 36px;
+            border-radius: 40px;
             border: 1px solid #000;
             box-shadow: var(--shadow);
-            padding: 40px;
+            padding: 32px;
+            text-align: left;
+            position: relative;
         }
 
+        /* Toolbar */
         .toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-bottom: 24px;
             margin-bottom: 32px;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 1px solid #a47c94;
         }
 
         .btn-group {
@@ -61,14 +75,14 @@
         }
 
         .btn {
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 15px;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid #e2e8f0;
-            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            background: #fff;
             color: #000;
             font-family: inherit;
         }
@@ -77,52 +91,130 @@
             background-color: #f1f5f9;
         }
 
-        .btn-primary {
+        .btn-confirm {
             background-color: var(--primary-accent);
             color: white;
             border-color: var(--primary-accent);
         }
 
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
+        /* Status Bar */
+        .status-container {
+            display: flex;
+            gap: 4px;
         }
 
-        .form-group {
-            margin-bottom: 24px;
+        .status-step {
+            padding: 6px 16px;
+            background: var(--bg-gray);
+            font-size: 12px;
+            color: var(--text-muted);
+            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
+            min-width: 80px;
+            text-align: center;
         }
 
-        .form-label {
-            display: block;
-            font-size: 16px;
-            color: var(--accent-pink);
+        .status-step.active {
+            background: #e2e8f0;
+            color: #000;
             font-weight: 500;
-            margin-bottom: 8px;
         }
 
-        .form-input {
-            width: 100%;
-            border: none;
-            border-bottom: 2px solid #a47c94;
-            padding: 8px 0;
+        /* Form Header Section */
+        .form-header-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .label {
+            width: 140px;
             font-size: 16px;
-            color: #333;
+            font-weight: 500;
+            color: var(--accent-pink);
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            border-bottom: 1.5px solid #a47c94;
+            padding: 4px 0;
+            font-size: 16px;
             outline: none;
             background: transparent;
             font-family: inherit;
         }
 
-        textarea.form-input {
-            border: 1px solid #a47c94;
-            padding: 12px;
-            border-radius: 8px;
-            resize: vertical;
-            min-height: 100px;
+        /* Products Table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
         }
 
-        select.form-input {
-            border: 1px solid #a47c94;
-            padding: 8px 12px;
-            border-radius: 8px;
+        .items-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2196f3;
+            border-bottom: 2px solid #000;
+        }
+
+        .items-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .line-input {
+            width: 100%;
+            border: none;
+            padding: 4px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+        }
+
+        .line-input:focus {
+            background: #fafafa;
+        }
+
+        .monetary {
+            text-align: right;
+            color: var(--primary-accent);
+        }
+
+        .total-row {
+            border-top: 2px solid #000;
+            font-weight: 600;
+        }
+
+        /* Alerts */
+        .alert-box {
+            background: #fff7ed;
+            border-left: 4px solid var(--accent-orange);
+            padding: 16px;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #9a3412;
+            display: none;
+        }
+
+        #createBillBtn {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -130,79 +222,213 @@
 <body>
 
     <div class="container">
+        <h1 class="header-title">Purchase Order</h1>
+
         <div class="form-card">
-            <div class="toolbar">
-                <div class="btn-group">
-                    <button type="button" class="btn"
-                        onclick="window.location.href='{{ url_for('admin.po_new') }}';">New</button>
-                    <button type="submit" form="poForm" class="btn btn-primary">
-                        {% if po %}Save{% else %}Create{% endif %}
-                    </button>
-                </div>
-                <div class="btn-group">
-                    <button type="button" class="btn"
-                        onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
-                    <button type="button" class="btn" onclick="window.history.back();">Back</button>
-                </div>
-            </div>
-
-            <h2 style="color: var(--accent-pink); margin-bottom: 32px;">
-                {% if po %}Edit Purchase Order{% else %}New Purchase Order{% endif %}
-            </h2>
-
             <form id="poForm" method="POST">
-                <div class="form-group">
-                    <label class="form-label">Order Number</label>
-                    <input type="text" name="order_number" class="form-input" placeholder="e.g. PO/2026/001"
-                        value="{{ po.order_number if po else '' }}">
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="btn-group">
+                        <button type="button" class="btn"
+                            onclick="window.location.href='{{ url_for('admin.po_new') }}';">New</button>
+                        <button type="submit" class="btn btn-confirm">Save</button>
+                        {% if po and po.status == 'draft' %}
+                        <button type="button" class="btn btn-confirm"
+                            onclick="updateStatus('confirmed')">Confirm</button>
+                        {% endif %}
+                        <button type="button" class="btn">Print</button>
+                        <button type="button" class="btn">Send</button>
+                        {% if po and po.status == 'confirmed' %}
+                        <button type="button" class="btn" onclick="updateStatus('cancelled')">Cancel</button>
+                        <button type="button" id="createBillBtn">Create Bill</button>
+                        {% endif %}
+                        <button type="button" class="btn btn-confirm"
+                            style="background: var(--accent-orange);">Budget</button>
+                    </div>
+
+                    <div class="status-container">
+                        <div class="status-step {% if not po or po.status == 'draft' %}active{% endif %}">Draft</div>
+                        <div class="status-step {% if po and po.status == 'confirmed' %}active{% endif %}">Confirm</div>
+                        <div class="status-step {% if po and po.status == 'cancelled' %}active{% endif %}">Cancelled
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn"
+                            onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                        <button type="button" class="btn" onclick="window.history.back();">Back</button>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Vendor Name *</label>
-                    <input type="text" name="vendor_name" class="form-input" placeholder="Enter vendor name"
-                        value="{{ po.vendor_name if po else '' }}" required>
+                <!-- Header Grid -->
+                <div class="form-header-grid">
+                    <div>
+                        <div class="input-row">
+                            <span class="label">PO No.</span>
+                            <input type="text" name="order_number" class="input-field" value="{{ order_number }}"
+                                readonly>
+                        </div>
+                        <div class="input-row">
+                            <span class="label">Vendor Name</span>
+                            <select name="vendor_name" class="input-field" required>
+                                <option value="" disabled selected>Select Vendor</option>
+                                {% for vendor in vendors %}
+                                <option value="{{ vendor.name }}" {% if po and po.vendor_name==vendor.name %}selected{%
+                                    endif %}>{{ vendor.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-row">
+                            <span class="label">Reference</span>
+                            <input type="text" name="reference" class="input-field" placeholder="REQ-25-0001"
+                                value="{{ po.reference if po else '' }}">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-row">
+                            <span class="label">PO Date</span>
+                            <input type="date" name="order_date" class="input-field"
+                                value="{{ po.order_date.strftime('%Y-%m-%d') if po and po.order_date else '' }}">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Order Date</label>
-                    <input type="date" name="order_date" class="form-input"
-                        value="{{ po.order_date.strftime('%Y-%m-%d') if po and po.order_date else '' }}">
-                </div>
+                <!-- Product Table -->
+                <table class="items-table" id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Sr. No.</th>
+                            <th>Product</th>
+                            <th>Budget Analytics</th>
+                            <th style="width: 80px;">Qty</th>
+                            <th style="width: 120px;">Unit Price</th>
+                            <th style="width: 140px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if po and po.lines %}
+                        {% for line in po.lines %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <input type="text" name="product_name[]" class="line-input product-search"
+                                    value="{{ line.product_name }}" list="productList">
+                            </td>
+                            <td>
+                                <select name="budget_analytics[]" class="line-input analytic-select">
+                                    <option value="">Choose Analytics</option>
+                                    {% for account in analytical_accounts %}
+                                    <option value="{{ account.name }}" {% if line.budget_analytics==account.name
+                                        %}selected{% endif %}>{{ account.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td><input type="number" name="quantity[]" class="line-input qty"
+                                    value="{{ line.quantity }}"></td>
+                            <td><input type="number" name="unit_price[]" class="line-input price"
+                                    value="{{ line.unit_price }}"></td>
+                            <td class="monetary"><span class="line-total">{{ "{:,.2f}".format(line.total) }}</span></td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        {% for i in range(1, 4) %}
+                        <tr>
+                            <td>{{ i }}</td>
+                            <td>
+                                <input type="text" name="product_name[]" class="line-input product-search"
+                                    list="productList">
+                            </td>
+                            <td>
+                                <select name="budget_analytics[]" class="line-input analytic-select">
+                                    <option value="">Choose Analytics</option>
+                                    {% for account in analytical_accounts %}
+                                    <option value="{{ account.name }}">{{ account.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td><input type="number" name="quantity[]" class="line-input qty" placeholder="0"></td>
+                            <td><input type="number" name="unit_price[]" class="line-input price" placeholder="0.00">
+                            </td>
+                            <td class="monetary"><span class="line-total">0.00</span></td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="5" style="text-align: right; padding: 16px;">Total</td>
+                            <td class="monetary"><span id="grandTotal">{{ "{:,.2f}".format(po.total_amount) if po else
+                                    '0.00' }}</span></td>
+                        </tr>
+                    </tfoot>
+                </table>
 
-                <div class="form-group">
-                    <label class="form-label">Expected Delivery</label>
-                    <input type="date" name="expected_delivery" class="form-input"
-                        value="{{ po.expected_delivery.strftime('%Y-%m-%d') if po and po.expected_delivery else '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Total Amount</label>
-                    <input type="number" step="0.01" name="total_amount" class="form-input" placeholder="0.00"
-                        value="{{ po.total_amount if po else '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-input">
-                        <option value="draft" {% if not po or po.status=='draft' %}selected{% endif %}>Draft</option>
-                        <option value="confirmed" {% if po and po.status=='confirmed' %}selected{% endif %}>Confirmed
-                        </option>
-                        <option value="received" {% if po and po.status=='received' %}selected{% endif %}>Received
-                        </option>
-                        <option value="cancelled" {% if po and po.status=='cancelled' %}selected{% endif %}>Cancelled
-                        </option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Notes</label>
-                    <textarea name="notes" class="form-input"
-                        placeholder="Additional notes">{{ po.notes if po else '' }}</textarea>
+                <div class="alert-box" id="budgetWarning">
+                    <strong>⚠ Exceeds Approved Budget</strong><br>
+                    The entered amount is higher than the remaining budget amount for this budget line. Consider
+                    adjusting the value or revise the budget.
                 </div>
             </form>
         </div>
     </div>
 
+    <datalist id="productList">
+        {% for prod in products %}
+        <option value="{{ prod.name }}">
+            {% endfor %}
+    </datalist>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('itemsTable');
+
+            function updateTotals() {
+                let grandTotal = 0;
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                    const price = parseFloat(row.querySelector('.price').value) || 0;
+                    const total = qty * price;
+                    row.querySelector('.line-total').textContent = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    grandTotal += total;
+                });
+                document.getElementById('grandTotal').textContent = grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            }
+
+            table.addEventListener('input', function (e) {
+                if (e.target.classList.contains('qty') || e.target.classList.contains('price')) {
+                    updateTotals();
+                }
+
+                // Analytics Suggestion Logic
+                if (e.target.classList.contains('product-search')) {
+                    const val = e.target.value.toLowerCase();
+                    const analyticSelect = e.target.closest('tr').querySelector('.analytic-select');
+
+                    // Same keywords as in budget_detail
+                    const keywordMap = {
+                        'chair': 'Office Maintenance',
+                        'table': 'Deepawali',
+                        'desk': 'Furniture Expo',
+                        'office': 'Office Maintenance'
+                    };
+
+                    for (const [key, account] of Object.entries(keywordMap)) {
+                        if (val.includes(key)) {
+                            Array.from(analyticSelect.options).forEach(opt => {
+                                if (opt.text === account) analyticSelect.value = opt.value;
+                            });
+                        }
+                    }
+                }
+            });
+        });
+
+        function updateStatus(status) {
+            if (confirm('Are you sure you want to ' + status + ' this order?')) {
+                window.location.href = "{{ url_for('admin.po_update_status', id=po.id if po else 0, status='STATUS') }}".replace('0', '{{ po.id if po else 0 }}').replace('STATUS', status);
+            }
+        }
+    </script>
 </body>
 
 </html>

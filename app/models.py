@@ -141,15 +141,18 @@ class PurchaseOrder(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     order_number = db.Column(db.String(50), unique=True)
+    reference = db.Column(db.String(128)) # REQ-25-0001
     vendor_name = db.Column(db.String(128), nullable=False)
     order_date = db.Column(db.Date)
     expected_delivery = db.Column(db.Date)
-    total_amount = db.Column(db.Float)
+    total_amount = db.Column(db.Float, default=0.0)
     status = db.Column(db.String(20), default='draft')  # draft, confirmed, received, cancelled
     notes = db.Column(db.Text)
     is_archived = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    lines = db.relationship('PurchaseOrderLine', backref='order', lazy=True, cascade="all, delete-orphan")
     
     def __repr__(self):
         return f'<PurchaseOrder {self.order_number}>'
@@ -158,11 +161,35 @@ class PurchaseOrder(db.Model):
         return {
             'id': self.id,
             'order_number': self.order_number,
+            'reference': self.reference,
             'vendor_name': self.vendor_name,
             'order_date': self.order_date.isoformat() if self.order_date else None,
             'expected_delivery': self.expected_delivery.isoformat() if self.expected_delivery else None,
             'total_amount': self.total_amount,
             'status': self.status,
             'notes': self.notes,
-            'is_archived': self.is_archived
+            'is_archived': self.is_archived,
+            'lines': [line.to_dict() for line in self.lines]
+        }
+
+
+class PurchaseOrderLine(db.Model):
+    __tablename__ = 'purchase_order_lines'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    po_id = db.Column(db.Integer, db.ForeignKey('purchase_orders.id'), nullable=False)
+    product_name = db.Column(db.String(128))
+    budget_analytics = db.Column(db.String(128))
+    quantity = db.Column(db.Float, default=1.0)
+    unit_price = db.Column(db.Float, default=0.0)
+    total = db.Column(db.Float, default=0.0)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'product_name': self.product_name,
+            'budget_analytics': self.budget_analytics,
+            'quantity': self.quantity,
+            'unit_price': self.unit_price,
+            'total': self.total
         }
