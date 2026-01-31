@@ -237,7 +237,7 @@
                             onclick="updateStatus('confirmed')">Confirm</button>
                         {% endif %}
                         <button type="button" class="btn">Print</button>
-                        <button type="button" class="btn">Send</button>
+                        <button type="button" class="btn" onclick="sendToVendor()">Send</button>
                         {% if po and po.status == 'confirmed' %}
                         <button type="button" class="btn" onclick="updateStatus('cancelled')">Cancel</button>
                         <button type="button" id="createBillBtn">Create Bill</button>
@@ -474,6 +474,11 @@
                 }
             });
         });
+
+        function sendToVendor() {
+            alert('Purchase Order {{ po.order_number if po else '' }} has been sent to the vendor portal!');
+            // In the future, this will trigger an API call to notify the user/vendor
+        }
 
         function updateStatus(status) {
             if (confirm('Are you sure you want to ' + status + ' this order?')) {
