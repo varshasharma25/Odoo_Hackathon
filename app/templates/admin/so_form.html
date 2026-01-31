@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sale Order Form | Shiv Furniture</title>
+    <title>Sale Order | Shiv Furniture</title>
     <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-accent: #714B67;
-            /* Odoo Indigo */
             --primary-hover: #5d3d55;
             --body-bg: #f8fafc;
             --card-white: #ffffff;
@@ -19,9 +18,8 @@
             --border-color: #e2e8f0;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --accent-pink: #d63384;
-            --warning-orange: #ff9800;
-            --success-green: #22c55e;
-            --blue-link: #2196f3;
+            --accent-green: #22c55e;
+            --bg-gray: #f1f5f9;
         }
 
         * {
@@ -38,44 +36,51 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            color: #000;
         }
 
         .form-card {
             background: white;
-            border-radius: 36px;
+            border-radius: 40px;
             border: 1px solid #000;
             box-shadow: var(--shadow);
-            padding: 40px;
+            padding: 32px;
+            text-align: left;
             position: relative;
         }
 
-        /* Toolbar */
         .toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-bottom: 24px;
             margin-bottom: 32px;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 1px solid #714B67;
         }
 
         .btn-group {
             display: flex;
             gap: 12px;
-            align-items: center;
         }
 
         .btn {
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 15px;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid #e2e8f0;
-            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            background: #fff;
             color: #000;
             font-family: inherit;
         }
@@ -90,168 +95,102 @@
             border-color: var(--primary-accent);
         }
 
-        /* Status Breadcrumbs */
+        .btn-send {
+            background-color: #2196f3;
+            color: white;
+            border-color: #2196f3;
+        }
+
         .status-container {
             display: flex;
-            align-items: center;
-            gap: 0;
+            gap: 4px;
         }
 
         .status-step {
-            padding: 8px 24px;
-            font-size: 14px;
-            font-weight: 600;
+            padding: 6px 16px;
+            background: var(--bg-gray);
+            font-size: 12px;
             color: var(--text-muted);
-            background: #f1f5f9;
-            position: relative;
             clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
-            margin-right: -10px;
+            min-width: 80px;
+            text-align: center;
         }
 
         .status-step.active {
-            background: #e2e8f0;
-            color: #000;
+            background: #714B67;
+            color: #fff;
+            font-weight: 500;
         }
 
-        /* Header Info */
-        .info-grid {
+        .form-header-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 60px;
+            gap: 40px;
             margin-bottom: 40px;
         }
 
-        .info-group {
+        .input-row {
             display: flex;
-            align-items: flex-end;
-            gap: 24px;
+            align-items: center;
             margin-bottom: 16px;
-            position: relative;
         }
 
         .label {
-            font-size: 18px;
-            color: var(--accent-pink);
+            width: 140px;
+            font-size: 16px;
             font-weight: 500;
-            min-width: 160px;
+            color: var(--primary-accent);
         }
 
         .input-field {
             flex: 1;
             border: none;
-            border-bottom: 1.5px solid var(--accent-pink);
+            border-bottom: 1.5px solid #714B67;
             padding: 4px 0;
             font-size: 16px;
-            color: #333;
             outline: none;
             background: transparent;
+            font-family: inherit;
         }
 
-        .hint {
-            position: absolute;
-            left: 200px;
-            bottom: -20px;
-            font-size: 11px;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-
-        .user-badge {
-            background: #f0c3f1;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 18px;
-            color: #000;
-            margin-bottom: 12px;
-            display: inline-block;
-        }
-
-        /* Items Table */
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 32px;
-            border: 1px solid var(--border-color);
+            margin-bottom: 40px;
         }
 
         .items-table th {
-            padding: 12px;
             text-align: left;
-            border: 1px solid var(--border-color);
-            background: #fff;
-            color: var(--accent-pink);
-            font-weight: 600;
-            font-size: 16px;
+            padding: 12px 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #714B67;
+            border-bottom: 2px solid #000;
         }
 
         .items-table td {
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            font-size: 15px;
-            height: 48px;
+            padding: 12px 8px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .col-sr {
-            width: 80px;
-            text-align: center;
-            color: var(--accent-pink);
-        }
-
-        .col-prod {
-            width: 450px;
-            text-align: center;
-        }
-
-        .col-qty {
-            width: 120px;
-            text-align: center;
-            color: var(--blue-link);
-        }
-
-        .col-price {
-            width: 140px;
-            text-align: center;
-            color: var(--accent-pink);
-        }
-
-        .col-total {
-            width: 140px;
-            text-align: center;
-            color: var(--blue-link);
-        }
-
-        .items-table input {
+        .line-input {
             width: 100%;
             border: none;
-            background: transparent;
-            text-align: inherit;
-            font-family: inherit;
+            padding: 4px;
+            font-size: 14px;
             outline: none;
-            font-size: inherit;
+            background: transparent;
+            font-family: inherit;
         }
 
-        .total-row {
-            font-weight: 600;
+        .monetary {
+            text-align: right;
             color: var(--primary-accent);
         }
 
-        .calc-hint {
-            font-size: 11px;
-            color: var(--blue-link);
-            display: block;
-            margin-top: 4px;
-        }
-
-        .empty-row td {
-            border-right: 1px dashed #ccc;
-        }
-
-        @media (max-width: 768px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
+        .total-row {
+            border-top: 2px solid #000;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -259,162 +198,250 @@
 <body>
 
     <div class="container">
+        <h1 class="header-title">Sale Order</h1>
+
         <div class="form-card">
-            <!-- Toolbar -->
-            <div class="toolbar">
-                <div class="btn-group">
-                    <button class="btn" onclick="window.location.href='{{ url_for('admin.so_new') }}';">New</button>
-                </div>
-                <div class="btn-group">
-                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
-                    <button class="btn" onclick="window.history.back();">Back</button>
-                </div>
-            </div>
+            <form id="soForm" method="POST">
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="btn-group">
+                        <button type="button" class="btn"
+                            onclick="window.location.href='{{ url_for('admin.so_new') }}';">New</button>
+                        <button type="submit" class="btn btn-confirm">Save</button>
+                        {% if so %}
+                        {% if so.status == 'draft' %}
+                        <button type="button" class="btn btn-send" onclick="sendToCustomer()"
+                            title="Sends order to customer portal and generates an invoice">Send</button>
+                        {% elif so.status == 'sent' %}
+                        <span
+                            style="color: var(--accent-green); font-size: 14px; align-self: center; margin-left: 8px;">✓
+                            Sent to Customer</span>
+                        {% endif %}
+                        {% else %}
+                        <span
+                            style="color: var(--text-muted); font-size: 12px; align-self: center; margin-left: 8px;">(Save
+                            to enable Send)</span>
+                        {% endif %}
+                        <button type="button" class="btn">Print</button>
+                    </div>
 
-            <!-- Header Info -->
-            <div class="info-grid">
-                <div>
-                    <div class="info-group">
-                        <span class="label">SO No.</span>
-                        <input type="text" class="input-field" value="S00001">
-                        <span class="hint">( auto generate PO Number + 1 of last order )</span>
+                    <div class="status-container">
+                        <div class="status-step {% if not so or so.status == 'draft' %}active{% endif %}">Draft</div>
+                        <div class="status-step {% if so and so.status == 'sent' %}active{% endif %}">Sent</div>
+                        <div class="status-step {% if so and so.status == 'cancelled' %}active{% endif %}">Cancelled
+                        </div>
                     </div>
-                    <div class="info-group" style="margin-top: 32px;">
-                        <span class="label">Customer Name</span>
-                        <input type="text" class="input-field" value="Nimesh Pathak">
-                        <span class="hint">(from Contact Master - Many to one )</span>
-                    </div>
-                    <div class="info-group">
-                        <span class="label">Reference</span>
-                        <input type="text" class="input-field" value="SO-26-441">
-                        <span class="hint" style="bottom: -20px;">Alpha numeric ( text )</span>
-                    </div>
-                </div>
 
-                <div style="text-align: right;">
-                    <div class="user-badge" style="background: #f0c3f1; padding: 6px 24px; border-radius: 20px;">
-                        Krishil Agrawal
-                    </div>
-                    <div class="info-group" style="justify-content: flex-end; margin-top: 20px;">
-                        <span class="label" style="min-width: auto; margin-right: 20px;">SO Date</span>
-                        <input type="date" class="input-field" value="2026-01-31"
-                            style="width: 200px; text-align: center;">
+                    <div class="btn-group">
+                        <button type="button" class="btn"
+                            onclick="window.location.href='{{ url_for('admin.dashboard') }}';">Home</button>
+                        <button type="button" class="btn" onclick="window.history.back();">Back</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Actions & Status -->
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; border-top: 1px solid #eee; padding-top: 24px;">
-                <div class="btn-group">
-                    <button class="btn btn-confirm" onclick="confirmSO()">Confirm</button>
-                    <button class="btn">Print</button>
-                    <button class="btn">Send</button>
-                    <button class="btn">Cancel</button>
+                <!-- Header Grid -->
+                <div class="form-header-grid">
+                    <div>
+                        <div class="input-row">
+                            <span class="label">SO No.</span>
+                            <input type="text" name="order_number" class="input-field" value="{{ order_number }}"
+                                readonly>
+                        </div>
+                        <div class="input-row">
+                            <span class="label">Customer</span>
+                            <select name="customer_id" class="input-field" required>
+                                <option value="" disabled selected>Select Customer</option>
+                                {% for customer in customers %}
+                                <option value="{{ customer.id }}" {% if so and so.customer_id==customer.id %}selected{%
+                                    endif %}>
+                                    {{ customer.name or customer.username }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-row">
+                            <span class="label">SO Date</span>
+                            <input type="date" name="order_date" class="input-field"
+                                value="{{ so.order_date.strftime('%Y-%m-%d') if so and so.order_date else '' }}"
+                                required>
+                        </div>
+                        {% if so and so.status == 'draft' %}
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: -8px;">
+                            * Clicking <b>Send</b> will finalized this order and generate an <b>Invoice</b> for the
+                            customer.
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class="status-container">
-                    <div class="status-step active">Draft</div>
-                    <div class="status-step">Confirm</div>
-                    <div class="status-step">Cancelled</div>
-                </div>
-            </div>
-
-            <!-- Items Table -->
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th class="col-sr">Sr. No.</th>
-                        <th class="col-prod">Product</th>
-                        <th class="col-qty">1 Qty</th>
-                        <th class="col-price">2 Unit Price</th>
-                        <th class="col-total">3 Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="col-sr">1</td>
-                        <td>
-                            <input type="text" value="Table" style="text-align: center;">
-                            <span class="hint" style="position: static; display: block;">(from Product Master - Many to
-                                one )</span>
-                        </td>
-                        <td class="col-qty">
-                            <input type="number" value="6" id="qty-1" onchange="calcSO()">
-                            <span class="calc-hint">Number</span>
-                        </td>
-                        <td class="col-price">
-                            <input type="number" value="3100" id="price-1" onchange="calcSO()">
-                            <span class="calc-hint" style="color: var(--accent-pink);">Monetery</span>
-                        </td>
-                        <td class="col-total">
-                            <span id="total-1">18,600</span>
-                            <span class="calc-hint">( 3 = 1 x 2 )</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-sr">2</td>
-                        <td><input type="text" value="Chair" style="text-align: center;"></td>
-                        <td class="col-qty"><input type="number" value="3" id="qty-2" onchange="calcSO()"></td>
-                        <td class="col-price"><input type="number" value="1000" id="price-2" onchange="calcSO()"></td>
-                        <td class="col-total">
-                            <span id="total-2">3,000</span>
-                            <span class="calc-hint">( 3 = 1 x 2 )</span>
-                        </td>
-                    </tr>
-                    <!-- Empty rows -->
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    <tr class="total-row">
-                        <td colspan="4" style="text-align: center; font-size: 20px; color: var(--primary-accent);">Total
-                        </td>
-                        <td class="col-total" style="font-size: 20px; font-weight: 600; color: var(--primary-accent);">
-                            ₹<span id="grand-total">21,600</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                <!-- Product Table -->
+                <table class="items-table" id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Sr. No.</th>
+                            <th>Product</th>
+                            <th>Budget Analytics</th>
+                            <th style="width: 80px;">Qty</th>
+                            <th style="width: 120px;">Unit Price</th>
+                            <th style="width: 140px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if so and so.lines %}
+                        {% for line in so.lines %}
+                        <tr>
+                            <td class="sr-no">{{ loop.index }}</td>
+                            <td>
+                                <input type="text" name="product_name[]" class="line-input product-search"
+                                    value="{{ line.product_name }}" list="productList" required>
+                            </td>
+                            <td>
+                                <select name="budget_analytics[]" class="line-input analytic-select">
+                                    <option value="">Choose Analytics</option>
+                                    {% for account in analytical_accounts %}
+                                    <option value="{{ account.name }}" {% if line.budget_analytics==account.name
+                                        %}selected{% endif %}>{{ account.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td><input type="number" name="quantity[]" class="line-input qty"
+                                    value="{{ line.quantity }}" required step="any"></td>
+                            <td><input type="number" name="unit_price[]" class="line-input price"
+                                    value="{{ line.unit_price }}" required step="any"></td>
+                            <td class="monetary">
+                                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                                    <span class="line-total">{{ "{:,.2f}".format(line.total) }}</span>
+                                    <span class="remove-line"
+                                        style="color: #ff4444; cursor: pointer; font-weight: bold; font-size: 18px; padding: 0 4px;">×</span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td class="sr-no">1</td>
+                            <td>
+                                <input type="text" name="product_name[]" class="line-input product-search"
+                                    list="productList" required>
+                            </td>
+                            <td>
+                                <select name="budget_analytics[]" class="line-input analytic-select">
+                                    <option value="">Choose Analytics</option>
+                                    {% for account in analytical_accounts %}
+                                    <option value="{{ account.name }}">{{ account.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td><input type="number" name="quantity[]" class="line-input qty" placeholder="0" required
+                                    step="any"></td>
+                            <td><input type="number" name="unit_price[]" class="line-input price" placeholder="0.00"
+                                    required step="any"></td>
+                            <td class="monetary">
+                                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                                    <span class="line-total">0.00</span>
+                                    <span class="remove-line"
+                                        style="color: #ff4444; cursor: pointer; font-weight: bold; font-size: 18px; padding: 0 4px;">×</span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="padding: 12px 8px;">
+                                <span id="addLine"
+                                    style="color: #2196f3; cursor: pointer; font-weight: 500; font-size: 14px;">Add a
+                                    line</span>
+                            </td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="4" style="text-align: right; padding: 16px;">Total</td>
+                            <td class="monetary"><span id="grandTotal" style="padding-right: 28px;">{{
+                                    "{:,.2f}".format(so.total_amount) if so else '0.00' }}</span></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </form>
         </div>
     </div>
 
-    <script>
-        function calcSO() {
-            let grandTotal = 0;
-            for (let i = 1; i <= 2; i++) {
-                const qty = parseFloat(document.getElementById('qty-' + i).value) || 0;
-                const price = parseFloat(document.getElementById('price-' + i).value) || 0;
-                const total = qty * price;
-                document.getElementById('total-' + i).innerText = total.toLocaleString();
-                grandTotal += total;
-            }
-            document.getElementById('grand-total').innerText = grandTotal.toLocaleString();
-        }
+    <datalist id="productList">
+        {% for prod in products %}
+        <option value="{{ prod.name }}">
+            {% endfor %}
+    </datalist>
 
-        function confirmSO() {
-            alert('Sale Order S00001 has been confirmed.');
-            const steps = document.querySelectorAll('.status-step');
-            steps[0].classList.remove('active');
-            steps[1].classList.add('active');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('itemsTable');
+            const tbody = table.querySelector('tbody');
+            const addLineBtn = document.getElementById('addLine');
+
+            function updateSrNos() {
+                tbody.querySelectorAll('tr').forEach((row, index) => {
+                    row.querySelector('.sr-no').textContent = index + 1;
+                });
+            }
+
+            function updateTotals() {
+                let grandTotal = 0;
+                tbody.querySelectorAll('tr').forEach(row => {
+                    const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                    const price = parseFloat(row.querySelector('.price').value) || 0;
+                    const total = qty * price;
+                    row.querySelector('.line-total').textContent = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    grandTotal += total;
+                });
+                document.getElementById('grandTotal').textContent = grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            }
+
+            addLineBtn.addEventListener('click', function () {
+                const newRow = tbody.insertRow();
+                newRow.innerHTML = `
+                    <td class="sr-no"></td>
+                    <td><input type="text" name="product_name[]" class="line-input product-search" list="productList" required></td>
+                    <td>
+                        <select name="budget_analytics[]" class="line-input analytic-select">
+                            <option value="">Choose Analytics</option>
+                            {% for account in analytical_accounts %}<option value="{{ account.name }}">{{ account.name }}</option>{% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="number" name="quantity[]" class="line-input qty" placeholder="0" required step="any"></td>
+                    <td><input type="number" name="unit_price[]" class="line-input price" placeholder="0.00" required step="any"></td>
+                    <td class="monetary">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                            <span class="line-total">0.00</span>
+                            <span class="remove-line" style="color: #ff4444; cursor: pointer; font-weight: bold; font-size: 18px; padding: 0 4px;">×</span>
+                        </div>
+                    </td>
+                `;
+                updateSrNos();
+                updateTotals();
+            });
+
+            table.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-line')) {
+                    if (tbody.rows.length > 1) {
+                        e.target.closest('tr').remove();
+                        updateSrNos();
+                        updateTotals();
+                    }
+                }
+            });
+
+            table.addEventListener('input', function (e) {
+                if (e.target.classList.contains('qty') || e.target.classList.contains('price')) {
+                    updateTotals();
+                }
+            });
+        });
+
+        function sendToCustomer() {
+            if (confirm('Are you sure you want to send this order to the customer? This will also generate an invoice.')) {
+                window.location.href = "{{ url_for('admin.so_send', id=so.id if so else 0) }}";
+            }
         }
     </script>
 </body>

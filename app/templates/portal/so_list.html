@@ -4,21 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Portal | My Orders</title>
+    <title>Customer Orders | Portal</title>
     <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-accent: #714B67;
-            /* Odoo Indigo */
             --primary-hover: #5d3d55;
             --body-bg: #f8fafc;
             --card-white: #ffffff;
-            --text-dark: #1e293b;
+            --text-dark: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --accent-pink: #d63384;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --sidebar-width: 280px;
         }
 
@@ -36,7 +34,7 @@
             min-height: 100vh;
         }
 
-        /* ===== Sidebar ===== */
+        /* ===== Sidebar (Consistent with user.html) ===== */
         .sidebar {
             width: var(--sidebar-width);
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
@@ -117,7 +115,31 @@
             color: #0f172a;
         }
 
-        /* ===== Table Content ===== */
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 99px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* ===== Table Card ===== */
         .table-container {
             padding: 40px;
             max-width: 1200px;
@@ -163,8 +185,8 @@
             font-weight: 500;
         }
 
-        tr:hover td {
-            background: #f8fafc;
+        tr:last-child td {
+            border-bottom: none;
         }
 
         .status-pill {
@@ -172,25 +194,60 @@
             border-radius: 99px;
             font-size: 13px;
             font-weight: 600;
+            display: inline-block;
         }
 
-        .status-confirmed {
-            background: #eff6ff;
-            color: #2563eb;
-        }
-
-        .status-delivered {
+        .status-sent {
             background: #ecfdf5;
             color: #059669;
         }
 
-        @media (max-width: 768px) {
+        .status-draft {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .status-cancelled {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .btn-view {
+            padding: 8px 16px;
+            background: var(--primary-accent);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-view:hover {
+            background: var(--primary-hover);
+        }
+
+        .empty-state {
+            padding: 80px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 1024px) {
             .sidebar {
+                width: 80px;
+                padding: 40px 10px;
+            }
+
+            .sidebar-logo,
+            .nav-item span {
                 display: none;
             }
 
             .main-wrapper {
-                margin-left: 0;
+                margin-left: 80px;
             }
         }
     </style>
@@ -198,6 +255,7 @@
 
 <body>
 
+    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-logo">PORTAL</div>
         <nav class="nav-menu">
@@ -206,6 +264,9 @@
             </a>
             <a href="{{ url_for('portal.invoices_list') }}" class="nav-item">
                 <span>Bills & Invoices</span>
+            </a>
+            <a href="{{ url_for('portal.so_list') }}" class="nav-item active">
+                <span>My Orders</span>
             </a>
             <a href="{{ url_for('portal.po_list') }}" class="nav-item">
                 <span>Purchase Specification</span>
@@ -217,35 +278,53 @@
     </aside>
 
     <div class="main-wrapper">
+        <!-- Header -->
         <header class="header">
             <h1>My Orders</h1>
+            <div class="user-badge">
+                <div class="user-avatar">{{ current_user.username[0].upper() }}</div>
+                <span>{{ current_user.name or current_user.username }}</span>
+            </div>
         </header>
 
+        <!-- Main Content -->
         <main class="table-container">
             <div class="order-card">
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
-                                <th>Order Ref</th>
-                                <th>Order Date</th>
+                                <th>Order No</th>
+                                <th>Date</th>
                                 <th>Amount</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for order in orders %}
                             <tr>
-                                <td>SO/2026/045</td>
-                                <td>28-Jan-2026</td>
-                                <td>₹ 15,400</td>
-                                <td><span class="status-pill status-delivered">Delivered</span></td>
+                                <td>{{ order.order_number }}</td>
+                                <td>{{ order.order_date.strftime('%d-%b-%Y') }}</td>
+                                <td>₹ {{ "{:,.2f}".format(order.total_amount) }}</td>
+                                <td>
+                                    <span class="status-pill status-{{ order.status }}">
+                                        {{ order.status|capitalize }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn-view" onclick="alert('Viewing order detail...')">View</button>
+                                </td>
                             </tr>
+                            {% else %}
                             <tr>
-                                <td>SO/2026/058</td>
-                                <td>02-Feb-2026</td>
-                                <td>₹ 8,200</td>
-                                <td><span class="status-pill status-confirmed">Confirmed</span></td>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <p>No orders found yet.</p>
+                                    </div>
+                                </td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>

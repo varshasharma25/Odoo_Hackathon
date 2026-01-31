@@ -10,7 +10,6 @@
     <style>
         :root {
             --primary-accent: #714B67;
-            /* Odoo Indigo */
             --primary-hover: #5d3d55;
             --body-bg: #f8fafc;
             --card-white: #ffffff;
@@ -49,7 +48,7 @@
         .sub-title {
             font-size: 20px;
             font-weight: 500;
-            color: #ff9800;
+            color: #2196f3;
             margin-bottom: 32px;
         }
 
@@ -101,7 +100,7 @@
             padding: 16px 32px;
             font-size: 15px;
             font-weight: 500;
-            color: #2196f3;
+            color: #714B67;
             border-bottom: 2px solid #000;
             background: #fff;
         }
@@ -126,14 +125,14 @@
             text-transform: capitalize;
         }
 
-        .status-confirmed {
-            background: #dcfce7;
-            color: #166534;
+        .status-draft {
+            background: #e2e8f0;
+            color: #475569;
         }
 
-        .status-draft {
-            background: #f1f5f9;
-            color: #475569;
+        .status-sent {
+            background: #dcfce7;
+            color: #166534;
         }
 
         .status-cancelled {
@@ -148,10 +147,6 @@
 
         .link-row:hover {
             background-color: #f9fafb;
-        }
-
-        .empty-row td {
-            height: 48px;
         }
 
         @media (max-width: 768px) {
@@ -175,7 +170,7 @@
 
     <div class="container">
         <h1 class="header-title">Sale Orders</h1>
-        <h2 class="sub-title">List View</h2>
+        <h2 class="sub-title">Outgoing Orders</h2>
 
         <div class="list-card">
             <div class="toolbar" style="display: flex; justify-content: space-between;">
@@ -184,7 +179,7 @@
                         onclick="window.location.href='{{ url_for('admin.so_new') }}';">New</button>
                 </div>
                 <div style="display: flex; gap: 16px;">
-                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button class="btn" onclick="window.location.href='{{ url_for('admin.dashboard') }}';">Home</button>
                     <button class="btn" onclick="window.history.back();">Back</button>
                 </div>
             </div>
@@ -192,47 +187,33 @@
             <table class="so-table">
                 <thead>
                     <tr>
-                        <th style="width: 180px;">SO Number</th>
-                        <th style="width: 140px;">SO Date</th>
+                        <th style="width: 150px;">Order No</th>
+                        <th style="width: 150px;">Date</th>
                         <th>Customer</th>
-                        <th class="hide-mobile">Reference</th>
                         <th style="width: 120px;">Total</th>
                         <th style="width: 120px;">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.so_detail', id=1) }}';">
-                        <td>S00001</td>
-                        <td>2026-01-31</td>
-                        <td>Nimesh Pathak</td>
-                        <td class="hide-mobile">SO-26-441</td>
-                        <td>₹21,600</td>
-                        <td><span class="status-badge status-confirmed">Confirm</span></td>
+                    {% if sale_orders %}
+                    {% for so in sale_orders %}
+                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.so_detail', id=so.id) }}';">
+                        <td>{{ so.order_number or 'N/A' }}</td>
+                        <td>{{ so.order_date.strftime('%d-%b-%Y') if so.order_date else 'N/A' }}</td>
+                        <td>{{ so.customer_name }}</td>
+                        <td>₹{{ "{:,.2f}".format(so.total_amount) if so.total_amount else '0.00' }}</td>
+                        <td>
+                            <span class="status-badge status-{{ so.status }}">{{ so.status }}</span>
+                        </td>
                     </tr>
-                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.so_detail', id=2) }}';">
-                        <td>S00002</td>
-                        <td>2026-01-31</td>
-                        <td>Azure Interior</td>
-                        <td class="hide-mobile">SO-26-442</td>
-                        <td>₹8,500</td>
-                        <td><span class="status-badge status-draft">Draft</span></td>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #64748b;">
+                            No sale orders found. Click "New" to create your first sale order.
+                        </td>
                     </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

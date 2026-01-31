@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from app.admin import bp
 from app import db
-from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine, VendorBill, VendorBillLine
+from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine, VendorBill, VendorBillLine, Invoice, InvoiceLine, SaleOrder, SaleOrderLine, Users
 from sqlalchemy.exc import IntegrityError
 
 def save_image(file):
@@ -452,14 +452,178 @@ def invoice_pay(id):
 @bp.route('/sale-orders')
 @login_required
 def so_list():
-    return render_template('admin/so_list.html')
+    sale_orders = SaleOrder.query.filter_by(is_archived=False).all()
+    return render_template('admin/so_list.html', sale_orders=sale_orders)
 
 @bp.route('/sale-order/new', methods=['GET', 'POST'])
 @login_required
 def so_new():
-    return render_template('admin/so_form.html')
+    customers = Users.query.filter_by(role='portal').all()
+    products = Product.query.filter_by(is_archived=False).all()
+    analytical_accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
+    
+    # Generate next serial SO Number
+    last_so = SaleOrder.query.order_by(SaleOrder.id.desc()).first()
+    if last_so and last_so.order_number and last_so.order_number.startswith('SO'):
+        try:
+            last_num = int(last_so.order_number[2:])
+            order_number = f"SO{last_num + 1:04d}"
+        except ValueError:
+            order_number = "SO0001"
+    else:
+        order_number = "SO0001"
+        
+    if request.method == 'POST':
+        customer_id = request.form.get('customer_id')
+        customer = Users.query.get(customer_id)
+        
+        so = SaleOrder(
+            order_number=request.form.get('order_number'),
+            customer_id=customer_id,
+            customer_name=customer.name or customer.username,
+            order_date=datetime.strptime(request.form.get('order_date'), '%Y-%m-%d').date() if request.form.get('order_date') else None,
+            status='draft',
+            notes=request.form.get('notes'),
+            total_amount=0.0
+        )
+        db.session.add(so)
+        db.session.flush()
+        
+        # Handle Line Items
+        line_products = request.form.getlist('product_name[]')
+        line_analytics = request.form.getlist('budget_analytics[]')
+        line_qtys = request.form.getlist('quantity[]')
+        line_prices = request.form.getlist('unit_price[]')
+        
+        total_amount = 0.0
+        for i in range(len(line_products)):
+            if not line_products[i]: continue
+            qty = float(line_qtys[i] or 0)
+            price = float(line_prices[i] or 0)
+            line_total = qty * price
+            total_amount += line_total
+            
+            line = SaleOrderLine(
+                so_id=so.id,
+                product_name=line_products[i],
+                budget_analytics=line_analytics[i] if i < len(line_analytics) else None,
+                quantity=qty,
+                unit_price=price,
+                total=line_total
+            )
+            db.session.add(line)
+            
+        so.total_amount = total_amount
+        db.session.commit()
+        flash('Sale Order created successfully!', 'success')
+        return redirect(url_for('admin.so_list'))
+        
+    return render_template('admin/so_form.html', so=None, order_number=order_number, 
+                           customers=customers, products=products, analytical_accounts=analytical_accounts)
 
 @bp.route('/sale-order/<int:id>', methods=['GET', 'POST'])
 @login_required
 def so_detail(id):
-    return render_template('admin/so_form.html')
+    so = SaleOrder.query.get_or_404(id)
+    customers = Users.query.filter_by(role='portal').all()
+    products = Product.query.filter_by(is_archived=False).all()
+    analytical_accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
+
+    if request.method == 'POST':
+        customer_id = request.form.get('customer_id')
+        customer = Users.query.get(customer_id)
+        
+        so.customer_id = customer_id
+        so.customer_name = customer.name or customer.username
+        so.order_date = datetime.strptime(request.form.get('order_date'), '%Y-%m-%d').date() if request.form.get('order_date') else None
+        so.notes = request.form.get('notes')
+        
+        # Clear existing lines and re-add
+        SaleOrderLine.query.filter_by(so_id=so.id).delete()
+        
+        line_products = request.form.getlist('product_name[]')
+        line_analytics = request.form.getlist('budget_analytics[]')
+        line_qtys = request.form.getlist('quantity[]')
+        line_prices = request.form.getlist('unit_price[]')
+        
+        total_amount = 0.0
+        for i in range(len(line_products)):
+            if not line_products[i]: continue
+            qty = float(line_qtys[i] or 0)
+            price = float(line_prices[i] or 0)
+            line_total = qty * price
+            total_amount += line_total
+            
+            line = SaleOrderLine(
+                so_id=so.id,
+                product_name=line_products[i],
+                budget_analytics=line_analytics[i] if i < len(line_analytics) else None,
+                quantity=qty,
+                unit_price=price,
+                total=line_total
+            )
+            db.session.add(line)
+            
+        so.total_amount = total_amount
+        db.session.commit()
+        flash('Sale Order updated successfully!', 'success')
+        return redirect(url_for('admin.so_list'))
+        
+    return render_template('admin/so_form.html', so=so, order_number=so.order_number, 
+                           customers=customers, products=products, analytical_accounts=analytical_accounts)
+
+@bp.route('/sale-order/<int:id>/send')
+@login_required
+def so_send(id):
+    so = SaleOrder.query.get_or_404(id)
+    
+    # Check if already sent to avoid duplicate invoices
+    if so.status == 'sent':
+        flash('Sale Order already sent!', 'warning')
+        return redirect(url_for('admin.so_detail', id=so.id))
+        
+    # Generate Invoice from SO
+    # Generate next serial Invoice Number
+    last_inv = Invoice.query.order_by(Invoice.id.desc()).first()
+    if last_inv and last_inv.invoice_number and last_inv.invoice_number.startswith('INV'):
+        try:
+            last_num = int(last_inv.invoice_number[4:])
+            invoice_number = f"INV-{last_num + 1:04d}"
+        except ValueError:
+            invoice_number = f"INV-{len(Invoice.query.all()) + 1:04d}"
+    else:
+        invoice_number = "INV-0001"
+
+    invoice = Invoice(
+        invoice_number=invoice_number,
+        customer_id=so.customer_id,
+        customer_name=so.customer_name,
+        invoice_date=datetime.utcnow().date(),
+        due_date=datetime.utcnow().date(), # Default to today, can be changed
+        subtotal=so.total_amount,
+        tax_amount=0.0,
+        total_amount=so.total_amount,
+        paid_amount=0.0,
+        balance_due=so.total_amount,
+        status='sent',
+        notes=f"Generated from Sale Order {so.order_number}"
+    )
+    db.session.add(invoice)
+    db.session.flush()
+    
+    # Add Invoice Lines
+    for so_line in so.lines:
+        inv_line = InvoiceLine(
+            invoice_id=invoice.id,
+            product_name=so_line.product_name,
+            quantity=so_line.quantity,
+            unit_price=so_line.unit_price,
+            total=so_line.total
+        )
+        db.session.add(inv_line)
+        
+    so.status = 'sent'
+    db.session.commit()
+    
+    flash(f'Sale Order sent successfully! Invoice {invoice_number} generated.', 'success')
+    return redirect(url_for('admin.so_detail', id=so.id))

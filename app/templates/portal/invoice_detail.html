@@ -334,7 +334,8 @@
         <header class="header">
             <h1>Invoice Detail</h1>
             <div class="user-badge">
-                <span>Portal User</span>
+                <div class="user-avatar">{{ current_user.username[0].upper() }}</div>
+                <span>{{ current_user.name or current_user.username }}</span>
             </div>
         </header>
 
@@ -342,20 +343,24 @@
             <div class="detail-card">
                 <div class="detail-header">
                     <div class="invoice-title">
-                        <h2>Invoice #INV-002</h2>
-                        <p style="color: var(--text-muted)">Created on 15 Feb 2026</p>
+                        <h2>Invoice #{{ invoice.invoice_number }}</h2>
+                        <p style="color: var(--text-muted)">Created on {{ invoice.invoice_date.strftime('%d %b %Y') }}
+                        </p>
                     </div>
-                    <span class="status-badge status-pending">Payment Pending</span>
+                    <span
+                        class="status-badge {% if invoice.status == 'paid' %}status-paid{% else %}status-pending{% endif %}">
+                        {{ invoice.status|capitalize }}
+                    </span>
                 </div>
 
                 <div class="info-grid">
                     <div class="info-box">
                         <label>Billed To</label>
-                        <p>Savya</p>
+                        <p>{{ invoice.customer_name }}</p>
                     </div>
                     <div class="info-box">
                         <label>Due Date</label>
-                        <p>25 Feb 2026</p>
+                        <p>{{ invoice.due_date.strftime('%d %b %Y') if invoice.due_date else 'N/A' }}</p>
                     </div>
                     <div class="info-box">
                         <label>Payment Method</label>
@@ -377,31 +382,31 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for line in invoice.lines %}
                         <tr>
-                            <td>Web Hosting Service</td>
-                            <td>1</td>
-                            <td style="text-align: right">₹ 2,500</td>
-                            <td style="text-align: right">₹ 2,500</td>
+                            <td>{{ line.product_name }}{% if line.description %} - {{ line.description }}{% endif %}
+                            </td>
+                            <td>{{ line.quantity }}</td>
+                            <td style="text-align: right">₹ {{ "{:,.2f}".format(line.unit_price) }}</td>
+                            <td style="text-align: right">₹ {{ "{:,.2f}".format(line.total) }}</td>
                         </tr>
-                        <tr>
-                            <td>Domain Registration</td>
-                            <td>1</td>
-                            <td style="text-align: right">₹ 700</td>
-                            <td style="text-align: right">₹ 700</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
 
                 <div class="total-section">
                     <div class="total-row">
                         <span class="total-label">Grand Total :</span>
-                        <span class="total-amount">₹ 3,200</span>
+                        <span class="total-amount">₹ {{ "{:,.2f}".format(invoice.total_amount) }}</span>
                     </div>
                 </div>
 
                 <div class="actions">
-                    <a href="{{ url_for('portal.invoice_pay', invoice_id=2) }}" class="btn btn-primary">Pay Now</a>
-                    <button class="btn btn-secondary">Download PDF</button>
+                    {% if invoice.status != 'paid' %}
+                    <a href="{{ url_for('portal.invoice_pay', invoice_id=invoice.id) }}" class="btn btn-primary">Pay
+                        Now</a>
+                    {% endif %}
+                    <button class="btn btn-secondary" onclick="window.print()">Print Invoice</button>
                     <a href="{{ url_for('portal.invoices_list') }}" class="btn btn-secondary">Back to List</a>
                 </div>
             </div>

@@ -307,8 +307,8 @@
         <header class="header">
             <h1>My Invoices</h1>
             <div class="user-badge">
-                <div class="user-avatar">PU</div>
-                <span>Portal User</span>
+                <div class="user-avatar">{{ current_user.username[0].upper() }}</div>
+                <span>{{ current_user.name or current_user.username }}</span>
             </div>
         </header>
 
@@ -327,24 +327,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-href="{{ url_for('portal.invoice_detail', invoice_id=1) }}">
-                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=1) }}"
-                                        class="invoice-link">INV-001</a></td>
-                                <td>01-Feb-2026</td>
-                                <td>₹ 5,000</td>
-                                <td><span class="status-pill status-paid">Paid</span></td>
-                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=1) }}" class="btn-view">View
+                            {% for invoice in invoices %}
+                            <tr data-href="{{ url_for('portal.invoice_detail', invoice_id=invoice.id) }}">
+                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=invoice.id) }}"
+                                        class="invoice-link">{{ invoice.invoice_number }}</a></td>
+                                <td>{{ invoice.invoice_date.strftime('%d-%b-%Y') }}</td>
+                                <td>₹ {{ "{:,.2f}".format(invoice.total_amount) }}</td>
+                                <td>
+                                    <span
+                                        class="status-pill {% if invoice.status == 'paid' %}status-paid{% else %}status-pending{% endif %}">
+                                        {{ invoice.status|capitalize }}
+                                    </span>
+                                </td>
+                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=invoice.id) }}"
+                                        class="btn-view">View
                                         Detail</a></td>
                             </tr>
-                            <tr data-href="{{ url_for('portal.invoice_detail', invoice_id=2) }}">
-                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=2) }}"
-                                        class="invoice-link">INV-002</a></td>
-                                <td>15-Feb-2026</td>
-                                <td>₹ 3,200</td>
-                                <td><span class="status-pill status-pending">Pending</span></td>
-                                <td><a href="{{ url_for('portal.invoice_detail', invoice_id=2) }}" class="btn-view">View
-                                        Detail</a></td>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">No
+                                    invoices found.</td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
