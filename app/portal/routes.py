@@ -2,6 +2,9 @@ from flask import render_template
 from app.portal import bp
 
 @bp.route('/')
+def index():
+    return render_template('admin/layout.html')
+
 @bp.route('/home')
 def home():
     return render_template('portal/user.html')
