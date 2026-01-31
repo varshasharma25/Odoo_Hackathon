@@ -4,24 +4,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin Dashboard | Budget Accounting System</title>
+    <title>Admin Portal | Shiv Furniture</title>
     <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-accent: #714B67;
             /* Odoo Indigo */
-            --primary-light: #fdf2f8;
             --primary-hover: #5d3d55;
-            --sidebar-bg: #111827;
-            --sidebar-hover: #1f2937;
+            --nav-bg: #ffffff;
             --body-bg: #f8fafc;
-            --card-white: #ffffff;
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --gradient: linear-gradient(135deg, #714B67 0%, #5d3d55 100%);
+            --card-white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --header-height: 80px;
         }
 
         * {
@@ -34,425 +32,415 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--body-bg);
             color: var(--text-dark);
-            display: flex;
             min-height: 100vh;
         }
 
-        /* SIDEBAR */
-        .sidebar {
-            width: 280px;
-            background-color: var(--sidebar-bg);
-            color: white;
-            padding: 32px 24px;
-            display: flex;
-            flex-direction: column;
+        /* --- MEGA MENU NAVIGATION --- */
+        .top-nav {
             position: fixed;
-            height: 100vh;
-            z-index: 100;
-        }
-
-        .sidebar-brand {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 40px;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--nav-bg);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            gap: 12px;
+            padding: 0 48px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
         }
 
-        .brand-icon {
-            width: 36px;
-            height: 36px;
-            background: var(--gradient);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .nav-category {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #4b5563;
-            margin: 24px 0 12px 12px;
-            font-weight: 600;
-        }
-
-        .nav-link {
-            color: #9ca3af;
-            text-decoration: none;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-radius: 10px;
-            transition: all 0.2s;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background-color: var(--sidebar-hover);
-            color: white;
-        }
-
-        .nav-link.active {
-            background-color: var(--primary-accent);
-        }
-
-        /* MAIN WRAPPER */
-        .main-wrapper {
-            flex: 1;
-            margin-left: 280px;
-            padding: 40px;
-        }
-
-        .top-bar {
+        .nav-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
         }
 
-        .page-title h1 {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .page-title p {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .user-pill {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 50px;
-            border: 1px solid var(--border-color);
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-accent);
+            text-decoration: none;
+            margin-right: 48px;
         }
 
-        .user-pill .avatar {
-            width: 28px;
-            height: 28px;
+        .brand-icon {
+            width: 32px;
+            height: 32px;
             background: var(--primary-accent);
+            border-radius: 8px;
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 40px;
+            flex: 1;
+        }
+
+        .menu-dropdown {
+            position: relative;
+        }
+
+        .menu-trigger {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+        }
+
+        .menu-trigger:hover {
+            color: var(--primary-accent);
+        }
+
+        .menu-trigger img {
+            width: 12px;
+            opacity: 0.5;
+        }
+
+        /* Dropdown Box styling matched to user image layout */
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            min-width: 220px;
+            padding: 20px 0;
+            display: none;
+            /* Toggle via JS or Hover */
+            margin-top: 10px;
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 10px 24px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: var(--primary-accent);
+            padding-left: 28px;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary-accent);
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-weight: 600;
+            font-size: 14px;
         }
 
-        /* HERO CARD */
-        .hero-banner {
-            background: var(--gradient);
-            padding: 40px;
+        /* --- MAIN CONTENT AREA --- */
+        .main-wrapper {
+            padding-top: var(--header-height);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 48px;
+            padding-right: 48px;
+        }
+
+        .page-header {
+            padding: 40px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-accent) 0%, #4a3143 100%);
             border-radius: 24px;
+            padding: 60px;
             color: white;
-            margin-bottom: 40px;
-            box-shadow: 0 20px 25px -5px rgba(113, 75, 103, 0.2);
+            margin-bottom: 48px;
+            box-shadow: 0 20px 40px rgba(113, 75, 103, 0.15);
+            position: relative;
+            overflow: hidden;
         }
 
-        .hero-banner h2 {
-            font-size: 32px;
-            margin-bottom: 12px;
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 16px;
+            font-weight: 600;
         }
 
-        .hero-banner p {
-            font-size: 16px;
+        .hero p {
+            font-size: 18px;
             opacity: 0.9;
             max-width: 600px;
             line-height: 1.6;
         }
 
-        /* DASHBOARD GRID */
-        .module-grid {
+        /* Dashboard Grid */
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 32px;
+            padding-bottom: 60px;
         }
 
-        .module-card {
-            background: white;
+        .card {
+            background: var(--card-white);
             border-radius: 20px;
-            padding: 32px;
+            padding: 40px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
 
-        .module-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
             border-color: var(--primary-accent);
         }
 
         .card-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--primary-light);
+            width: 56px;
+            height: 56px;
+            background-color: #fdf2f8;
             color: var(--primary-accent);
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 28px;
+            margin-bottom: 24px;
         }
 
-        .module-card h3 {
-            font-size: 18px;
+        .card h3 {
+            font-size: 20px;
             margin-bottom: 12px;
         }
 
-        .module-card p {
-            font-size: 14px;
+        .card p {
+            font-size: 15px;
             color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .inner-links {
-            list-style: none;
-        }
-
-        .inner-links li {
-            margin-bottom: 8px;
-        }
-
-        .inner-links a {
-            text-decoration: none;
-            color: var(--primary-accent);
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .inner-links a:hover {
-            color: var(--primary-hover);
-            text-decoration: underline;
-        }
-
-        /* WORKFLOW STRIP */
-        .workflow-section {
-            background: #111827;
-            padding: 40px;
-            border-radius: 24px;
-            color: white;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .workflow-section h2 {
-            font-size: 18px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            line-height: 1.6;
             margin-bottom: 24px;
-            color: #9ca3af;
         }
 
-        .flow-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .flow-step {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .flow-arrow {
+        .btn-link {
             color: var(--primary-accent);
-            font-weight: bold;
-        }
-
-        /* INFO LIST */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-        }
-
-        .info-card {
-            background: #ffffff;
-            padding: 24px;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .info-card h4 {
-            font-size: 16px;
-            margin-bottom: 16px;
-            display: flex;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        .info-card h4::before {
-            content: "";
-            width: 4px;
-            height: 16px;
-            background: var(--primary-accent);
-            border-radius: 2px;
-        }
-
-        .info-card ul {
-            list-style: none;
-        }
-
-        .info-card li {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: flex-start;
             gap: 8px;
         }
 
-        .info-card li::before {
-            content: "•";
-            color: var(--primary-accent);
+        .btn-link:hover {
+            color: var(--primary-hover);
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0 24px;
             }
 
+            .menu-items {
+                display: none;
+            }
+
+            /* Mobile would need a burger menu */
             .main-wrapper {
-                margin-left: 0;
+                padding: var(--header-height) 24px 24px;
+            }
+
+            .hero {
+                padding: 40px 30px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-icon">S</div>
-            Shiv Furniture
+    <!-- TOP NAVIGATION (Mega Menu Structure) -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="/" class="brand">
+                <div class="brand-icon"></div>
+                Shiv Furniture
+            </a>
+
+            <div class="menu-items">
+                <!-- ACCOUNT MENU -->
+                <div class="menu-dropdown">
+                    <button class="menu-trigger" onclick="toggleMenu(this)">
+                        Account
+                        <span style="font-size: 10px;">▼</span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('admin.contacts_list') }}" class="dropdown-item">Contact</a>
+                        <a href="{{ url_for('admin.products_list') }}" class="dropdown-item">Product</a>
+                        <a href="{{ url_for('admin.analytical_accounts_list') }}" class="dropdown-item">Analyticals</a>
+                        <a href="#" class="dropdown-item">Auto Analytic Model</a>
+                        <a href="{{ url_for('admin.budgets_list') }}" class="dropdown-item">Budget</a>
+                    </div>
+                </div>
+
+                <!-- PURCHASE MENU -->
+                <div class="menu-dropdown">
+                    <button class="menu-trigger" onclick="toggleMenu(this)">
+                        Purchase
+                        <span style="font-size: 10px;">▼</span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('admin.po_list') }}" class="dropdown-item">Purchase Order</a>
+                        <a href="{{ url_for('admin.vendor_bills_list') }}" class="dropdown-item">Purchase Bill</a>
+                        <a href="{{ url_for('admin.payments_list') }}" class="dropdown-item">Payment</a>
+                    </div>
+                </div>
+
+                <!-- SALE MENU -->
+                <div class="menu-dropdown">
+                    <button class="menu-trigger" onclick="toggleMenu(this)">
+                        Sale
+                        <span style="font-size: 10px;">▼</span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('admin.so_list') }}" class="dropdown-item">Sale Order</a>
+                        <a href="{{ url_for('admin.invoice_new') }}" class="dropdown-item">Sale Invoice</a>
+                        <a href="#" class="dropdown-item">Receipt</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-actions">
+                <span style="font-size: 14px; font-weight: 500;">Admin Portal</span>
+                <div class="avatar-circle">C</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENT BELOW MENU -->
+    <div class="main-wrapper">
+        <div class="page-header">
+            <div class="breadcrumb">Portal / Overview</div>
         </div>
 
-        <div class="nav-category">Main Console</div>
-        <a href="#" class="nav-link active">🏠 Dashboard Overview</a>
-
-        <div class="nav-category">Management</div>
-        <a href="{{ url_for('admin.contacts_list') }}" class="nav-link">👥 Contacts</a>
-        <a href="{{ url_for('admin.products_list') }}" class="nav-link">📦 Products</a>
-        <a href="{{ url_for('admin.budgets_list') }}" class="nav-link">💰 Financial Budgets</a>
-
-        <div class="nav-category">Settings</div>
-        <a href="#" class="nav-link">⚙️ Configuration</a>
-    </aside>
-
-    <!-- CONTENT -->
-    <main class="main-wrapper">
-        <div class="top-bar">
-            <div class="page-title">
-                <h1>Admin Dashboard</h1>
-                <p>Odoo-Powered Budget Accounting Control</p>
-            </div>
-            <div class="user-pill">
-                <span>System Administrator</span>
-                <div class="avatar">AD</div>
-            </div>
-        </div>
-
-        <!-- HERO BANNER -->
-        <section class="hero-banner">
-            <h2>Financial Overview</h2>
+        <section class="hero">
+            <h1>Welcome to Your Portal</h1>
             <p>
-                Efficiently manage the core modules of Shiv Furniture. This centralized hub allows you to maintain
-                master data, synchronize transactions, and monitor real-time budget performance.
+                Efficiently manage your transactions, review your official documentation, and settle outstanding
+                balances directly from your dashboard.
             </p>
         </section>
 
-        <!-- MODULE GRID -->
-        <div class="module-grid">
-            <div class="module-card">
-                <div class="card-icon">🏗️</div>
-                <h3>Master Data</h3>
-                <p>Oversee critical business entities and analytical structures.</p>
-                <ul class="inner-links">
-                    <li><a href="{{ url_for('admin.contacts_list') }}">→ Business Contacts</a></li>
-                    <li><a href="{{ url_for('admin.products_list') }}">→ Product Catalog</a></li>
-                    <li><a href="{{ url_for('admin.analytical_accounts_list') }}">→ Analytical Accounts</a></li>
-                    <li><a href="{{ url_for('admin.budgets_list') }}">→ Budget Master</a></li>
-                </ul>
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-icon">📄</div>
+                <h3>Billing & Finance</h3>
+                <p>
+                    Review your entire invoice history, check real-time payment statuses, and download tax-ready
+                    documents whenever you need them.
+                </p>
+                <a href="{{ url_for('portal.invoices_list') }}" class="btn-link">Manage Billing →</a>
             </div>
 
-            <div class="module-card">
-                <div class="card-icon">🔄</div>
-                <h3>Transactions</h3>
-                <p>Track the lifecycle of purchases and sales operations.</p>
-                <ul class="inner-links">
-                    <li><a href="{{ url_for('admin.po_list') }}">→ Purchase Orders</a></li>
-                    <li><a href="{{ url_for('admin.vendor_bills_list') }}">→ Vendor Bills</a></li>
-                    <li><a href="{{ url_for('admin.so_list') }}">→ Sales Orders</a></li>
-                    <li><a href="{{ url_for('admin.invoices_list') }}">→ Customer Invoices</a></li>
-                </ul>
+            <div class="card">
+                <div class="card-icon">📦</div>
+                <h3>Order Tracking</h3>
+                <p>
+                    Stay updated on your active sales and purchase orders. Access detailed breakdowns of items, delivery
+                    dates, and current progress.
+                </p>
+                <a href="{{ url_for('portal.so_list') }}" class="btn-link">Track Orders →</a>
             </div>
 
-            <div class="module-card">
-                <div class="card-icon">📈</div>
-                <h3>Analytics</h3>
-                <p>Monitor performance metrics and financial utilization.</p>
-                <ul class="inner-links">
-                    <li><a href="{{ url_for('admin.budget_vs_actual') }}">→ Performance Analysis</a></li>
-                    <li><a href="{{ url_for('admin.budget_achievement_lines') }}">→ Strategic Achievement</a></li>
-                </ul>
+            <div class="card">
+                <div class="card-icon">💳</div>
+                <h3>Secure Payments</h3>
+                <p>
+                    Process payments for pending bills instantly using our encrypted payment system. Fast, secure, and
+                    fully recorded in your history.
+                </p>
+                <a href="{{ url_for('portal.invoices_list') }}" class="btn-link">Settle Balances →</a>
             </div>
         </div>
+    </div>
 
-        <!-- WORKFLOW SECTION -->
-        <section class="workflow-section">
-            <h2>Operational Flow</h2>
-            <div class="flow-container">
-                <div class="flow-step">Orders</div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step">Accounting Vouchers</div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step">Analytical Entries</div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step">Budget Validation</div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step">Intelligence Reports</div>
-            </div>
-        </section>
+    <script>
+        function toggleMenu(button) {
+            const dropdown = button.parentElement;
+            const wasActive = dropdown.classList.contains('active');
 
-        <!-- WHY THIS MATTERS -->
-        <div class="info-grid">
-            <div class="info-card">
-                <h4>System Value Add</h4>
-                <ul>
-                    <li>Real-time visibility of departmental spending.</li>
-                    <li>Reduced manual reconciliation by 70%.</li>
-                    <li>Consistent data linkage across all modules.</li>
-                    <li>Industry-grade ERP workflow standard.</li>
-                </ul>
-            </div>
-        </div>
-    </main>
+            // Close all dropdowns
+            document.querySelectorAll('.menu-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+
+            // Toggle current if it wasn't active
+            if (!wasActive) {
+                dropdown.classList.add('active');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.menu-dropdown')) {
+                document.querySelectorAll('.menu-dropdown').forEach(d => {
+                    d.classList.remove('active');
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
