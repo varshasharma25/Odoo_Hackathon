@@ -190,11 +190,11 @@ def budget_detail(id):
     return render_template('admin/budget_detail.html', budget=budget, analytical_accounts=analytical_accounts)
 
 @bp.route('/budget/revised')
-def budget_revised():
+def budget_vs_actual():
     return render_template('admin/budget_vs_actual.html')
 
 @bp.route('/budget/explanation')
-def budget_explanation():
+def budget_achievement_lines():
     return render_template('admin/budget_achievement_lines.html')
 
 @bp.route('/purchase-orders')
