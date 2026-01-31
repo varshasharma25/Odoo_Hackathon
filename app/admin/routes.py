@@ -6,6 +6,7 @@ from datetime import datetime
 from app.admin import bp
 from app import db
 from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine
+from sqlalchemy.exc import IntegrityError
 
 def save_image(file):
     if file and file.filename:
@@ -37,25 +38,32 @@ def contacts_list():
 @login_required
 def contact_new():
     if request.method == 'POST':
-        image_url = None
-        if 'image' in request.files:
-            file = request.files['image']
-            saved_path = save_image(file)
-            if saved_path:
-                image_url = saved_path
+        try:
+            image_url = None
+            if 'image' in request.files:
+                file = request.files['image']
+                saved_path = save_image(file)
+                if saved_path:
+                    image_url = saved_path
 
-        contact = Contact(
-            name=request.form.get('name'),
-            email=request.form.get('email'), 
-            phone=request.form.get('phone'),
-            company=request.form.get('company'),
-            address=request.form.get('address'),
-            image_url=image_url
-        )
-        db.session.add(contact)
-        db.session.commit()
-        flash('Contact created successfully!', 'success')
-        return redirect(url_for('admin.contacts_list'))
+            contact = Contact(
+                name=request.form.get('name'),
+                email=request.form.get('email') or None,  # Store empty email as None
+                phone=request.form.get('phone'),
+                company=request.form.get('company'),
+                address=request.form.get('address'),
+                image_url=image_url
+            )
+            db.session.add(contact)
+            db.session.commit()
+            flash('Contact created successfully!', 'success')
+            return redirect(url_for('admin.contacts_list'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Error: A contact with this email already exists.', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An unexpected error occurred: {str(e)}', 'danger')
     return render_template('admin/contact_form.html', contact=None)
 
 @bp.route('/contact/<int:id>', methods=['GET', 'POST'])
@@ -63,21 +71,28 @@ def contact_new():
 def contact_detail(id):
     contact = Contact.query.get_or_404(id)
     if request.method == 'POST':
-        contact.name = request.form.get('name')
-        contact.email = request.form.get('email')
-        contact.phone = request.form.get('phone')
-        contact.company = request.form.get('company')
-        contact.address = request.form.get('address')
-        
-        if 'image' in request.files:
-            file = request.files['image']
-            saved_path = save_image(file)
-            if saved_path:
-                contact.image_url = saved_path
-                
-        db.session.commit()
-        flash('Contact updated successfully!', 'success')
-        return redirect(url_for('admin.contacts_list'))
+        try:
+            contact.name = request.form.get('name')
+            contact.email = request.form.get('email') or None
+            contact.phone = request.form.get('phone')
+            contact.company = request.form.get('company')
+            contact.address = request.form.get('address')
+            
+            if 'image' in request.files:
+                file = request.files['image']
+                saved_path = save_image(file)
+                if saved_path:
+                    contact.image_url = saved_path
+                    
+            db.session.commit()
+            flash('Contact updated successfully!', 'success')
+            return redirect(url_for('admin.contacts_list'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Error: A contact with this email already exists.', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An unexpected error occurred: {str(e)}', 'danger')
     return render_template('admin/contact_form.html', contact=contact)
 
 @bp.route('/products')

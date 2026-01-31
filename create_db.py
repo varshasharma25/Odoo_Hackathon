@@ -29,11 +29,11 @@ try:
     exists = cursor.fetchone()
     
     if exists:
-        print(f"✓ Database '{DB_NAME}' already exists")
+        print(f"Database '{DB_NAME}' already exists")
     else:
         # Create database
         cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(DB_NAME)))
-        print(f"✓ Database '{DB_NAME}' created successfully!")
+        print(f"Database '{DB_NAME}' created successfully!")
     
     cursor.close()
     conn.close()

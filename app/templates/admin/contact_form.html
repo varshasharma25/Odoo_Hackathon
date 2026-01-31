@@ -20,6 +20,9 @@
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --accent-pink: #d63384;
             /* For labels like in image */
+            --danger: #ef4444;
+            --success: #22c55e;
+            --info: #3b82f6;
         }
 
         * {
@@ -227,6 +230,31 @@
             font-style: italic;
         }
 
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 24px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
         @media (max-width: 900px) {
             .form-body {
                 grid-template-columns: 1fr;
@@ -250,10 +278,7 @@
                 <div class="btn-group">
                     <button type="button" class="btn"
                         onclick="window.location.href='{{ url_for('admin.contact_new') }}';">New</button>
-                    <button type="submit" class="btn" form="contactForm"
-                        style="background-color: var(--primary-accent); color: white;">
-                        {% if contact %}Save{% else %}Create{% endif %}
-                    </button>
+                    <!-- Success button is now inside the form for better reliability -->
                     <button type="button" class="btn">Archived</button>
                 </div>
                 <div class="btn-group">
@@ -261,6 +286,19 @@
                         onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
                     <button type="button" class="btn" onclick="window.history.back();">Back</button>
                 </div>
+            </div>
+
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
             </div>
 
             <form id="contactForm" method="POST" class="form-body" enctype="multipart/form-data">
@@ -317,6 +355,13 @@
                         <p class="hint-text">
                             *Tags feature coming soon
                         </p>
+                    </div>
+
+                    <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
+                        <button type="submit" class="btn"
+                            style="background-color: var(--primary-accent); color: white; width: 200px; padding: 15px;">
+                            {% if contact %}Save Changes{% else %}Create Contact{% endif %}
+                        </button>
                     </div>
                 </div>
             </form>

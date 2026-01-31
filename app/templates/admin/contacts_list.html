@@ -18,6 +18,9 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --danger: #ef4444;
+            --success: #22c55e;
+            --info: #3b82f6;
         }
 
         * {
@@ -178,6 +181,31 @@
                 display: none;
             }
         }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin: 0 32px 24px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
     </style>
 </head>
 
@@ -199,6 +227,19 @@
                     <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
                     <button class="btn" onclick="window.history.back();">Back</button>
                 </div>
+            </div>
+
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
             </div>
 
             <!-- Table -->
