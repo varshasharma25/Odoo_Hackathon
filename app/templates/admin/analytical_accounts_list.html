@@ -219,67 +219,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Sample Row 1 -->
+                    {% if accounts %}
+                    {% for account in accounts %}
                     <tr class="link-row"
-                        onclick="window.location.href='{{ url_for('admin.analytical_account_detail', id=1) }}';">
+                        onclick="window.location.href='{{ url_for('admin.analytical_account_detail', id=account.id) }}';">
                         <td>
                             <div class="checkbox-container"></div>
                         </td>
-                        <td>Project: Modern Villa Renovation</td>
-                        <td class="hide-mobile">ANA/2026/001</td>
-                        <td class="hide-mobile">Azure Interior</td>
-                        <td>Internal Projects</td>
+                        <td>{{ account.name }}</td>
+                        <td class="hide-mobile">{{ account.code or 'N/A' }}</td>
+                        <td class="hide-mobile">{{ account.description or '-' }}</td>
+                        <td>-</td>
                         <td><span class="badge badge-active">Active</span></td>
                     </tr>
-                    <!-- Sample Row 2 -->
-                    <tr class="link-row"
-                        onclick="window.location.href='{{ url_for('admin.analytical_account_detail', id=2) }}';">
-                        <td>
-                            <div class="checkbox-container"></div>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
+                            No analytical accounts found. Click "New" to add your first account.
                         </td>
-                        <td>Maintenance: Office HQ</td>
-                        <td class="hide-mobile">ANA/2026/042</td>
-                        <td class="hide-mobile">Nimesh Pathak</td>
-                        <td>Service Plan</td>
-                        <td><span class="badge badge-pending">Pending</span></td>
                     </tr>
-                    <!-- Sample Row 3 -->
-                    <tr class="link-row"
-                        onclick="window.location.href='{{ url_for('admin.analytical_account_detail', id=3) }}';">
-                        <td>
-                            <div class="checkbox-container"></div>
-                        </td>
-                        <td>Furniture Batch: Teak Series</td>
-                        <td class="hide-mobile">ANA/PROD/99</td>
-                        <td class="hide-mobile">-</td>
-                        <td>Production Plan</td>
-                        <td><span class="badge badge-active">Active</span></td>
-                    </tr>
-                    <!-- Empty rows to match image aesthetic -->
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td class="hide-mobile"></td>
-                        <td class="hide-mobile"></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td class="hide-mobile"></td>
-                        <td class="hide-mobile"></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td class="hide-mobile"></td>
-                        <td class="hide-mobile"></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

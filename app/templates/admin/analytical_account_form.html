@@ -176,55 +176,59 @@
             <!-- Toolbar -->
             <div class="toolbar">
                 <div class="btn-group">
-                    <button class="btn"
+                    <button type="button" class="btn"
                         onclick="window.location.href='{{ url_for('admin.analytical_account_new') }}';">New</button>
-                    <button class="btn btn-confirm">Confirm</button>
-                    <button class="btn">Archived</button>
+                    <button type="submit" form="accountForm" class="btn btn-confirm">
+                        {% if account %}Save{% else %}Create{% endif %}
+                    </button>
+                    <button type="button" class="btn">Archived</button>
                 </div>
                 <div class="btn-group">
-                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
-                    <button class="btn" onclick="window.history.back();">Back</button>
+                    <button type="button" class="btn"
+                        onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button type="button" class="btn" onclick="window.history.back();">Back</button>
                 </div>
             </div>
 
-            <!-- Form Body - Styled as a list/table as per image -->
-            <table class="analytics-table">
-                <thead>
-                    <tr>
-                        <th colspan="2">Analytic Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Deepawali</td>
-                    </tr>
-                    <tr>
-                        <td>Marriage Session</td>
-                    </tr>
-                    <tr>
-                        <td>Furniture Expo 2026</td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" class="input-field" placeholder="Add new analytic label..."></td>
-                    </tr>
-                    <!-- Aesthetic spacers -->
-                    <tr class="empty-row">
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- Form Body -->
+            <form id="accountForm" method="POST">
+                <table class="analytics-table">
+                    <tbody>
+                        <tr>
+                            <td style="width: 200px; color: var(--accent-pink); font-weight: 500;">Account Name</td>
+                            <td>
+                                <input type="text" name="name" class="input-field" placeholder="Enter account name"
+                                    value="{{ account.name if account else '' }}" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--accent-pink); font-weight: 500;">Code</td>
+                            <td>
+                                <input type="text" name="code" class="input-field" placeholder="e.g. ANA/2026/001"
+                                    value="{{ account.code if account else '' }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="color: var(--accent-pink); font-weight: 500; vertical-align: top; padding-top: 20px;">
+                                Description</td>
+                            <td>
+                                <textarea name="description" class="input-field" rows="3"
+                                    placeholder="Account description">{{ account.description if account else '' }}</textarea>
+                            </td>
+                        </tr>
+                        <!-- Aesthetic spacers -->
+                        <tr class="empty-row">
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="empty-row">
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         </div>
     </div>
 

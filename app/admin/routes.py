@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from app.admin import bp
 from app import db
-from app.models import Contact, Product, Budget
+from app.models import Contact, Product, Budget, AnalyticalAccount
 
 @bp.route('/dashboard')
 @login_required
@@ -83,15 +83,34 @@ def product_detail(id):
 
 @bp.route('/analytical-accounts')
 def analytical_accounts_list():
-    return render_template('admin/analytical_accounts_list.html')
+    accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
+    return render_template('admin/analytical_accounts_list.html', accounts=accounts)
 
 @bp.route('/analytical-account/new', methods=['GET', 'POST'])
 def analytical_account_new():
-    return render_template('admin/analytical_account_form.html')
+    if request.method == 'POST':
+        account = AnalyticalAccount(
+            name=request.form.get('name'),
+            code=request.form.get('code'),
+            description=request.form.get('description')
+        )
+        db.session.add(account)
+        db.session.commit()
+        flash('Analytical Account created successfully!', 'success')
+        return redirect(url_for('admin.analytical_accounts_list'))
+    return render_template('admin/analytical_account_form.html', account=None)
 
 @bp.route('/analytical-account/<int:id>', methods=['GET', 'POST'])
 def analytical_account_detail(id):
-    return render_template('admin/analytical_account_form.html')
+    account = AnalyticalAccount.query.get_or_404(id)
+    if request.method == 'POST':
+        account.name = request.form.get('name')
+        account.code = request.form.get('code')
+        account.description = request.form.get('description')
+        db.session.commit()
+        flash('Analytical Account updated successfully!', 'success')
+        return redirect(url_for('admin.analytical_accounts_list'))
+    return render_template('admin/analytical_account_form.html', account=account)
 
 @bp.route('/budgets')
 def budgets_list():
