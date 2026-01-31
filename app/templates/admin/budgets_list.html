@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget List | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            /* Odoo Indigo */
+            --body-bg: #f8fafc;
+            --text-dark: #000;
+            --text-blue: #2196f3;
+            --text-pink: #d63384;
+            --text-orange: #ff9800;
+            --border-color: #a47c94;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .sub-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-orange);
+            margin-bottom: 32px;
+        }
+
+        .list-card {
+            background: white;
+            border-radius: 32px;
+            border: 1px solid #000;
+            box-shadow: var(--shadow);
+            padding: 24px 0;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            padding: 0 32px 24px;
+        }
+
+        .btn {
+            padding: 10px 32px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #000;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .budget-table th {
+            text-align: left;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-blue);
+            border-top: 1.5px solid var(--border-color);
+            border-bottom: 1.5px solid var(--border-color);
+        }
+
+        .budget-table td {
+            padding: 16px 32px;
+            font-size: 16px;
+            color: var(--text-pink);
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .link-row {
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .link-row:hover {
+            background-color: #f9fafb;
+        }
+
+        .pie-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* SVG Pie chart icon simulate the image */
+        .pie-chart-svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Empty rows */
+        .empty-row td {
+            height: 48px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .budget-table th,
+            .budget-table td {
+                padding: 12px 16px;
+            }
+
+            .hide-mobile {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="header-title">Budget</h1>
+        <h2 class="sub-title">List View</h2>
+
+        <div class="list-card">
+            <!-- Toolbar -->
+            <div class="toolbar" style="display: flex; justify-content: space-between;">
+                <div style="display: flex; gap: 16px;">
+                    <button class="btn" onclick="window.location.href='{{ url_for('admin.budget_new') }}';">New</button>
+                </div>
+                <div style="display: flex; gap: 16px;">
+                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button class="btn" onclick="window.history.back();">Back</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <table class="budget-table">
+                <thead>
+                    <tr>
+                        <th>Budget Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Pie Chart</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Sample Row 1 -->
+                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.budget_detail', id=1) }}';">
+                        <td>January 2026</td>
+                        <td>01/01/2026</td>
+                        <td>31/01/2026</td>
+                        <td>Confirm</td>
+                        <td>
+                            <div class="pie-icon">
+                                <svg class="pie-chart-svg" viewBox="0 0 32 32">
+                                    <circle r="16" cx="16" cy="16" fill="#f1f5f9" />
+                                    <path d="M16 16 L16 0 A16 16 0 0 1 32 16 Z" fill="#2196f3" />
+                                    <path d="M16 16 L32 16 A16 16 0 0 1 16 32 Z" fill="#d63384" />
+                                    <path d="M16 16 L16 32 A16 16 0 0 1 0 16 Z" fill="#ff9800" />
+                                    <circle r="15" cx="16" cy="16" fill="none" stroke="#333" stroke-width="0.5" />
+                                    <line x1="16" y1="0" x2="16" y2="32" stroke="#333" stroke-width="0.5" />
+                                    <line x1="0" y1="16" x2="32" y2="16" stroke="#333" stroke-width="0.5" />
+                                </svg>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Aesthetic spacers matching image -->
+                    <tr class="empty-row">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="empty-row">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="empty-row">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="empty-row">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="empty-row">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>

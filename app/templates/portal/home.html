@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Customer Portal | Shiv Furniture</title>
+    <title>Admin Portal | Shiv Furniture</title>
     <!-- Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -12,13 +12,14 @@
             --primary-accent: #714B67;
             /* Odoo Indigo */
             --primary-hover: #5d3d55;
-            --sidebar-bg: #111827;
+            --nav-bg: #ffffff;
             --body-bg: #f8fafc;
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --card-white: #ffffff;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --header-height: 80px;
         }
 
         * {
@@ -31,112 +32,187 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--body-bg);
             color: var(--text-dark);
-            display: flex;
             min-height: 100vh;
         }
 
-        /* Sidebar Component */
-        .sidebar {
-            width: 280px;
-            background-color: var(--sidebar-bg);
-            color: white;
-            padding: 32px 24px;
-            display: flex;
-            flex-direction: column;
+        /* --- MEGA MENU NAVIGATION --- */
+        .top-nav {
             position: fixed;
-            height: 100vh;
-        }
-
-        .sidebar-brand {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 48px;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--nav-bg);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            gap: 12px;
+            padding: 0 48px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
         }
 
-        .brand-dot {
-            width: 12px;
-            height: 12px;
-            background-color: var(--primary-accent);
-            border-radius: 50%;
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: 8px;
-        }
-
-        .nav-link {
-            color: #9ca3af;
-            text-decoration: none;
-            padding: 12px 16px;
-            display: block;
-            border-radius: 8px;
-            transition: all 0.2s;
-            font-size: 15px;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: white;
-        }
-
-        .nav-link.active {
-            background-color: var(--primary-accent);
-        }
-
-        /* Main Content Wrapper */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 48px;
-        }
-
-        header {
+        .nav-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
         }
 
-        .user-info {
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-accent);
+            text-decoration: none;
+            margin-right: 48px;
         }
 
-        .avatar {
-            width: 40px;
-            height: 40px;
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-accent);
+            border-radius: 8px;
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 40px;
+            flex: 1;
+        }
+
+        .menu-dropdown {
+            position: relative;
+        }
+
+        .menu-trigger {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+        }
+
+        .menu-trigger:hover {
+            color: var(--primary-accent);
+        }
+
+        .menu-trigger img {
+            width: 12px;
+            opacity: 0.5;
+        }
+
+        /* Dropdown Box styling matched to user image layout */
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            min-width: 220px;
+            padding: 20px 0;
+            display: none;
+            /* Toggle via JS or Hover */
+            margin-top: 10px;
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 10px 24px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: var(--primary-accent);
+            padding-left: 28px;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
             background-color: var(--primary-accent);
+            color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
             font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .main-wrapper {
+            padding-top: var(--header-height);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 48px;
+            padding-right: 48px;
+        }
+
+        .page-header {
+            padding: 40px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: var(--text-muted);
         }
 
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--primary-accent) 0%, #4a3143 100%);
             border-radius: 24px;
-            padding: 48px;
+            padding: 60px;
             color: white;
-            margin-bottom: 40px;
+            margin-bottom: 48px;
             box-shadow: 0 20px 40px rgba(113, 75, 103, 0.15);
             position: relative;
             overflow: hidden;
         }
 
         .hero h1 {
-            font-size: 36px;
+            font-size: 42px;
             margin-bottom: 16px;
             font-weight: 600;
         }
@@ -148,30 +224,29 @@
             line-height: 1.6;
         }
 
-        /* Grid Layout */
+        /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
             gap: 32px;
+            padding-bottom: 60px;
         }
 
-        .feature-card {
-            background-color: var(--card-white);
+        .card {
+            background: var(--card-white);
             border-radius: 20px;
             padding: 40px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
         }
 
-        .feature-card:hover {
+        .card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
             border-color: var(--primary-accent);
         }
 
-        .icon-circle {
+        .card-icon {
             width: 56px;
             height: 56px;
             background-color: #fdf2f8;
@@ -184,110 +259,122 @@
             margin-bottom: 24px;
         }
 
-        .feature-card h3 {
+        .card h3 {
             font-size: 20px;
             margin-bottom: 12px;
-            color: var(--text-dark);
         }
 
-        .feature-card p {
+        .card p {
             font-size: 15px;
             color: var(--text-muted);
             line-height: 1.6;
-            margin-bottom: 32px;
-            flex-grow: 1;
+            margin-bottom: 24px;
         }
 
-        .btn-action {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: var(--primary-accent);
-            color: white;
+        .btn-link {
+            color: var(--primary-accent);
             text-decoration: none;
-            border-radius: 10px;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 14px;
-            transition: background 0.2s;
-            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-action:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 80px;
-                padding: 24px 16px;
-            }
-
-            .sidebar-brand span,
-            .nav-link span {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 80px;
-            }
+        .btn-link:hover {
+            color: var(--primary-hover);
         }
 
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
+            .top-nav {
+                padding: 0 24px;
             }
 
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                padding: 16px;
+            .menu-items {
+                display: none;
             }
 
-            .main-content {
-                margin-left: 0;
-                padding: 24px;
+            /* Mobile would need a burger menu */
+            .main-wrapper {
+                padding: var(--header-height) 24px 24px;
+            }
+
+            .hero {
+                padding: 40px 30px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-dot"></div>
-            <span>Shiv Furniture</span>
+    <!-- TOP NAVIGATION (Mega Menu Structure) -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="/" class="brand">
+                <div class="brand-icon"></div>
+                Shiv Furniture
+            </a>
+
+            <div class="menu-items">
+                <!-- ACCOUNT MENU -->
+                <div class="menu-dropdown">
+                    <button class="menu-trigger" onclick="toggleMenu(this)">
+                        Account
+                        <span style="font-size: 10px;">▼</span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('admin.contacts_list') }}" class="dropdown-item">Contact</a>
+                        <a href="{{ url_for('admin.products_list') }}" class="dropdown-item">Product</a>
+                        <a href="{{ url_for('admin.analytical_accounts_list') }}" class="dropdown-item">Analyticals</a>
+                        <a href="#" class="dropdown-item">Auto Analytic Model</a>
+                        <a href="{{ url_for('admin.budgets_list') }}" class="dropdown-item">Budget</a>
+                    </div>
+                </div>
+
+                <!-- PURCHASE MENU -->
+                <div class="menu-dropdown">
+                    <button class="menu-trigger" onclick="toggleMenu(this)">
+                        Purchase
+                        <span style="font-size: 10px;">▼</span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" class="dropdown-item">Purchase Order</a>
+                        <a href="#" class="dropdown-item">Purchase Bill</a>
+                        <a href="#" class="dropdown-item">Payment</a>
+                    </div>
+                </div>
+
+                <!-- SALE MENU -->
+                <div class="menu-dropdown">
+                    <button class="menu-trigger" onclick="toggleMenu(this)">
+                        Sale
+                        <span style="font-size: 10px;">▼</span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" class="dropdown-item">Sale Order</a>
+                        <a href="#" class="dropdown-item">Sale Invoice</a>
+                        <a href="#" class="dropdown-item">Receipt</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-actions">
+                <span style="font-size: 14px; font-weight: 500;">Admin Portal</span>
+                <div class="avatar-circle">C</div>
+            </div>
         </div>
-        <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="#" class="nav-link active"><span>Overview</span></a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('portal.invoices_list') }}" class="nav-link"><span>Invoices</span></a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('portal.so_list') }}" class="nav-link"><span>Orders</span></a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link"><span>Settings</span></a>
-            </li>
-        </ul>
-    </aside>
+    </nav>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <header>
-            <div class="header-breadcrumb">
-                <span style="color: var(--text-muted);">Portal /</span> Overview
-            </div>
-            <div class="user-info">
-                <span>Customer Portal</span>
-                <div class="avatar">C</div>
-            </div>
-        </header>
+    <!-- CONTENT BELOW MENU -->
+    <div class="main-wrapper">
+        <div class="page-header">
+            <div class="breadcrumb">Portal / Overview</div>
+        </div>
 
-        <!-- HERO SECTION -->
         <section class="hero">
             <h1>Welcome to Your Portal</h1>
             <p>
@@ -296,39 +383,64 @@
             </p>
         </section>
 
-        <!-- DASHBOARD GRID -->
         <div class="dashboard-grid">
-            <div class="feature-card">
-                <div class="icon-circle">📄</div>
+            <div class="card">
+                <div class="card-icon">📄</div>
                 <h3>Billing & Finance</h3>
                 <p>
                     Review your entire invoice history, check real-time payment statuses, and download tax-ready
                     documents whenever you need them.
                 </p>
-                <a href="{{ url_for('portal.invoices_list') }}" class="btn-action">Manage Billing</a>
+                <a href="{{ url_for('portal.invoices_list') }}" class="btn-link">Manage Billing →</a>
             </div>
 
-            <div class="feature-card">
-                <div class="icon-circle">📦</div>
+            <div class="card">
+                <div class="card-icon">📦</div>
                 <h3>Order Tracking</h3>
                 <p>
                     Stay updated on your active sales and purchase orders. Access detailed breakdowns of items, delivery
                     dates, and current progress.
                 </p>
-                <a href="{{ url_for('portal.so_list') }}" class="btn-action">Track Orders</a>
+                <a href="{{ url_for('portal.so_list') }}" class="btn-link">Track Orders →</a>
             </div>
 
-            <div class="feature-card">
-                <div class="icon-circle">💳</div>
+            <div class="card">
+                <div class="card-icon">💳</div>
                 <h3>Secure Payments</h3>
                 <p>
                     Process payments for pending bills instantly using our encrypted payment system. Fast, secure, and
                     fully recorded in your history.
                 </p>
-                <a href="{{ url_for('portal.invoices_list') }}" class="btn-action">Settle Balances</a>
+                <a href="{{ url_for('portal.invoices_list') }}" class="btn-link">Settle Balances →</a>
             </div>
         </div>
-    </main>
+    </div>
+
+    <script>
+        function toggleMenu(button) {
+            const dropdown = button.parentElement;
+            const wasActive = dropdown.classList.contains('active');
+
+            // Close all dropdowns
+            document.querySelectorAll('.menu-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+
+            // Toggle current if it wasn't active
+            if (!wasActive) {
+                dropdown.classList.add('active');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.menu-dropdown')) {
+                document.querySelectorAll('.menu-dropdown').forEach(d => {
+                    d.classList.remove('active');
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

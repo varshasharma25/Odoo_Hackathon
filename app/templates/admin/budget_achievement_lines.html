@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Field Explanation | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #ef4444;
+            --primary-pink: #d63384;
+            --primary-orange: #f59e0b;
+            --primary-blue: #2196f3;
+            --text-dark: #333;
+            --bg-color: #ffffff;
+            --border-gray: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 500;
+            color: var(--primary-red);
+            margin-bottom: 24px;
+        }
+
+        .explanation-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-gray);
+            border-radius: 40px;
+            padding: 48px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .field-row {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 32px;
+            align-items: flex-start;
+        }
+
+        .field-label {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--primary-pink);
+            min-width: 180px;
+            text-align: left;
+        }
+
+        .field-content {
+            font-size: 16px;
+            color: #4b5563;
+        }
+
+        .highlight-pink {
+            color: var(--primary-pink);
+        }
+
+        .highlight-orange {
+            color: var(--primary-orange);
+        }
+
+        .highlight-blue {
+            color: var(--primary-blue);
+        }
+
+        .nested-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+        }
+
+        .nested-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 15px;
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        .nested-table td {
+            padding: 12px;
+            font-size: 15px;
+            color: #6b7280;
+        }
+
+        .formula {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin: 16px 0;
+        }
+
+        .example {
+            margin-top: 12px;
+            padding-left: 20px;
+            border-left: 3px solid #e5e7eb;
+            font-style: italic;
+            color: #9ca3af;
+        }
+
+        .hint-text {
+            font-size: 14px;
+            color: var(--primary-orange);
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .field-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .explanation-card {
+                padding: 24px;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="page-title">Field Explanation</h1>
+
+        <div class="explanation-card">
+            <!-- Toolbar -->
+            <div
+                style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 32px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px;">
+                <button onclick="window.location.href='{{ url_for('portal.home') }}';"
+                    style="padding: 8px 20px; border-radius: 6px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-family: inherit;">Home</button>
+                <button onclick="window.history.back();"
+                    style="padding: 8px 20px; border-radius: 6px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-family: inherit;">Back</button>
+            </div>
+
+            <!-- Budget Name -->
+            <div class="field-row">
+                <span class="field-label">Budget Name</span>
+                <div class="field-content">
+                    Alpha numeric text <span class="highlight-pink">In case of Revision Keep original budget name as it
+                        is and add date of revision in last with word ( Rev DD MM YYYY )</span>
+                    <br><span class="example">E.g. Project A (Rev DD MM YYYY)</span>
+                </div>
+            </div>
+
+            <!-- Budget Period -->
+            <div class="field-row">
+                <span class="field-label">Budget Period</span>
+                <div class="field-content">Date</div>
+            </div>
+
+            <!-- Analytic Name -->
+            <div class="field-row">
+                <span class="field-label">Analytic Name</span>
+                <div class="field-content">Date</div>
+            </div>
+
+            <!-- Type -->
+            <div class="field-row">
+                <span class="field-label">Type</span>
+                <div class="field-content">
+                    <span class="highlight-orange">Here, Type = Income / Expense</span>
+                    <br><br>
+                    <span class="highlight-orange">Analytical set on on All Invoice lines to be mapped with type Budget
+                        = Income</span>
+                    <br>
+                    <span class="highlight-blue">Analytical set on on All Purchase Order / Vendor Bill lines to be
+                        mapped with type Budget Type = Expense</span>
+                </div>
+            </div>
+
+            <!-- Budgeted Amount -->
+            <div class="field-row">
+                <span class="field-label">Budgeted Amount</span>
+                <div class="field-content highlight-pink">Monetery</div>
+            </div>
+
+            <!-- Achieved Amount -->
+            <div class="field-row">
+                <span class="field-label">Achieved Amount</span>
+                <div class="field-content">
+                    <span class="highlight-orange">Only Visible for Confirmed Budget,</span><br>
+                    Considering above Deepawali Analytical Example :
+
+                    <table class="nested-table">
+                        <thead>
+                            <tr>
+                                <th>Analytic Name</th>
+                                <th>Type</th>
+                                <th>Lookup</th>
+                                <th>Achieved Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Deepawali</td>
+                                <td>Income</td>
+                                <td class="highlight-blue">Sales Invoice</td>
+                                <td>21,600/-</td>
+                                <td class="highlight-blue" style="font-size: 13px;">
+                                    Search <span style="text-decoration: underline;">Analytical in Sales Invoice</span>
+                                    with name Deepawali,<br>
+                                    consider <span style="text-decoration: underline;">budget period</span> and <span
+                                        style="text-decoration: underline;">compute total</span> and set in achieved
+                                    amount
+                                    <br><span class="highlight-orange">Budget Period = (start date ____ End
+                                        Date____)</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Deepawali</td>
+                                <td>Expense</td>
+                                <td class="highlight-blue">Vendor Bills</td>
+                                <td>16,350/-</td>
+                                <td class="highlight-blue" style="font-size: 13px;">
+                                    Search <span style="text-decoration: underline;">Analytical in Vendor Bills</span>
+                                    with name Deepawali,<br>
+                                    consider <span style="text-decoration: underline;">budget period</span> and <span
+                                        style="text-decoration: underline;">compute total</span> and set in achieved
+                                    amount
+                                    <br><span class="highlight-orange">Budget Period = (start date ____ End
+                                        Date____)</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- View button -->
+            <div class="field-row">
+                <span class="field-label">Achieved Amount View button</span>
+                <div class="field-content">
+                    Clicking on View button open list view of all invoice/bill lines having same analytical for the
+                    budget period.<br>
+                    <span style="font-style: italic;">Invoice/Bill/PO Number, date, Amount</span>
+                </div>
+            </div>
+
+            <!-- Achieved % -->
+            <div class="field-row">
+                <span class="field-label">Achieved %</span>
+                <div class="field-content">
+                    <span class="highlight-pink">Only Visible for Confirmed Budget,</span><br>
+                    Consider Following Formula :
+                    <div class="formula highlight-blue">(Acheived Amount / Budgeted Amount) * 100</div>
+                    <div class="example">
+                        Example:<br>
+                        Deepawali Expense 5. 84 % = (16,350/2,80,000) * 100
+                    </div>
+                </div>
+            </div>
+
+            <!-- Amount to Achieve -->
+            <div class="field-row" style="border-top: 1px solid #f1f5f9; padding-top: 32px;">
+                <span class="field-label">Amount to Achieve</span>
+                <div class="field-content">
+                    <span class="highlight-pink">Only Visible for Confirmed Budget,</span><br>
+                    Consider Following Formula :
+                    <div class="formula highlight-blue">Budgeted Amount - (minus) Achived Amount</div>
+                    <div class="example">
+                        Example:<br>
+                        Deepawali Income = 4,00,000 - 21,600<br>
+                        = 3,78,400
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

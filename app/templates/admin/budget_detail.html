@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Detail | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            /* Odoo Indigo */
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #333;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --accent-pink: #d63384;
+            --accent-orange: #f59e0b;
+            --accent-blue: #2196f3;
+            --accent-green: #16a34a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 32px;
+            color: #000;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 36px;
+            border: 1px solid #000;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            text-align: left;
+        }
+
+        /* Toolbar & Wizard Section */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #a47c94;
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #000;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-accent);
+            color: white;
+            border-color: var(--primary-accent);
+        }
+
+        /* Status Wizard/Breadcrumbs */
+        .status-wizard {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .step {
+            padding: 10px 24px;
+            font-size: 14px;
+            color: #64748b;
+            position: relative;
+            background: #f1f5f9;
+            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
+            margin-right: -10px;
+        }
+
+        .step:first-child {
+            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%);
+        }
+
+        .step:last-child {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 10% 50%);
+            margin-right: 0;
+        }
+
+        .step.active {
+            color: var(--primary-accent);
+            font-weight: 600;
+            background: #e2e8f0;
+        }
+
+        /* Form Fields */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .label {
+            font-size: 18px;
+            color: var(--accent-pink);
+            font-weight: 500;
+            min-width: 140px;
+            padding-bottom: 6px;
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #a47c94;
+            padding: 8px 0;
+            font-size: 18px;
+            color: #333;
+            outline: none;
+            background: transparent;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .revised-text {
+            color: var(--accent-pink);
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        /* Table Section */
+        .analytic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .analytic-table th {
+            text-align: left;
+            padding: 16px 12px;
+            font-size: 15px;
+            color: var(--accent-blue);
+            font-weight: 500;
+            border-bottom: 1px solid #a47c94;
+        }
+
+        .analytic-table td {
+            padding: 14px 12px;
+            font-size: 15px;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .analytic-table .monetary-val {
+            color: var(--accent-pink);
+            font-style: italic;
+        }
+
+        .analytic-table .achieved-val {
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .view-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header-section {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="header-title">Budget</h1>
+
+        <div class="form-card">
+            <!-- Header section with Toolbar and Status -->
+            <div class="header-section">
+                <div class="btn-group">
+                    <button class="btn" onclick="window.location.href='{{ url_for('admin.budget_new') }}';">New</button>
+                    <button class="btn btn-primary">Confirm</button>
+                    <button class="btn"
+                        onclick="window.location.href='{{ url_for('admin.budget_revised') }}';">Revise</button>
+                    <button class="btn">Archived</button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button class="btn" onclick="window.history.back();">Back</button>
+                </div>
+
+                <div class="status-wizard">
+                    <div class="step active">Draft</div>
+                    <div class="step">Confirm</div>
+                    <div class="step">Revised</div>
+                    <div class="step">Cancelled</div>
+                </div>
+            </div>
+
+            <!-- Main Form Inputs -->
+            <div class="form-grid">
+                <div class="left-col">
+                    <div class="input-group">
+                        <span class="label">Budget Name</span>
+                        <input type="text" class="input-field" placeholder="January 2026">
+                    </div>
+                    <div class="input-group">
+                        <span class="label">Budget Period</span>
+                        <div class="date-range">
+                            <input type="text" class="input-field" placeholder="Start Date" style="text-align: center;">
+                            <span style="padding-bottom: 10px; color: var(--accent-pink); font-weight: 500;">To</span>
+                            <input type="text" class="input-field" placeholder="End Date" style="text-align: center;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col">
+                    <div class="input-group">
+                        <span class="label" style="min-width: 120px;">Revised with</span>
+                        <input type="text" class="input-field" placeholder="Revised Budget Label">
+                    </div>
+                    <p class="revised-text" style="padding-left: 140px; font-style: italic; font-size: 13px;">
+                        (if revised than revised budget clickable link)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Analyticals Table -->
+            <table class="analytic-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Analytic Name</th>
+                        <th>Type</th>
+                        <th>Budgeted Amount</th>
+                        <th>Achieved Amount</th>
+                        <th>Achieved %</th>
+                        <th>Amount to Achieve</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Deepawali</td>
+                        <td>Income</td>
+                        <td>4,00,000/-</td>
+                        <td><span class="achieved-val">21,600/-</span> <span class="view-link"
+                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
+                        </td>
+                        <td></td>
+                        <td>3,78,400/-</td>
+                    </tr>
+                    <tr>
+                        <td>Marriage Session 2026</td>
+                        <td>Income</td>
+                        <td class="monetary-val">Monetary</td>
+                        <td class="monetary-val">Compute <span class="view-link"
+                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Furniture Expo 2026</td>
+                        <td>Income</td>
+                        <td class="monetary-val">Monetary</td>
+                        <td class="monetary-val">Compute <span class="view-link"
+                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Deepawali</td>
+                        <td>Expense</td>
+                        <td>2,80,000/-</td>
+                        <td>16,350/- <span class="view-link"
+                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
+                        </td>
+                        <td>5.84 %</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                        <td colspan="2" style="font-size: 11px; color: var(--accent-orange); font-style: italic;">
+                            (Achieved Amount / Budgeted Amount) * 100
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Marriage Session 2026</td>
+                        <td>Expense</td>
+                        <td class="monetary-val">Monetary</td>
+                        <td class="monetary-val">Compute <span class="view-link"
+                                onclick="window.location.href='{{ url_for('admin.budget_explanation') }}';">View</span>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>

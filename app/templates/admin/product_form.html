@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Form | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            /* Odoo Indigo */
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #333;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --accent-pink: #d63384;
+            /* For labels like in image */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            color: #000;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 36px;
+            border: 1px solid #000;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            text-align: left;
+            position: relative;
+        }
+
+        /* Toolbar Section */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #a47c94;
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #000;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Form Layout */
+        .form-body {
+            padding: 20px 0;
+        }
+
+        .input-row {
+            margin-bottom: 40px;
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+        }
+
+        .label {
+            font-size: 18px;
+            color: var(--accent-pink);
+            font-weight: 500;
+            min-width: 140px;
+            padding-bottom: 6px;
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #a47c94;
+            padding: 8px 0;
+            font-size: 18px;
+            color: #333;
+            outline: none;
+            background: transparent;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-bottom-color: var(--primary-accent);
+        }
+
+        .input-field::placeholder {
+            color: #cbd5e1;
+            font-weight: 300;
+        }
+
+        /* Grid for secondary fields */
+        .fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            margin-top: 20px;
+        }
+
+        .col-left,
+        .col-right {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .compact-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
+        .compact-group .label {
+            min-width: 100px;
+        }
+
+        .hint-text {
+            color: #f59e0b;
+            /* Orange as in image */
+            font-size: 14px;
+            margin-top: 12px;
+            line-height: 1.4;
+            font-style: italic;
+            max-width: 300px;
+        }
+
+        @media (max-width: 800px) {
+            .fields-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="header-title">Product Master</h1>
+
+        <div class="form-card">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="btn-group">
+                    <button class="btn"
+                        onclick="window.location.href='{{ url_for('admin.product_new') }}';">New</button>
+                    <button class="btn">Confirm</button>
+                    <button class="btn">Archived</button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button class="btn" onclick="window.history.back()">Back</button>
+                </div>
+            </div>
+
+            <form action="#" method="POST" class="form-body">
+                <!-- Product Name - Full Width Underline -->
+                <div class="input-row">
+                    <span class="label">Product Name</span>
+                    <input type="text" class="input-field" placeholder="e.g. Modern Teak Chair">
+                </div>
+
+                <div class="fields-grid">
+                    <!-- Left Column: Category -->
+                    <div class="col-left">
+                        <div class="compact-group">
+                            <span class="label">Category</span>
+                            <div style="flex: 1; position: relative;">
+                                <input type="text" class="input-field" placeholder="Selection" style="width: 100%;">
+                            </div>
+                        </div>
+                        <p class="hint-text">
+                            *Category can be create and<br>
+                            save onthe fly ( Create & Save )<br>
+                            (Many 2 One field)
+                        </p>
+                    </div>
+
+                    <!-- Right Column: Prices -->
+                    <div class="col-right">
+                        <div class="compact-group">
+                            <span class="label" style="min-width: 120px;">Sales Price</span>
+                            <div style="flex: 1; display: flex; align-items: flex-end; gap: 8px;">
+                                <input type="text" class="input-field" placeholder="0.00" style="text-align: right;">
+                                <span style="font-size: 16px; color: #64748b; padding-bottom: 8px;">Rs</span>
+                            </div>
+                        </div>
+
+                        <div class="compact-group">
+                            <span class="label" style="min-width: 120px;">Purchase Price</span>
+                            <div style="flex: 1; display: flex; align-items: flex-end; gap: 8px;">
+                                <input type="text" class="input-field" placeholder="0.00" style="text-align: right;">
+                                <span style="font-size: 16px; color: #64748b; padding-bottom: 8px;">Rs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
