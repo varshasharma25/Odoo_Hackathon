@@ -242,8 +242,8 @@
                         <button type="button" class="btn" onclick="updateStatus('cancelled')">Cancel</button>
                         <button type="button" id="createBillBtn">Create Bill</button>
                         {% endif %}
-                        <button type="button" class="btn btn-confirm"
-                            style="background: var(--accent-orange);">Budget</button>
+                        <button type="button" class="btn btn-confirm" style="background: var(--accent-orange);"
+                            onclick="window.location.href='{{ url_for('admin.budgets_list') }}';">Budget</button>
                     </div>
 
                     <div class="status-container">
