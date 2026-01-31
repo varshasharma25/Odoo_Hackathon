@@ -1,8 +1,25 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_required
+from werkzeug.utils import secure_filename
+import os
 from app.admin import bp
 from app import db
 from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder
+
+def save_image(file):
+    if file and file.filename:
+        filename = secure_filename(file.filename)
+        # Ensure unique filename to prevent overwrites
+        import uuid
+        name, ext = os.path.splitext(filename)
+        filename = f"{name}_{uuid.uuid4().hex[:8]}{ext}"
+        
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        file.save(file_path)
+        return f"uploads/{filename}"
+    return None
 
 @bp.route('/dashboard')
 @login_required
@@ -19,12 +36,20 @@ def contacts_list():
 @login_required
 def contact_new():
     if request.method == 'POST':
+        image_url = None
+        if 'image' in request.files:
+            file = request.files['image']
+            saved_path = save_image(file)
+            if saved_path:
+                image_url = saved_path
+
         contact = Contact(
             name=request.form.get('name'),
             email=request.form.get('email'), 
             phone=request.form.get('phone'),
             company=request.form.get('company'),
-            address=request.form.get('address')
+            address=request.form.get('address'),
+            image_url=image_url
         )
         db.session.add(contact)
         db.session.commit()
@@ -42,6 +67,13 @@ def contact_detail(id):
         contact.phone = request.form.get('phone')
         contact.company = request.form.get('company')
         contact.address = request.form.get('address')
+        
+        if 'image' in request.files:
+            file = request.files['image']
+            saved_path = save_image(file)
+            if saved_path:
+                contact.image_url = saved_path
+                
         db.session.commit()
         flash('Contact updated successfully!', 'success')
         return redirect(url_for('admin.contacts_list'))
