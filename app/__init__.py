@@ -29,9 +29,9 @@ def create_app(config_class=Config):
 
     login.init_app(app)
 
-    from app.models import User
+    from app.models import Users
     @login.user_loader
     def load_user(id):
-        return User.query.get(int(id))
+        return Users.query.get(int(id))
 
     return app
