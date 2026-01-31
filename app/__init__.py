@@ -25,7 +25,7 @@ def create_app(config_class=Config):
     app.register_blueprint(admin_bp, url_prefix='/admin')
 
     from app.portal import bp as portal_bp
-    app.register_blueprint(portal_bp, url_prefix='/portal')
+    app.register_blueprint(portal_bp, url_prefix='')
 
     login.init_app(app)
 
