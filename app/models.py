@@ -79,3 +79,33 @@ class AnalyticalAccount(db.Model):
     
     def __repr__(self):
         return f'<AnalyticalAccount {self.name}>'
+
+
+class Budget(db.Model):
+    __tablename__ = 'budgets'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    period_start = db.Column(db.Date)
+    period_end = db.Column(db.Date)
+    analytical_account = db.Column(db.String(128))
+    total_amount = db.Column(db.Float)
+    description = db.Column(db.Text)
+    is_archived = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<Budget {self.name}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'period_start': self.period_start.isoformat() if self.period_start else None,
+            'period_end': self.period_end.isoformat() if self.period_end else None,
+            'analytical_account': self.analytical_account,
+            'total_amount': self.total_amount,
+            'description': self.description,
+            'is_archived': self.is_archived
+        }

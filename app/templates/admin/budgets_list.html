@@ -181,12 +181,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Sample Row 1 -->
-                    <tr class="link-row" onclick="window.location.href='{{ url_for('admin.budget_detail', id=1) }}';">
-                        <td>January 2026</td>
-                        <td>01/01/2026</td>
-                        <td>31/01/2026</td>
-                        <td>Confirm</td>
+                    {% if budgets %}
+                    {% for budget in budgets %}
+                    <tr class="link-row"
+                        onclick="window.location.href='{{ url_for('admin.budget_detail', id=budget.id) }}';">
+                        <td>{{ budget.name }}</td>
+                        <td>{{ budget.period_start.strftime('%d/%m/%Y') if budget.period_start else 'N/A' }}</td>
+                        <td>{{ budget.period_end.strftime('%d/%m/%Y') if budget.period_end else 'N/A' }}</td>
+                        <td>{{ budget.analytical_account or 'N/A' }}</td>
                         <td>
                             <div class="pie-icon">
                                 <svg class="pie-chart-svg" viewBox="0 0 32 32">
@@ -201,42 +203,14 @@
                             </div>
                         </td>
                     </tr>
-                    <!-- Aesthetic spacers matching image -->
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #64748b;">
+                            No budgets found. Click "New" to add your first budget.
+                        </td>
                     </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 from app.admin import bp
 from app import db
-from app.models import Contact, Product
+from app.models import Contact, Product, Budget
 
 @bp.route('/dashboard')
 def dashboard():
@@ -89,15 +89,40 @@ def analytical_account_detail(id):
 
 @bp.route('/budgets')
 def budgets_list():
-    return render_template('admin/budgets_list.html')
+    budgets = Budget.query.filter_by(is_archived=False).all()
+    return render_template('admin/budgets_list.html', budgets=budgets)
 
 @bp.route('/budget/new', methods=['GET', 'POST'])
 def budget_new():
-    return render_template('admin/budget_detail.html')
+    if request.method == 'POST':
+        budget = Budget(
+            name=request.form.get('name'),
+            period_start=request.form.get('period_start'),
+            period_end=request.form.get('period_end'),
+            analytical_account=request.form.get('analytical_account'),
+            total_amount=request.form.get('total_amount'),
+            description=request.form.get('description')
+        )
+        db.session.add(budget)
+        db.session.commit()
+        flash('Budget created successfully!', 'success')
+        return redirect(url_for('admin.budgets_list'))
+    return render_template('admin/budget_detail.html', budget=None)
 
 @bp.route('/budget/<int:id>', methods=['GET', 'POST'])
 def budget_detail(id):
-    return render_template('admin/budget_detail.html')
+    budget = Budget.query.get_or_404(id)
+    if request.method == 'POST':
+        budget.name = request.form.get('name')
+        budget.period_start = request.form.get('period_start')
+        budget.period_end = request.form.get('period_end')
+        budget.analytical_account = request.form.get('analytical_account')
+        budget.total_amount = request.form.get('total_amount')
+        budget.description = request.form.get('description')
+        db.session.commit()
+        flash('Budget updated successfully!', 'success')
+        return redirect(url_for('admin.budgets_list'))
+    return render_template('admin/budget_detail.html', budget=budget)
 
 @bp.route('/budget/revised')
 def budget_revised():

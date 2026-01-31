@@ -242,15 +242,19 @@
             <!-- Header section with Toolbar and Status -->
             <div class="header-section">
                 <div class="btn-group">
-                    <button class="btn" onclick="window.location.href='{{ url_for('admin.budget_new') }}';">New</button>
-                    <button class="btn btn-primary">Confirm</button>
-                    <button class="btn"
+                    <button type="button" class="btn"
+                        onclick="window.location.href='{{ url_for('admin.budget_new') }}';">New</button>
+                    <button type="submit" form="budgetForm" class="btn btn-primary">
+                        {% if budget %}Save{% else %}Create{% endif %}
+                    </button>
+                    <button type="button" class="btn"
                         onclick="window.location.href='{{ url_for('admin.budget_revised') }}';">Revise</button>
-                    <button class="btn">Archived</button>
+                    <button type="button" class="btn">Archived</button>
                 </div>
                 <div class="btn-group">
-                    <button class="btn" onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
-                    <button class="btn" onclick="window.history.back();">Back</button>
+                    <button type="button" class="btn"
+                        onclick="window.location.href='{{ url_for('portal.home') }}';">Home</button>
+                    <button type="button" class="btn" onclick="window.history.back();">Back</button>
                 </div>
 
                 <div class="status-wizard">
@@ -262,32 +266,46 @@
             </div>
 
             <!-- Main Form Inputs -->
-            <div class="form-grid">
-                <div class="left-col">
-                    <div class="input-group">
-                        <span class="label">Budget Name</span>
-                        <input type="text" class="input-field" placeholder="January 2026">
+            <form id="budgetForm" method="POST">
+                <div class="form-grid">
+                    <div class="left-col">
+                        <div class="input-group">
+                            <span class="label">Budget Name</span>
+                            <input type="text" name="name" class="input-field" placeholder="January 2026"
+                                value="{{ budget.name if budget else '' }}" required>
+                        </div>
+                        <div class="input-group">
+                            <span class="label">Budget Period</span>
+                            <div class="date-range">
+                                <input type="date" name="period_start" class="input-field"
+                                    value="{{ budget.period_start if budget else '' }}" style="text-align: center;">
+                                <span
+                                    style="padding-bottom: 10px; color: var(--accent-pink); font-weight: 500;">to</span>
+                                <input type="date" name="period_end" class="input-field"
+                                    value="{{ budget.period_end if budget else '' }}" style="text-align: center;">
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <span class="label">Budget Period</span>
-                        <div class="date-range">
-                            <input type="text" class="input-field" placeholder="Start Date" style="text-align: center;">
-                            <span style="padding-bottom: 10px; color: var(--accent-pink); font-weight: 500;">To</span>
-                            <input type="text" class="input-field" placeholder="End Date" style="text-align: center;">
+
+                    <div class="right-col">
+                        <div class="input-group">
+                            <span class="label" style="min-width: 160px;">Analytical Account</span>
+                            <input type="text" name="analytical_account" class="input-field" placeholder="Account name"
+                                value="{{ budget.analytical_account if budget else '' }}">
+                        </div>
+                        <div class="input-group">
+                            <span class="label" style="min-width: 160px;">Total Amount</span>
+                            <input type="number" step="0.01" name="total_amount" class="input-field" placeholder="0.00"
+                                value="{{ budget.total_amount if budget else '' }}">
+                        </div>
+                        <div class="input-group">
+                            <span class="label" style="min-width: 160px;">Description</span>
+                            <textarea name="description" class="input-field" rows="2"
+                                placeholder="Budget description">{{ budget.description if budget else '' }}</textarea>
                         </div>
                     </div>
                 </div>
-
-                <div class="right-col">
-                    <div class="input-group">
-                        <span class="label" style="min-width: 120px;">Revised with</span>
-                        <input type="text" class="input-field" placeholder="Revised Budget Label">
-                    </div>
-                    <p class="revised-text" style="padding-left: 140px; font-style: italic; font-size: 13px;">
-                        (if revised than revised budget clickable link)
-                    </p>
-                </div>
-            </div>
+            </form>
 
             <!-- Analyticals Table -->
             <table class="analytic-table">
