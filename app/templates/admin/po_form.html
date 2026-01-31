@@ -309,7 +309,7 @@
                         {% if po and po.lines %}
                         {% for line in po.lines %}
                         <tr>
-                            <td>{{ loop.index }}</td>
+                            <td class="sr-no">{{ loop.index }}</td>
                             <td>
                                 <input type="text" name="product_name[]" class="line-input product-search"
                                     value="{{ line.product_name }}" list="productList">
@@ -327,13 +327,18 @@
                                     value="{{ line.quantity }}"></td>
                             <td><input type="number" name="unit_price[]" class="line-input price"
                                     value="{{ line.unit_price }}"></td>
-                            <td class="monetary"><span class="line-total">{{ "{:,.2f}".format(line.total) }}</span></td>
+                            <td class="monetary">
+                                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                                    <span class="line-total">{{ "{:,.2f}".format(line.total) }}</span>
+                                    <span class="remove-line"
+                                        style="color: #ff4444; cursor: pointer; font-weight: bold; font-size: 18px; padding: 0 4px;">×</span>
+                                </div>
+                            </td>
                         </tr>
                         {% endfor %}
                         {% else %}
-                        {% for i in range(1, 4) %}
                         <tr>
-                            <td>{{ i }}</td>
+                            <td class="sr-no">1</td>
                             <td>
                                 <input type="text" name="product_name[]" class="line-input product-search"
                                     list="productList">
@@ -349,16 +354,28 @@
                             <td><input type="number" name="quantity[]" class="line-input qty" placeholder="0"></td>
                             <td><input type="number" name="unit_price[]" class="line-input price" placeholder="0.00">
                             </td>
-                            <td class="monetary"><span class="line-total">0.00</span></td>
+                            <td class="monetary">
+                                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                                    <span class="line-total">0.00</span>
+                                    <span class="remove-line"
+                                        style="color: #ff4444; cursor: pointer; font-weight: bold; font-size: 18px; padding: 0 4px;">×</span>
+                                </div>
+                            </td>
                         </tr>
-                        {% endfor %}
                         {% endif %}
                     </tbody>
                     <tfoot>
+                        <tr>
+                            <td colspan="6" style="padding: 12px 8px;">
+                                <span id="addLine"
+                                    style="color: #2196f3; cursor: pointer; font-weight: 500; font-size: 14px;">Add a
+                                    line</span>
+                            </td>
+                        </tr>
                         <tr class="total-row">
                             <td colspan="5" style="text-align: right; padding: 16px;">Total</td>
-                            <td class="monetary"><span id="grandTotal">{{ "{:,.2f}".format(po.total_amount) if po else
-                                    '0.00' }}</span></td>
+                            <td class="monetary"><span id="grandTotal" style="padding-right: 28px;">{{
+                                    "{:,.2f}".format(po.total_amount) if po else '0.00' }}</span></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -381,10 +398,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const table = document.getElementById('itemsTable');
+            const tbody = table.querySelector('tbody');
+            const addLineBtn = document.getElementById('addLine');
+
+            function updateSrNos() {
+                tbody.querySelectorAll('tr').forEach((row, index) => {
+                    row.querySelector('.sr-no').textContent = index + 1;
+                });
+            }
 
             function updateTotals() {
                 let grandTotal = 0;
-                table.querySelectorAll('tbody tr').forEach(row => {
+                tbody.querySelectorAll('tr').forEach(row => {
                     const qty = parseFloat(row.querySelector('.qty').value) || 0;
                     const price = parseFloat(row.querySelector('.price').value) || 0;
                     const total = qty * price;
@@ -394,24 +419,51 @@
                 document.getElementById('grandTotal').textContent = grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
             }
 
+            addLineBtn.addEventListener('click', function () {
+                const newRow = tbody.insertRow();
+                newRow.innerHTML = `
+                    <td class="sr-no"></td>
+                    <td><input type="text" name="product_name[]" class="line-input product-search" list="productList"></td>
+                    <td>
+                        <select name="budget_analytics[]" class="line-input analytic-select">
+                            <option value="">Choose Analytics</option>
+                            {% for account in analytical_accounts %}<option value="{{ account.name }}">{{ account.name }}</option>{% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="number" name="quantity[]" class="line-input qty" placeholder="0"></td>
+                    <td><input type="number" name="unit_price[]" class="line-input price" placeholder="0.00"></td>
+                    <td class="monetary">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                            <span class="line-total">0.00</span>
+                            <span class="remove-line" style="color: #ff4444; cursor: pointer; font-weight: bold; font-size: 18px; padding: 0 4px;">×</span>
+                        </div>
+                    </td>
+                `;
+                updateSrNos();
+                updateTotals();
+            });
+
+            table.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-line')) {
+                    if (tbody.rows.length > 1) {
+                        e.target.closest('tr').remove();
+                        updateSrNos();
+                        updateTotals();
+                    } else {
+                        alert("At least one line is required.");
+                    }
+                }
+            });
+
             table.addEventListener('input', function (e) {
                 if (e.target.classList.contains('qty') || e.target.classList.contains('price')) {
                     updateTotals();
                 }
 
-                // Analytics Suggestion Logic
                 if (e.target.classList.contains('product-search')) {
                     const val = e.target.value.toLowerCase();
                     const analyticSelect = e.target.closest('tr').querySelector('.analytic-select');
-
-                    // Same keywords as in budget_detail
-                    const keywordMap = {
-                        'chair': 'Office Maintenance',
-                        'table': 'Deepawali',
-                        'desk': 'Furniture Expo',
-                        'office': 'Office Maintenance'
-                    };
-
+                    const keywordMap = { 'chair': 'Office Maintenance', 'table': 'Deepawali', 'desk': 'Furniture Expo', 'office': 'Office Maintenance' };
                     for (const [key, account] of Object.entries(keywordMap)) {
                         if (val.includes(key)) {
                             Array.from(analyticSelect.options).forEach(opt => {
