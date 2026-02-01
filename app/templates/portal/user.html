@@ -310,8 +310,8 @@
         <header class="header">
             <h1>Overview</h1>
             <div class="user-badge">
-                <div class="user-avatar">PU</div>
-                <span>Portal User</span>
+                <div class="user-avatar">{{ current_user.username[0].upper() }}</div>
+                <span>{{ current_user.name or current_user.username }}</span>
             </div>
         </header>
 
@@ -321,25 +321,25 @@
             <div class="grid-stats">
                 <div class="stat-card">
                     <span class="stat-label">Total Invoices</span>
-                    <div class="stat-value">12</div>
+                    <div class="stat-value">{{ total_invoices }}</div>
                     <div class="stat-subtext">Lifetime history</div>
                 </div>
 
                 <div class="stat-card">
                     <span class="stat-label">Unpaid Bills</span>
-                    <div class="stat-value">₹ 18,500</div>
+                    <div class="stat-value">₹ {{ "{:,.2f}".format(total_amount_due) }}</div>
                     <div class="stat-subtext">Attention required</div>
                 </div>
 
                 <div class="stat-card">
                     <span class="stat-label">Active Orders</span>
-                    <div class="stat-value">07</div>
+                    <div class="stat-value">{{ "{:02d}".format(active_orders) }}</div>
                     <div class="stat-subtext">SO / PO tracking</div>
                 </div>
 
                 <div class="stat-card">
                     <span class="stat-label">Payments Made</span>
-                    <div class="stat-value">₹ 92,000</div>
+                    <div class="stat-value">₹ {{ "{:,.2f}".format(total_payments_made) }}</div>
                     <div class="stat-subtext">Verified transactions</div>
                 </div>
             </div>

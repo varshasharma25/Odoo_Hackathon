@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.portal import bp
 from app import db
-from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount
+from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount, Invoice, Users, SaleOrder
 from datetime import datetime
 
 @bp.route('/')
@@ -12,32 +12,73 @@ def index():
 @bp.route('/home')
 @login_required
 def home():
-    return render_template('portal/user.html')
+    # Get invoice statistics for the user
+    total_invoices = Invoice.query.filter_by(customer_id=current_user.id, is_archived=False).count()
+    paid_invoices = Invoice.query.filter_by(customer_id=current_user.id, status='paid', is_archived=False).count()
+    unpaid_invoices = Invoice.query.filter_by(customer_id=current_user.id, is_archived=False).filter(Invoice.status.in_(['sent', 'partial', 'overdue'])).count()
+    
+    total_amount_due = db.session.query(db.func.sum(Invoice.balance_due)).filter_by(customer_id=current_user.id, is_archived=False).scalar() or 0
+    total_payments_made = db.session.query(db.func.sum(Invoice.paid_amount)).filter_by(customer_id=current_user.id, is_archived=False).scalar() or 0
+    
+    # Active orders from SaleOrder model
+    active_orders = SaleOrder.query.filter_by(customer_id=current_user.id, status='sent', is_archived=False).count()
+    
+    return render_template('portal/user.html', 
+                         total_invoices=total_invoices,
+                         paid_invoices=paid_invoices,
+                         unpaid_invoices=unpaid_invoices,
+                         total_amount_due=total_amount_due,
+                         total_payments_made=total_payments_made,
+                         active_orders=active_orders)
 
 @bp.route('/invoices')
 @login_required
 def invoices_list():
-    return render_template('portal/invoice_list.html')
-
-@bp.route('/orders')
-@login_required
-def so_list():
-    return render_template('portal/so_list.html')
+    # Get all invoices for the current user (lifetime)
+    invoices = Invoice.query.filter_by(customer_id=current_user.id, is_archived=False).order_by(Invoice.invoice_date.desc()).all()
+    
+    # Calculate summary statistics
+    total_invoices = len(invoices)
+    paid_count = sum(1 for inv in invoices if inv.status == 'paid')
+    unpaid_count = sum(1 for inv in invoices if inv.status in ['sent', 'partial', 'overdue'])
+    total_amount = sum(inv.total_amount for inv in invoices)
+    total_paid = sum(inv.paid_amount for inv in invoices)
+    total_due = sum(inv.balance_due for inv in invoices)
+    
+    return render_template('portal/invoice_list.html', 
+                         invoices=invoices,
+                         total_invoices=total_invoices,
+                         paid_count=paid_count,
+                         unpaid_count=unpaid_count,
+                         total_amount=total_amount,
+                         total_paid=total_paid,
+                         total_due=total_due)
 
 @bp.route('/invoice/<int:invoice_id>')
 @login_required
 def invoice_detail(invoice_id):
-    return render_template('portal/invoice_detail.html', invoice_id=invoice_id)
+    invoice = Invoice.query.filter_by(id=invoice_id, customer_id=current_user.id).first_or_404()
+    return render_template('portal/invoice_detail.html', invoice=invoice)
+
+@bp.route('/orders')
+@login_required
+def so_list():
+    # Get all sale orders for the current user (Purchases from their perspective)
+    orders = SaleOrder.query.filter_by(customer_id=current_user.id, is_archived=False).order_by(SaleOrder.order_date.desc()).all()
+    return render_template('portal/so_list.html', orders=orders)
 
 @bp.route('/invoice/<int:invoice_id>/pay')
 @login_required
 def invoice_pay(invoice_id):
-    return render_template('portal/invoice_pay.html', invoice_id=invoice_id)
+    invoice = Invoice.query.filter_by(id=invoice_id, customer_id=current_user.id).first_or_404()
+    return render_template('portal/invoice_pay.html', invoice=invoice)
 
 @bp.route('/payments')
 @login_required
 def payment_history():
-    return render_template('portal/payment.html')
+    # Get all paid invoices as payment history
+    paid_invoices = Invoice.query.filter_by(customer_id=current_user.id, is_archived=False).filter(Invoice.paid_amount > 0).order_by(Invoice.updated_at.desc()).all()
+    return render_template('portal/payment.html', payments=paid_invoices)
 
 # --- Purchase Draft Routes ---
 
@@ -116,5 +157,5 @@ def po_new():
 @bp.route('/purchase-order/<int:id>', methods=['GET'])
 @login_required
 def po_detail(id):
-    po = PurchaseOrder.query.filter_by(id=id, user_id=current_user.id).get_or_404(id)
+    po = PurchaseOrder.query.filter_by(id=id, user_id=current_user.id).first_or_404()
     return render_template('portal/po_form.html', po=po)

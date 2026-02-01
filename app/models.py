@@ -3,8 +3,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db
 
-
-
 class Contact(db.Model):
     __tablename__ = 'contacts'
     
@@ -33,7 +31,6 @@ class Contact(db.Model):
             'image_url': self.image_url,
             'is_archived': self.is_archived
         }
-
 
 class Product(db.Model):
     __tablename__ = 'products'
@@ -70,7 +67,6 @@ class Product(db.Model):
             'is_archived': self.is_archived
         }
 
-
 class AnalyticalAccount(db.Model):
     __tablename__ = 'analytical_accounts'
     
@@ -84,7 +80,6 @@ class AnalyticalAccount(db.Model):
     
     def __repr__(self):
         return f'<AnalyticalAccount {self.name}>'
-
 
 class Budget(db.Model):
     __tablename__ = 'budgets'
@@ -115,7 +110,6 @@ class Budget(db.Model):
             'is_archived': self.is_archived
         }
 
-
 class Users(UserMixin, db.Model):
     __tablename__ = 'users'
 
@@ -136,7 +130,6 @@ class Users(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
-
 
 class PurchaseOrder(db.Model):
     __tablename__ = 'purchase_orders'
@@ -176,7 +169,6 @@ class PurchaseOrder(db.Model):
             'lines': [line.to_dict() for line in self.lines]
         }
 
-
 class PurchaseOrderLine(db.Model):
     __tablename__ = 'purchase_order_lines'
     
@@ -197,7 +189,6 @@ class PurchaseOrderLine(db.Model):
             'unit_price': self.unit_price,
             'total': self.total
         }
-
 
 class VendorBill(db.Model):
     __tablename__ = 'vendor_bills'
@@ -223,7 +214,6 @@ class VendorBill(db.Model):
     def __repr__(self):
         return f'<VendorBill {self.bill_number}>'
 
-
 class VendorBillLine(db.Model):
     __tablename__ = 'vendor_bill_lines'
     
@@ -234,3 +224,133 @@ class VendorBillLine(db.Model):
     quantity = db.Column(db.Float, default=1.0)
     unit_price = db.Column(db.Float, default=0.0)
     total = db.Column(db.Float, default=0.0)
+
+class Invoice(db.Model):
+    __tablename__ = 'invoices'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_number = db.Column(db.String(50), unique=True, nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    customer_name = db.Column(db.String(128), nullable=False)
+    invoice_date = db.Column(db.Date, nullable=False)
+    due_date = db.Column(db.Date)
+    subtotal = db.Column(db.Float, default=0.0)
+    tax_amount = db.Column(db.Float, default=0.0)
+    total_amount = db.Column(db.Float, default=0.0)
+    paid_amount = db.Column(db.Float, default=0.0)
+    balance_due = db.Column(db.Float, default=0.0)
+    status = db.Column(db.String(20), default='draft')  # draft, sent, paid, partial, overdue, cancelled
+    payment_terms = db.Column(db.String(128))
+    notes = db.Column(db.Text)
+    is_archived = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    customer = db.relationship('Users', backref='invoices', lazy=True)
+    lines = db.relationship('InvoiceLine', backref='invoice', lazy=True, cascade="all, delete-orphan")
+    
+    def __repr__(self):
+        return f'<Invoice {self.invoice_number}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'invoice_number': self.invoice_number,
+            'customer_id': self.customer_id,
+            'customer_name': self.customer_name,
+            'invoice_date': self.invoice_date.isoformat() if self.invoice_date else None,
+            'due_date': self.due_date.isoformat() if self.due_date else None,
+            'subtotal': self.subtotal,
+            'tax_amount': self.tax_amount,
+            'total_amount': self.total_amount,
+            'paid_amount': self.paid_amount,
+            'balance_due': self.balance_due,
+            'status': self.status,
+            'payment_terms': self.payment_terms,
+            'notes': self.notes,
+            'is_archived': self.is_archived,
+            'lines': [line.to_dict() for line in self.lines]
+        }
+
+class InvoiceLine(db.Model):
+    __tablename__ = 'invoice_lines'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=False)
+    product_name = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.Text)
+    quantity = db.Column(db.Float, default=1.0)
+    unit_price = db.Column(db.Float, default=0.0)
+    tax_rate = db.Column(db.Float, default=0.0)
+    tax_amount = db.Column(db.Float, default=0.0)
+    total = db.Column(db.Float, default=0.0)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'product_name': self.product_name,
+            'description': self.description,
+            'quantity': self.quantity,
+            'unit_price': self.unit_price,
+            'tax_rate': self.tax_rate,
+            'tax_amount': self.tax_amount,
+            'total': self.total
+        }
+
+class SaleOrder(db.Model):
+    __tablename__ = 'sale_orders'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    order_number = db.Column(db.String(50), unique=True, nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    customer_name = db.Column(db.String(128), nullable=False)
+    order_date = db.Column(db.Date, nullable=False)
+    total_amount = db.Column(db.Float, default=0.0)
+    status = db.Column(db.String(20), default='draft')  # draft, confirmed, sent, cancelled
+    notes = db.Column(db.Text)
+    is_archived = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    customer = db.relationship('Users', backref='sale_orders', lazy=True)
+    lines = db.relationship('SaleOrderLine', backref='order', lazy=True, cascade="all, delete-orphan")
+    
+    def __repr__(self):
+        return f'<SaleOrder {self.order_number}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'order_number': self.order_number,
+            'customer_id': self.customer_id,
+            'customer_name': self.customer_name,
+            'order_date': self.order_date.isoformat() if self.order_date else None,
+            'total_amount': self.total_amount,
+            'status': self.status,
+            'notes': self.notes,
+            'is_archived': self.is_archived,
+            'lines': [line.to_dict() for line in self.lines]
+        }
+
+class SaleOrderLine(db.Model):
+    __tablename__ = 'sale_order_lines'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    so_id = db.Column(db.Integer, db.ForeignKey('sale_orders.id'), nullable=False)
+    product_name = db.Column(db.String(128), nullable=False)
+    budget_analytics = db.Column(db.String(128))
+    quantity = db.Column(db.Float, default=1.0)
+    unit_price = db.Column(db.Float, default=0.0)
+    total = db.Column(db.Float, default=0.0)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'product_name': self.product_name,
+            'budget_analytics': self.budget_analytics,
+            'quantity': self.quantity,
+            'unit_price': self.unit_price,
+            'total': self.total
+        }

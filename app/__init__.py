@@ -34,4 +34,16 @@ def create_app(config_class=Config):
     def load_user(id):
         return Users.query.get(int(id))
 
+    # Root route
+    @app.route('/')
+    def index():
+        from flask import redirect, url_for
+        from flask_login import current_user
+        if current_user.is_authenticated:
+            if current_user.role == 'admin':
+                return redirect(url_for('admin.dashboard'))
+            else:
+                return redirect(url_for('portal.home'))
+        return redirect(url_for('auth.login'))
+
     return app
