@@ -239,6 +239,8 @@
                         <button type="button" class="btn">Print</button>
                         <button type="button" class="btn" onclick="sendToVendor()">Send</button>
                         {% if po and po.status == 'confirmed' %}
+                        <button type="button" class="btn" onclick="updateStatus('received')"
+                            style="background: var(--accent-green); color: white;">Receive</button>
                         <button type="button" class="btn" onclick="updateStatus('cancelled')">Cancel</button>
                         <button type="button" id="createBillBtn"
                             onclick="window.location.href='{{ url_for('admin.po_create_bill', id=po.id) }}';">Create
@@ -250,9 +252,9 @@
 
                     <div class="status-container">
                         <div class="status-step {% if not po or po.status == 'draft' %}active{% endif %}">Draft</div>
+                        <div class="status-step {% if po and po.status == 'sent' %}active{% endif %}">Sent</div>
                         <div class="status-step {% if po and po.status == 'confirmed' %}active{% endif %}">Confirm</div>
-                        <div class="status-step {% if po and po.status == 'cancelled' %}active{% endif %}">Cancelled
-                        </div>
+                        <div class="status-step {% if po and po.status == 'received' %}active{% endif %}">Received</div>
                     </div>
 
                     <div class="btn-group">
@@ -478,8 +480,9 @@
         });
 
         function sendToVendor() {
-            alert("Purchase Order {{ po.order_number if po else '' }} has been sent to the vendor portal!");
-            // In the future, this will trigger an API call to notify the user/vendor
+            if (confirm('Are you sure you want to send this PO to the vendor?')) {
+                updateStatus('sent');
+            }
         }
 
         function updateStatus(status) {

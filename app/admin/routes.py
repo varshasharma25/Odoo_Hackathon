@@ -349,7 +349,7 @@ def po_detail(id):
 @login_required
 def po_update_status(id, status):
     po = PurchaseOrder.query.get_or_404(id)
-    if status in ['confirmed', 'cancelled', 'received']:
+    if status in ['confirmed', 'cancelled', 'received', 'sent']:
         po.status = status
         db.session.commit()
         flash(f'Purchase Order {status} successfully!', 'success')
