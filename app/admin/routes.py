@@ -28,11 +28,16 @@ def save_image(file):
 def dashboard():
     portal_drafts_count = PurchaseOrder.query.filter(PurchaseOrder.user_id.isnot(None), PurchaseOrder.status == 'draft').count()
     total_po_count = PurchaseOrder.query.count()
-    pending_bills_count = 5 # Placeholder as we don't have a bill model yet or it's not fully used
+    
+    # Financial Analytics for Admin Dashboard
+    balance_outstanding = db.session.query(db.func.sum(VendorBill.total_amount - VendorBill.amount_paid)).filter(VendorBill.payment_status != 'paid').scalar() or 0
+    total_purchases = db.session.query(db.func.sum(VendorBill.total_amount)).scalar() or 0
+    
     return render_template('admin/dashboard.html', 
                            portal_drafts_count=portal_drafts_count,
                            total_po_count=total_po_count,
-                           pending_bills_count=pending_bills_count)
+                           balance_outstanding=balance_outstanding,
+                           total_purchases=total_purchases)
 
 @bp.route('/contacts')
 @login_required
@@ -260,6 +265,14 @@ def po_new():
             notes=request.form.get('notes'),
             total_amount=0.0
         )
+        
+        # Link Vendor User if email matches
+        vendor_contact = Contact.query.filter_by(name=po.vendor_name).first()
+        if vendor_contact and vendor_contact.email:
+            vendor_user = Users.query.filter_by(email=vendor_contact.email, role='portal').first()
+            if vendor_user:
+                po.vendor_id = vendor_user.id
+
         db.session.add(po)
         db.session.flush() # Get PO ID
         
@@ -311,6 +324,17 @@ def po_detail(id):
         po.expected_delivery = datetime.strptime(request.form.get('expected_delivery'), '%Y-%m-%d').date() if request.form.get('expected_delivery') else None
         po.notes = request.form.get('notes')
         
+        # Link/Relink Vendor User
+        vendor_contact = Contact.query.filter_by(name=po.vendor_name).first()
+        if vendor_contact and vendor_contact.email:
+            vendor_user = Users.query.filter_by(email=vendor_contact.email, role='portal').first()
+            if vendor_user:
+                po.vendor_id = vendor_user.id
+            else:
+                po.vendor_id = None
+        else:
+            po.vendor_id = None
+        
         # Clear existing lines and re-add
         PurchaseOrderLine.query.filter_by(po_id=po.id).delete()
         
@@ -349,7 +373,7 @@ def po_detail(id):
 @login_required
 def po_update_status(id, status):
     po = PurchaseOrder.query.get_or_404(id)
-    if status in ['confirmed', 'cancelled', 'received']:
+    if status in ['confirmed', 'cancelled', 'received', 'sent']:
         po.status = status
         db.session.commit()
         flash(f'Purchase Order {status} successfully!', 'success')

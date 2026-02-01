@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.portal import bp
 from app import db
-from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount, Invoice, Users, SaleOrder
+from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount, Invoice, Users, SaleOrder, VendorBill
 from datetime import datetime
 
 @bp.route('/')
@@ -20,8 +20,16 @@ def home():
     total_amount_due = db.session.query(db.func.sum(Invoice.balance_due)).filter_by(customer_id=current_user.id, is_archived=False).scalar() or 0
     total_payments_made = db.session.query(db.func.sum(Invoice.paid_amount)).filter_by(customer_id=current_user.id, is_archived=False).scalar() or 0
     
-    # Active orders from SaleOrder model
-    active_orders = SaleOrder.query.filter_by(customer_id=current_user.id, status='sent', is_archived=False).count()
+    # Financials for Vendor Perspective
+    # Pending Payments: Amount Admin owes to this vendor (Unpaid Bills)
+    pending_vendor_payments = db.session.query(db.func.sum(VendorBill.total_amount - VendorBill.amount_paid)).filter_by(vendor_id=current_user.id, is_archived=False).filter(VendorBill.payment_status != 'paid').scalar() or 0
+    # Total Sales: Total amount of bills sent by this vendor
+    total_vendor_sales = db.session.query(db.func.sum(VendorBill.total_amount)).filter_by(vendor_id=current_user.id, is_archived=False).scalar() or 0
+    
+    # Active orders from SaleOrder model (Customer perspective)
+    active_sale_orders = SaleOrder.query.filter_by(customer_id=current_user.id, status='sent', is_archived=False).count()
+    # Received POs (Vendor perspective) - Only 'sent' or 'received' status
+    new_purchase_orders = PurchaseOrder.query.filter_by(vendor_id=current_user.id, is_archived=False).filter(PurchaseOrder.status.in_(['sent'])).count()
     
     return render_template('portal/user.html', 
                          total_invoices=total_invoices,
@@ -29,7 +37,10 @@ def home():
                          unpaid_invoices=unpaid_invoices,
                          total_amount_due=total_amount_due,
                          total_payments_made=total_payments_made,
-                         active_orders=active_orders)
+                         active_orders=active_sale_orders,
+                         pending_vendor_payments=pending_vendor_payments,
+                         total_vendor_sales=total_vendor_sales,
+                         new_purchase_orders=new_purchase_orders)
 
 @bp.route('/invoices')
 @login_required
@@ -85,9 +96,11 @@ def payment_history():
 @bp.route('/purchase-orders')
 @login_required
 def po_list():
-    # Only show POs created by the current user
-    purchase_orders = PurchaseOrder.query.filter_by(user_id=current_user.id, is_archived=False).all()
-    return render_template('portal/po_list.html', purchase_orders=purchase_orders)
+    # Show POs where this user is either the creator (Portal Drafts) -> Only Drafts
+    draft_pos = PurchaseOrder.query.filter_by(user_id=current_user.id, is_archived=False, status='draft').all()
+    # Vendor sees orders only when they are SENT by Admin
+    received_pos = PurchaseOrder.query.filter_by(vendor_id=current_user.id, is_archived=False).filter(PurchaseOrder.status.in_(['sent', 'received'])).all()
+    return render_template('portal/po_list.html', draft_pos=draft_pos, received_pos=received_pos)
 
 @bp.route('/purchase-order/new', methods=['GET', 'POST'])
 @login_required
@@ -157,5 +170,66 @@ def po_new():
 @bp.route('/purchase-order/<int:id>', methods=['GET'])
 @login_required
 def po_detail(id):
-    po = PurchaseOrder.query.filter_by(id=id, user_id=current_user.id).first_or_404()
+    # Check if the user is the creator or the vendor
+    po = PurchaseOrder.query.filter(
+        (PurchaseOrder.id == id) & 
+        ((PurchaseOrder.user_id == current_user.id) | (PurchaseOrder.vendor_id == current_user.id))
+    ).first_or_404()
+    
+    # If the user is the vendor, show the read-only view with "Accept" button
+    if po.vendor_id == current_user.id:
+        return render_template('portal/po_detail.html', po=po)
+    
+    # Otherwise show the draft form (existing po_form.html)
     return render_template('portal/po_form.html', po=po)
+
+@bp.route('/purchase-order/<int:id>/accept')
+@login_required
+def po_accept(id):
+    po = PurchaseOrder.query.filter_by(id=id, vendor_id=current_user.id).first_or_404()
+    
+    if po.status != 'sent':
+        flash('Only SENT Purchase Orders can be accepted.', 'warning')
+        return redirect(url_for('portal.po_detail', id=po.id))
+        
+    # Generate Vendor Bill for Admin
+    last_bill = VendorBill.query.order_by(VendorBill.id.desc()).first()
+    if last_bill and last_bill.bill_number and last_bill.bill_number.startswith('Bill'):
+        try:
+            last_num = int(last_bill.bill_number.split('/')[-1])
+            bill_number = f"Bill/{po.order_number}/{last_num + 1:04d}"
+        except (ValueError, IndexError):
+            bill_number = f"Bill/{po.order_number}/0001"
+    else:
+        bill_number = f"Bill/{po.order_number}/0001"
+        
+    bill = VendorBill(
+        bill_number=bill_number,
+        vendor_name=current_user.name or current_user.username,
+        vendor_id=current_user.id,
+        bill_date=datetime.now().date(),
+        reference=po.order_number,
+        total_amount=po.total_amount,
+        po_id=po.id,
+        status='confirmed' # Automatically confirmed since it's from an accepted PO
+    )
+    db.session.add(bill)
+    db.session.flush()
+    
+    from app.models import VendorBillLine
+    for line in po.lines:
+        bill_line = VendorBillLine(
+            bill_id=bill.id,
+            product_name=line.product_name,
+            budget_analytics=line.budget_analytics,
+            quantity=line.quantity,
+            unit_price=line.unit_price,
+            total=line.total
+        )
+        db.session.add(bill_line)
+        
+    po.status = 'received' # Admin marks as received/processed
+    db.session.commit()
+    
+    flash(f'Purchase Order {po.order_number} accepted! Bill {bill_number} has been sent to Admin.', 'success')
+    return redirect(url_for('portal.po_list'))

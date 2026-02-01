@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Order | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --sidebar-width: 280px;
+            --accent-pink: #d63384;
+            --accent-green: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 50px;
+            text-align: center;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #94a3b8;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-accent);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);
+        }
+
+        /* ===== Main Content Area ===== */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .dashboard-container {
+            padding: 40px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 32px;
+            text-align: left;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-accept {
+            background-color: var(--accent-green);
+            color: #000;
+            border-color: var(--accent-green);
+        }
+
+        .status-badge {
+            padding: 6px 16px;
+            background: #f1f5f9;
+            font-size: 13px;
+            border-radius: 99px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .label {
+            width: 140px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .value {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .items-table td {
+            padding: 16px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+            border-top: 2px solid var(--text-dark);
+            padding-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+                padding: 40px 10px;
+            }
+
+            .sidebar-logo,
+            .nav-item span {
+                display: none;
+            }
+
+            .main-wrapper {
+                margin-left: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">USER PORTAL</div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('portal.home') }}" class="nav-item">
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('portal.invoices_list') }}" class="nav-item">
+                <span>Bills & Invoices</span>
+            </a>
+            <a href="{{ url_for('portal.po_list') }}" class="nav-item active">
+                <span>Purchase Specification</span>
+            </a>
+            <a href="{{ url_for('portal.payment_history') }}" class="nav-item">
+                <span>Payments</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="header">
+            <h1>Purchase Order {{ po.order_number }}</h1>
+            <div class="user-badge"
+                style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #fff; border: 1px solid var(--border-color); border-radius: 99px; font-size: 14px; font-weight: 500;">
+                <div
+                    style="width: 32px; height: 32px; background: var(--primary-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    {{ current_user.name[0] if current_user.name else 'U' }}</div>
+                <span>{{ current_user.name or current_user.email }}</span>
+            </div>
+        </header>
+
+        <main class="dashboard-container">
+            <div class="form-card">
+                <div class="toolbar">
+                    <div style="display: flex; gap: 12px;">
+                        <a href="{{ url_for('portal.po_list') }}" class="btn">Back to List</a>
+                        {% if po.status == 'confirmed' %}
+                        <a href="{{ url_for('portal.po_accept', id=po.id) }}" class="btn btn-accept"
+                            onclick="return confirm('Accept this Purchase Order? This will automatically generate a Bill for Admin.')">Accept
+                            & Send Bill</a>
+                        {% endif %}
+                    </div>
+                    <span class="status-badge"
+                        style="background: {% if po.status=='received' %}#ecfdf5{% elif po.status=='confirmed' %}#fef3c7{% else %}#f1f5f9{% endif %}; color: {% if po.status=='received' %}#059669{% elif po.status=='confirmed' %}#d97706{% else %}#64748b{% endif %};">
+                        Status: {{ po.status|capitalize }}
+                    </span>
+                </div>
+
+                <div class="info-grid">
+                    <div>
+                        <div class="info-row">
+                            <span class="label">PO Number</span>
+                            <span class="value">{{ po.order_number }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Reference</span>
+                            <span class="value">{{ po.reference or '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Vendor</span>
+                            <span class="value">{{ po.vendor_name }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-row">
+                            <span class="label">PO Date</span>
+                            <span class="value">{{ po.order_date.strftime('%d-%b-%Y') if po.order_date else '-'
+                                }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Expected Delivery</span>
+                            <span class="value">{{ po.expected_delivery.strftime('%d-%b-%Y') if po.expected_delivery
+                                else '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Product</th>
+                            <th style="width: 100px;">Quantity</th>
+                            <th style="width: 150px;">Unit Price</th>
+                            <th style="width: 150px; text-align: right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for line in po.lines %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ line.product_name }}</td>
+                            <td>{{ line.quantity }}</td>
+                            <td>₹{{ "{:,.2f}".format(line.unit_price) }}</td>
+                            <td style="text-align: right; font-weight: 600;">₹{{ "{:,.2f}".format(line.total) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="total-section">
+                    <div style="text-align: right;">
+                        <span
+                            style="font-size: 14px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Total
+                            Amount</span>
+                        <div style="font-size: 28px; font-weight: 600; color: var(--primary-accent);">₹ {{
+                            "{:,.2f}".format(po.total_amount) }}</div>
+                    </div>
+                </div>
+
+                {% if po.notes %}
+                <div
+                    style="margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <h3
+                        style="font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase;">
+                        Notes</h3>
+                    <p style="font-size: 15px; line-height: 1.6;">{{ po.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

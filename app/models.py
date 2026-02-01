@@ -144,12 +144,14 @@ class PurchaseOrder(db.Model):
     status = db.Column(db.String(20), default='draft')  # draft, confirmed, received, cancelled
     notes = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    vendor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     is_archived = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     lines = db.relationship('PurchaseOrderLine', backref='order', lazy=True, cascade="all, delete-orphan")
-    created_by = db.relationship('Users', backref='purchase_orders', lazy=True)
+    vendor = db.relationship('Users', foreign_keys=[vendor_id], backref='received_pos', lazy=True)
+    created_by = db.relationship('Users', foreign_keys=[user_id], backref='created_pos', lazy=True)
     
     def __repr__(self):
         return f'<PurchaseOrder {self.order_number}>'
@@ -204,12 +206,14 @@ class VendorBill(db.Model):
     status = db.Column(db.String(20), default='draft')  # draft, confirmed, cancelled
     payment_status = db.Column(db.String(20), default='not_paid')  # not_paid, partial, paid
     po_id = db.Column(db.Integer, db.ForeignKey('purchase_orders.id'), nullable=True)
+    vendor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     is_archived = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     lines = db.relationship('VendorBillLine', backref='bill', lazy=True, cascade="all, delete-orphan")
     purchase_order = db.relationship('PurchaseOrder', backref='bills', lazy=True)
+    vendor = db.relationship('Users', backref='vendor_bills', lazy=True)
     
     def __repr__(self):
         return f'<VendorBill {self.bill_number}>'

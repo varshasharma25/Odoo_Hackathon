@@ -268,22 +268,49 @@
         <main class="dashboard-container">
             <div class="list-card">
                 <div class="toolbar">
-                    <h2 style="font-size: 18px; color: var(--text-dark);">My Submissions</h2>
-                    <a href="{{ url_for('portal.po_new') }}" class="btn btn-new">Create New Draft</a>
+                    <h2 style="font-size: 18px; color: var(--text-dark);">Orders to Fulfill</h2>
                 </div>
 
-                <!-- Flash Messages -->
-                <div style="padding: 0 32px;">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    {% for category, message in messages %}
-                    <div
-                        style="padding: 12px; margin-bottom: 20px; border-radius: 12px; background: {% if category == 'success' %}#ecfdf5{% else %}#fef2f2{% endif %}; color: {% if category == 'success' %}#065f46{% else %}#991b1b{% endif %}; font-size: 14px; font-weight: 500;">
-                        {{ message }}
-                    </div>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
+                <div style="overflow-x: auto; margin-bottom: 40px;">
+                    <table class="po-table">
+                        <thead>
+                            <tr>
+                                <th>Order No</th>
+                                <th>Date</th>
+                                <th>Expected Delivery</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if received_pos %}
+                            {% for po in received_pos %}
+                            <tr class="link-row"
+                                onclick="window.location.href='{{ url_for('portal.po_detail', id=po.id) }}';">
+                                <td>{{ po.order_number }}</td>
+                                <td>{{ po.order_date.strftime('%d-%b-%Y') if po.order_date else '-' }}</td>
+                                <td>{{ po.expected_delivery.strftime('%d-%b-%Y') if po.expected_delivery else '-' }}
+                                </td>
+                                <td style="font-weight: 600;">₹{{ "{:,.2f}".format(po.total_amount) }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ po.status }}">{{ po.status }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    No orders received from Admin yet.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="toolbar">
+                    <h2 style="font-size: 18px; color: var(--text-dark);">My Submissions (Drafts)</h2>
+                    <a href="{{ url_for('portal.po_new') }}" class="btn btn-new">Create New Draft</a>
                 </div>
 
                 <div style="overflow-x: auto;">
@@ -298,15 +325,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% if purchase_orders %}
-                            {% for po in purchase_orders %}
+                            {% if draft_pos %}
+                            {% for po in draft_pos %}
                             <tr class="link-row"
                                 onclick="window.location.href='{{ url_for('portal.po_detail', id=po.id) }}';">
                                 <td>{{ po.order_number or 'N/A' }}</td>
                                 <td>{{ po.order_date.strftime('%d-%b-%Y') if po.order_date else 'N/A' }}</td>
                                 <td>{{ po.vendor_name }}</td>
-                                <td style="font-weight: 600;">₹{{ "{:,.2f}".format(po.total_amount) if po.total_amount
-                                    else '0.00' }}</td>
+                                <td style="font-weight: 600;">₹{{ "{:,.2f}".format(po.total_amount) or '0.00' }}</td>
                                 <td>
                                     <span class="status-badge status-{{ po.status }}">{{ po.status }}</span>
                                 </td>
@@ -314,8 +340,8 @@
                             {% endfor %}
                             {% else %}
                             <tr>
-                                <td colspan="5" style="text-align: center; padding: 60px; color: var(--text-muted);">
-                                    No purchase drafts found. Click "Create New Draft" to get started.
+                                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    No purchase drafts found.
                                 </td>
                             </tr>
                             {% endif %}

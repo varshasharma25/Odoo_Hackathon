@@ -318,6 +318,39 @@
         <!-- Main Dashboard -->
         <main class="dashboard-container">
 
+            <!-- Vendor Stats (if user is a vendor) -->
+            {% if current_user.role == 'portal' %}
+            <div class="grid-stats">
+                <div class="stat-card">
+                    <span class="stat-label">Pending Payments</span>
+                    <div class="stat-value">₹ {{ "{:,.2f}".format(pending_vendor_payments) }}</div>
+                    <div class="stat-subtext">Due from Admin</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Total Sales</span>
+                    <div class="stat-value">₹ {{ "{:,.2f}".format(total_vendor_sales) }}</div>
+                    <div class="stat-subtext">Billed to Admin</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">New Orders</span>
+                    <div class="stat-value">{{ new_purchase_orders }}</div>
+                    <div class="stat-subtext">Received from Admin</div>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Active Sales</span>
+                    <div class="stat-value">{{ "{:02d}".format(active_orders) }}</div>
+                    <div class="stat-subtext">Customer Orders</div>
+                </div>
+            </div>
+
+            <h2 class="section-title"
+                style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 40px;">My Customer
+                Account</h2>
+            {% endif %}
+
             <div class="grid-stats">
                 <div class="stat-card">
                     <span class="stat-label">Total Invoices</span>
@@ -329,12 +362,6 @@
                     <span class="stat-label">Unpaid Bills</span>
                     <div class="stat-value">₹ {{ "{:,.2f}".format(total_amount_due) }}</div>
                     <div class="stat-subtext">Attention required</div>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-label">Active Orders</span>
-                    <div class="stat-value">{{ "{:02d}".format(active_orders) }}</div>
-                    <div class="stat-subtext">SO / PO tracking</div>
                 </div>
 
                 <div class="stat-card">

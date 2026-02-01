@@ -206,16 +206,6 @@
             color: #9a3412;
             display: none;
         }
-
-        #createBillBtn {
-            background-color: #000;
-            color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-        }
     </style>
 </head>
 
@@ -237,12 +227,9 @@
                             onclick="updateStatus('confirmed')">Confirm</button>
                         {% endif %}
                         <button type="button" class="btn">Print</button>
-                        <button type="button" class="btn" onclick="sendToVendor()">Send</button>
+                        <button type="button" class="btn" onclick="updateStatus('sent')">Send</button>
                         {% if po and po.status == 'confirmed' %}
                         <button type="button" class="btn" onclick="updateStatus('cancelled')">Cancel</button>
-                        <button type="button" id="createBillBtn"
-                            onclick="window.location.href='{{ url_for('admin.po_create_bill', id=po.id) }}';">Create
-                            Bill</button>
                         {% endif %}
                         <button type="button" class="btn btn-confirm" style="background: var(--accent-orange);"
                             onclick="window.location.href='{{ url_for('admin.budgets_list') }}';">Budget</button>
@@ -251,6 +238,7 @@
                     <div class="status-container">
                         <div class="status-step {% if not po or po.status == 'draft' %}active{% endif %}">Draft</div>
                         <div class="status-step {% if po and po.status == 'confirmed' %}active{% endif %}">Confirm</div>
+                        <div class="status-step {% if po and po.status == 'sent' %}active{% endif %}">Sent</div>
                         <div class="status-step {% if po and po.status == 'cancelled' %}active{% endif %}">Cancelled
                         </div>
                     </div>

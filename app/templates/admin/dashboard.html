@@ -405,14 +405,25 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-icon">💳</div>
-            <h3>Secure Payments</h3>
-            <p>
-                Process payments for pending bills instantly using our encrypted payment system. Fast, secure, and
-                fully recorded in your history.
-            </p>
-            <a href="{{ url_for('portal.invoices_list') }}" class="btn-link">Settle Balances →</a>
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-icon">💳</div>
+                <h3>Financial Overview</h3>
+                <p>
+                    <strong>Balance Outstanding:</strong> ₹ {{ "{:,.2f}".format(balance_outstanding) }}<br>
+                    <strong>Total Purchases:</strong> ₹ {{ "{:,.2f}".format(total_purchases) }}
+                </p>
+                <a href="{{ url_for('admin.vendor_bills_list') }}" class="btn-link">View Vendor Bills →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📄</div>
+                <h3>Process Payments</h3>
+                <p>
+                    Process payments for pending bills instantly using our encrypted payment system.
+                </p>
+                <a href="{{ url_for('admin.payments_list') }}" class="btn-link">Go to Payments →</a>
+            </div>
         </div>
     </div>
     </div>
