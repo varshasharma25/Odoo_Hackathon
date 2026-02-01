@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from app.admin import bp
 from app import db
-from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine, VendorBill, VendorBillLine, Invoice, InvoiceLine, SaleOrder, SaleOrderLine, Users
+from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine, VendorBill, VendorBillLine, Invoice, InvoiceLine, SaleOrder, SaleOrderLine, Users, AutoAnalyticalModel
 from sqlalchemy.exc import IntegrityError
 
 def save_image(file):
@@ -27,6 +27,7 @@ def save_image(file):
 @login_required
 def dashboard():
     portal_drafts_count = PurchaseOrder.query.filter(PurchaseOrder.user_id.isnot(None), PurchaseOrder.status == 'draft').count()
+    sales_drafts_count = SaleOrder.query.filter(SaleOrder.customer_id.isnot(None), SaleOrder.status == 'draft').count()
     total_po_count = PurchaseOrder.query.count()
     
     # Financial Analytics for Admin Dashboard
@@ -35,6 +36,7 @@ def dashboard():
     
     return render_template('admin/dashboard.html', 
                            portal_drafts_count=portal_drafts_count,
+                           sales_drafts_count=sales_drafts_count,
                            total_po_count=total_po_count,
                            balance_outstanding=balance_outstanding,
                            total_purchases=total_purchases)
@@ -178,11 +180,62 @@ def analytical_account_detail(id):
         return redirect(url_for('admin.analytical_accounts_list'))
     return render_template('admin/analytical_account_form.html', account=account)
 
+@bp.route('/auto-analytical-models')
+@login_required
+def auto_analytical_models_list():
+    models = AutoAnalyticalModel.query.all()
+    return render_template('admin/auto_analytical_models_list.html', models=models)
+
+@bp.route('/auto-analytical-model/new', methods=['GET', 'POST'])
+@login_required
+def auto_analytical_model_new():
+    if request.method == 'POST':
+        product_name = request.form.get('product_name')
+        vendor_name = request.form.get('vendor_name')
+        analytical_account_name = request.form.get('analytical_account_name')
+        
+        model = AutoAnalyticalModel(
+            product_name=product_name,
+            vendor_name=vendor_name,
+            analytical_account_name=analytical_account_name
+        )
+        db.session.add(model)
+        db.session.commit()
+        flash('Auto Analytical Model created successfully!', 'success')
+        return redirect(url_for('admin.auto_analytical_models_list'))
+    
+    products = Product.query.all()
+    vendors = Contact.query.all()
+    analytical_accounts = AnalyticalAccount.query.all()
+    return render_template('admin/auto_analytical_model_form.html', 
+                           products=products, 
+                           vendors=vendors, 
+                           analytical_accounts=analytical_accounts)
+
+@bp.route('/auto-analytical-model/delete/<int:id>')
+@login_required
+def auto_analytical_model_delete(id):
+    model = AutoAnalyticalModel.query.get_or_404(id)
+    db.session.delete(model)
+    db.session.commit()
+    flash('Model deleted successfully!', 'success')
+    return redirect(url_for('admin.auto_analytical_models_list'))
+
 @bp.route('/budgets')
 @login_required
 def budgets_list():
     budgets = Budget.query.filter_by(is_archived=False).all()
     return render_template('admin/budgets_list.html', budgets=budgets)
+
+@bp.route('/budget/revised')
+@login_required
+def budget_revised():
+    return render_template('admin/budget_vs_actual.html')
+
+@bp.route('/budget/explanation')
+@login_required
+def budget_explanation():
+    return render_template('admin/budget_achievement_lines.html')
 
 @bp.route('/budget/new', methods=['GET', 'POST'])
 @login_required
@@ -305,8 +358,10 @@ def po_new():
         flash('Purchase Order created successfully!', 'success')
         return redirect(url_for('admin.po_list'))
         
+    auto_models = AutoAnalyticalModel.query.filter_by(is_active=True).all()
     return render_template('admin/po_form.html', po=None, order_number=order_number, 
-                           vendors=vendors, analytical_accounts=analytical_accounts, products=products)
+                           vendors=vendors, analytical_accounts=analytical_accounts, products=products,
+                           auto_models=auto_models)
 
 @bp.route('/purchase-order/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -366,8 +421,10 @@ def po_detail(id):
         flash('Purchase Order updated successfully!', 'success')
         return redirect(url_for('admin.po_list'))
         
+    auto_models = AutoAnalyticalModel.query.filter_by(is_active=True).all()
     return render_template('admin/po_form.html', po=po, order_number=po.order_number, 
-                           vendors=vendors, analytical_accounts=analytical_accounts, products=products)
+                           vendors=vendors, analytical_accounts=analytical_accounts, products=products,
+                           auto_models=auto_models)
 
 @bp.route('/purchase-order/<int:id>/status/<status>')
 @login_required

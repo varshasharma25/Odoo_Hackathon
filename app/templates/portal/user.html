@@ -299,6 +299,9 @@
             <a href="{{ url_for('portal.po_list') }}" class="nav-item">
                 <span>Purchase Specification</span>
             </a>
+            <a href="{{ url_for('portal.sales_orders_list') }}" class="nav-item">
+                <span>My Sales Orders</span>
+            </a>
             <a href="{{ url_for('portal.payment_history') }}" class="nav-item">
                 <span>Payments</span>
             </a>
@@ -384,6 +387,9 @@
                     </a>
                     <a href="{{ url_for('portal.po_list') }}" class="btn-action">
                         Draft Purchase Specs
+                    </a>
+                    <a href="{{ url_for('portal.sales_orders_list') }}" class="btn-action">
+                        My Sales Orders
                     </a>
                 </div>
             </section>

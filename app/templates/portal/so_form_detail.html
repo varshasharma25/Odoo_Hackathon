@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Order Detail | User Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            --body-bg: #f8fafc;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #94a3b8;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-accent);
+            color: #fff;
+        }
+
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .dashboard-container {
+            padding: 40px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 32px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            color: var(--text-dark);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .items-table td {
+            padding: 16px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">USER PORTAL</div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('portal.home') }}" class="nav-item">
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('portal.invoices_list') }}" class="nav-item">
+                <span>Bills & Invoices</span>
+            </a>
+            <a href="{{ url_for('portal.po_list') }}" class="nav-item">
+                <span>Purchase Specification</span>
+            </a>
+            <a href="{{ url_for('portal.sales_orders_list') }}" class="nav-item active">
+                <span>My Sales Orders</span>
+            </a>
+            <a href="{{ url_for('portal.payment_history') }}" class="nav-item">
+                <span>Payments</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="header">
+            <h1>Sales Order Details</h1>
+            <div
+                style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #fff; border: 1px solid var(--border-color); border-radius: 99px; font-size: 14px; font-weight: 500;">
+                <div
+                    style="width: 32px; height: 32px; background: var(--primary-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    {{ current_user.name[0] if current_user.name else 'U' }}
+                </div>
+                <span>{{ current_user.name or current_user.email }}</span>
+            </div>
+        </header>
+
+        <main class="dashboard-container">
+            <div class="form-card">
+                <div class="toolbar">
+                    <a href="{{ url_for('portal.sales_orders_list') }}" class="btn">← Back to Orders</a>
+                    <span class="status-badge"
+                        style="background: {% if so.status == 'draft' %}#fef3c7; color: #92400e{% elif so.status == 'sent' %}#d1fae5; color: #065f46{% elif so.status == 'confirmed' %}#dbeafe; color: #1e40af{% else %}#fee2e2; color: #991b1b{% endif %};">
+                        {{ so.status }}
+                    </span>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Order Number</span>
+                        <span class="info-value" style="color: var(--primary-accent); font-weight: 600;">{{
+                            so.order_number }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Order Date</span>
+                        <span class="info-value">{{ so.order_date.strftime('%B %d, %Y') if so.order_date else 'N/A'
+                            }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Customer</span>
+                        <span class="info-value">{{ so.customer_name }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Total Amount</span>
+                        <span class="info-value" style="font-size: 20px; color: var(--primary-accent);">₹{{
+                            "{:,.2f}".format(so.total_amount) }}</span>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px; margin-top: 40px;">Order Items</h3>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th style="width: 100px;">Qty</th>
+                            <th style="width: 150px;">Unit Price</th>
+                            <th style="width: 150px; text-align: right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for line in so.lines %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ line.product_name }}</td>
+                            <td>{{ line.budget_analytics or 'N/A' }}</td>
+                            <td>{{ line.quantity }}</td>
+                            <td>₹{{ "{:,.2f}".format(line.unit_price) }}</td>
+                            <td style="text-align: right; font-weight: 600;">₹{{ "{:,.2f}".format(line.total) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div
+                    style="display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <div style="text-align: right;">
+                        <span
+                            style="font-size: 14px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Total
+                            Amount</span>
+                        <div style="font-size: 28px; font-weight: 600; color: var(--primary-accent);">₹{{
+                            "{:,.2f}".format(so.total_amount) }}</div>
+                    </div>
+                </div>
+
+                {% if so.notes %}
+                <div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 12px;">
+                    <h4
+                        style="font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">
+                        Notes</h4>
+                    <p style="color: var(--text-dark); line-height: 1.6;">{{ so.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

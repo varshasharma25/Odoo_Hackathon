@@ -2,7 +2,11 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.portal import bp
 from app import db
+<<<<<<< HEAD
 from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount, Invoice, Users, SaleOrder, VendorBill
+=======
+from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount, Invoice, Users, SaleOrder, SaleOrderLine
+>>>>>>> c0275c37aa251125e22938b43de89e498a9b06dd
 from datetime import datetime
 
 @bp.route('/')
@@ -183,6 +187,7 @@ def po_detail(id):
     # Otherwise show the draft form (existing po_form.html)
     return render_template('portal/po_form.html', po=po)
 
+<<<<<<< HEAD
 @bp.route('/purchase-order/<int:id>/accept')
 @login_required
 def po_accept(id):
@@ -233,3 +238,81 @@ def po_accept(id):
     
     flash(f'Purchase Order {po.order_number} accepted! Bill {bill_number} has been sent to Admin.', 'success')
     return redirect(url_for('portal.po_list'))
+=======
+# --- Sales Draft Routes ---
+
+@bp.route('/sales-orders')
+@login_required
+def sales_orders_list():
+    # Show sales orders where the current user is the customer
+    sales_orders = SaleOrder.query.filter_by(customer_id=current_user.id, is_archived=False).order_by(SaleOrder.order_date.desc()).all()
+    return render_template('portal/so_form_list.html', sales_orders=sales_orders)
+
+@bp.route('/sale-order/new', methods=['GET', 'POST'])
+@login_required
+def so_new():
+    products = Product.query.filter_by(is_archived=False).all()
+    analytical_accounts = AnalyticalAccount.query.filter_by(is_archived=False).all()
+    
+    if request.method == 'POST':
+        # Generate next serial SO Number (prefixed with PSO for Portal Sale Order)
+        last_so = SaleOrder.query.filter(SaleOrder.order_number.like('PSO%')).order_by(SaleOrder.id.desc()).first()
+        if last_so and last_so.order_number and last_so.order_number.startswith('PSO'):
+            try:
+                last_num = int(last_so.order_number[3:])
+                order_number = f"PSO{last_num + 1:04d}"
+            except ValueError:
+                order_number = "PSO0001"
+        else:
+            order_number = "PSO0001"
+
+        so = SaleOrder(
+            order_number=order_number,
+            customer_id=current_user.id,
+            customer_name=current_user.name or current_user.username,
+            order_date=datetime.strptime(request.form.get('order_date'), '%Y-%m-%d').date() if request.form.get('order_date') else datetime.now().date(),
+            status='draft',
+            notes=request.form.get('notes'),
+            total_amount=0.0
+        )
+        db.session.add(so)
+        db.session.flush() # Get SO ID
+        
+        # Handle Line Items
+        line_products = request.form.getlist('product_name[]')
+        line_analytics = request.form.getlist('budget_analytics[]')
+        line_qtys = request.form.getlist('quantity[]')
+        line_prices = request.form.getlist('unit_price[]')
+        
+        total_amount = 0.0
+        for i in range(len(line_products)):
+            if not line_products[i]: continue
+            qty = float(line_qtys[i] or 0)
+            price = float(line_prices[i] or 0)
+            line_total = qty * price
+            total_amount += line_total
+            
+            line = SaleOrderLine(
+                so_id=so.id,
+                product_name=line_products[i],
+                budget_analytics=line_analytics[i] if i < len(line_analytics) else None,
+                quantity=qty,
+                unit_price=price,
+                total=line_total
+            )
+            db.session.add(line)
+            
+        so.total_amount = total_amount
+        db.session.commit()
+        flash('Sales Draft created successfully and sent for review!', 'success')
+        return redirect(url_for('portal.sales_orders_list'))
+        
+    return render_template('portal/so_form_create.html', so=None, 
+                           products=products, analytical_accounts=analytical_accounts)
+
+@bp.route('/sale-order/<int:id>', methods=['GET'])
+@login_required
+def so_detail(id):
+    so = SaleOrder.query.filter_by(id=id, customer_id=current_user.id).first_or_404()
+    return render_template('portal/so_form_detail.html', so=so)
+>>>>>>> c0275c37aa251125e22938b43de89e498a9b06dd

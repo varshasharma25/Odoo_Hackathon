@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Sales Orders | User Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 50px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #94a3b8;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-accent);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);
+        }
+
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .dashboard-container {
+            padding: 40px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .orders-table {
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-top: 24px;
+        }
+
+        .orders-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            background: #f8fafc;
+            padding: 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .orders-table td {
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 15px;
+        }
+
+        .orders-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-confirmed {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-sent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">USER PORTAL</div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('portal.home') }}" class="nav-item">
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('portal.invoices_list') }}" class="nav-item">
+                <span>Bills & Invoices</span>
+            </a>
+            <a href="{{ url_for('portal.po_list') }}" class="nav-item">
+                <span>Purchase Specification</span>
+            </a>
+            <a href="{{ url_for('portal.sales_orders_list') }}" class="nav-item active">
+                <span>My Sales Orders</span>
+            </a>
+            <a href="{{ url_for('portal.payment_history') }}" class="nav-item">
+                <span>Payments</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="header">
+            <h1>My Sales Orders</h1>
+            <div class="user-badge"
+                style="display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #fff; border: 1px solid var(--border-color); border-radius: 99px; font-size: 14px; font-weight: 500;">
+                <div
+                    style="width: 32px; height: 32px; background: var(--primary-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    {{ current_user.name[0] if current_user.name else 'U' }}</div>
+                <span>{{ current_user.name or current_user.email }}</span>
+            </div>
+        </header>
+
+        <main class="dashboard-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div
+                style="padding: 16px; background: {% if category == 'success' %}#d1fae5{% else %}#fee2e2{% endif %}; border-radius: 12px; margin-bottom: 24px; color: {% if category == 'success' %}#065f46{% else %}#991b1b{% endif %};">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div>
+                    <h2 style="font-size: 20px; font-weight: 600; color: var(--text-dark);">Sales Order Drafts</h2>
+                    <p style="color: var(--text-muted); margin-top: 4px;">Create and manage your sales order requests
+                    </p>
+                </div>
+                <a href="{{ url_for('portal.so_new') }}" class="btn btn-primary">+ Create New Order</a>
+            </div>
+
+            {% if sales_orders %}
+            <div class="orders-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order Number</th>
+                            <th>Order Date</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for so in sales_orders %}
+                        <tr>
+                            <td style="font-weight: 600; color: var(--primary-accent);">{{ so.order_number }}</td>
+                            <td>{{ so.order_date.strftime('%b %d, %Y') if so.order_date else 'N/A' }}</td>
+                            <td style="font-weight: 600;">₹{{ "{:,.2f}".format(so.total_amount) }}</td>
+                            <td>
+                                <span class="status-badge status-{{ so.status }}">{{ so.status }}</span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('portal.so_detail', id=so.id) }}"
+                                    style="color: var(--primary-accent); text-decoration: none; font-weight: 600;">View
+                                    Details →</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <h3>No Sales Orders Yet</h3>
+                <p>You haven't created any sales orders. Click the button above to create your first order.</p>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+
+</html>

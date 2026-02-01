@@ -358,3 +358,16 @@ class SaleOrderLine(db.Model):
             'unit_price': self.unit_price,
             'total': self.total
         }
+
+class AutoAnalyticalModel(db.Model):
+    __tablename__ = 'auto_analytical_models'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.String(128), nullable=True)
+    vendor_name = db.Column(db.String(128), nullable=True)
+    analytical_account_name = db.Column(db.String(128), nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<AutoAnalyticalModel {self.product_name or self.vendor_name}>'
