@@ -2,11 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.portal import bp
 from app import db
-<<<<<<< HEAD
-from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount, Invoice, Users, SaleOrder, VendorBill
-=======
-from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount, Invoice, Users, SaleOrder, SaleOrderLine
->>>>>>> c0275c37aa251125e22938b43de89e498a9b06dd
+from app.models import PurchaseOrder, PurchaseOrderLine, Contact, Product, AnalyticalAccount, Invoice, Users, SaleOrder, VendorBill, SaleOrderLine
 from datetime import datetime
 
 @bp.route('/')
@@ -187,7 +183,7 @@ def po_detail(id):
     # Otherwise show the draft form (existing po_form.html)
     return render_template('portal/po_form.html', po=po)
 
-<<<<<<< HEAD
+
 @bp.route('/purchase-order/<int:id>/accept')
 @login_required
 def po_accept(id):
@@ -238,7 +234,7 @@ def po_accept(id):
     
     flash(f'Purchase Order {po.order_number} accepted! Bill {bill_number} has been sent to Admin.', 'success')
     return redirect(url_for('portal.po_list'))
-=======
+
 # --- Sales Draft Routes ---
 
 @bp.route('/sales-orders')
@@ -315,4 +311,3 @@ def so_new():
 def so_detail(id):
     so = SaleOrder.query.filter_by(id=id, customer_id=current_user.id).first_or_404()
     return render_template('portal/so_form_detail.html', so=so)
->>>>>>> c0275c37aa251125e22938b43de89e498a9b06dd

@@ -270,6 +270,14 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        {% if po and not po.vendor_id %}
+                        <div
+                            style="font-size: 13px; color: #dc2626; background: #fee2e2; padding: 8px; border-radius: 6px; margin-bottom: 16px;">
+                            ⚠ <strong>Unlinked Vendor:</strong> This vendor is not linked to a Portal User. Even if
+                            sent, they will NOT see this order. Ensure a User exists with the same email as the Vendor
+                            Contact.
+                        </div>
+                        {% endif %}
                         <div class="input-row">
                             <span class="label">Reference</span>
                             <input type="text" name="reference" class="input-field" placeholder="REQ-25-0001"
