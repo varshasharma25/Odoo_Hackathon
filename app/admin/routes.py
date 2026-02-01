@@ -173,6 +173,47 @@ def analytical_account_detail(id):
         return redirect(url_for('admin.analytical_accounts_list'))
     return render_template('admin/analytical_account_form.html', account=account)
 
+@bp.route('/auto-analytical-models')
+@login_required
+def auto_analytical_models_list():
+    models = AutoAnalyticalModel.query.all()
+    return render_template('admin/auto_analytical_models_list.html', models=models)
+
+@bp.route('/auto-analytical-model/new', methods=['GET', 'POST'])
+@login_required
+def auto_analytical_model_new():
+    if request.method == 'POST':
+        product_name = request.form.get('product_name')
+        vendor_name = request.form.get('vendor_name')
+        analytical_account_name = request.form.get('analytical_account_name')
+        
+        model = AutoAnalyticalModel(
+            product_name=product_name,
+            vendor_name=vendor_name,
+            analytical_account_name=analytical_account_name
+        )
+        db.session.add(model)
+        db.session.commit()
+        flash('Auto Analytical Model created successfully!', 'success')
+        return redirect(url_for('admin.auto_analytical_models_list'))
+    
+    products = Product.query.all()
+    vendors = Contact.query.all()
+    analytical_accounts = AnalyticalAccount.query.all()
+    return render_template('admin/auto_analytical_model_form.html', 
+                           products=products, 
+                           vendors=vendors, 
+                           analytical_accounts=analytical_accounts)
+
+@bp.route('/auto-analytical-model/delete/<int:id>')
+@login_required
+def auto_analytical_model_delete(id):
+    model = AutoAnalyticalModel.query.get_or_404(id)
+    db.session.delete(model)
+    db.session.commit()
+    flash('Model deleted successfully!', 'success')
+    return redirect(url_for('admin.auto_analytical_models_list'))
+
 @bp.route('/budgets')
 @login_required
 def budgets_list():
