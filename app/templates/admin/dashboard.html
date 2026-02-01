@@ -397,12 +397,22 @@
 
             <div class="card">
                 <div class="card-icon">🚀</div>
-                <h3>Portal Submissions</h3>
+                <h3>Purchase Specifications</h3>
                 <p>
                     There are <strong>{{ portal_drafts_count }}</strong> new purchase specifications submitted via the
                     portal that require your review and confirmation.
                 </p>
                 <a href="{{ url_for('admin.po_list') }}" class="btn-link">Review Specifications →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🛒</div>
+                <h3>Sales Order Drafts</h3>
+                <p>
+                    There are <strong>{{ sales_drafts_count }}</strong> new sales order drafts submitted by customers
+                    that require your review and approval.
+                </p>
+                <a href="{{ url_for('admin.so_list') }}" class="btn-link">Review Sales Orders →</a>
             </div>
         </div>
 

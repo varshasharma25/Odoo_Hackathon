@@ -27,10 +27,12 @@ def save_image(file):
 @login_required
 def dashboard():
     portal_drafts_count = PurchaseOrder.query.filter(PurchaseOrder.user_id.isnot(None), PurchaseOrder.status == 'draft').count()
+    sales_drafts_count = SaleOrder.query.filter(SaleOrder.customer_id.isnot(None), SaleOrder.status == 'draft').count()
     total_po_count = PurchaseOrder.query.count()
     pending_bills_count = 5 # Placeholder as we don't have a bill model yet or it's not fully used
     return render_template('admin/dashboard.html', 
                            portal_drafts_count=portal_drafts_count,
+                           sales_drafts_count=sales_drafts_count,
                            total_po_count=total_po_count,
                            pending_bills_count=pending_bills_count)
 
