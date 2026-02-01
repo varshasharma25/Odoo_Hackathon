@@ -220,6 +220,16 @@ def budgets_list():
     budgets = Budget.query.filter_by(is_archived=False).all()
     return render_template('admin/budgets_list.html', budgets=budgets)
 
+@bp.route('/budget/revised')
+@login_required
+def budget_revised():
+    return render_template('admin/budget_vs_actual.html')
+
+@bp.route('/budget/explanation')
+@login_required
+def budget_explanation():
+    return render_template('admin/budget_achievement_lines.html')
+
 @bp.route('/budget/new', methods=['GET', 'POST'])
 @login_required
 def budget_new():
