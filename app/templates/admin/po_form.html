@@ -466,16 +466,38 @@
 
                 if (e.target.classList.contains('product-search')) {
                     const val = e.target.value.toLowerCase();
+                    const vendorVal = document.querySelector('select[name="vendor_name"]').value.toLowerCase();
                     const analyticSelect = e.target.closest('tr').querySelector('.analytic-select');
-                    const keywordMap = { 'chair': 'Office Maintenance', 'table': 'Deepawali', 'desk': 'Furniture Expo', 'office': 'Office Maintenance' };
-                    for (const [key, account] of Object.entries(keywordMap)) {
-                        if (val.includes(key)) {
-                            Array.from(analyticSelect.options).forEach(opt => {
-                                if (opt.text === account) analyticSelect.value = opt.value;
-                            });
-                        }
+
+                    // Rules from database
+                    const rules = [
+                        {% for model in auto_models %}
+                {
+                    product: "{{ model.product_name|lower if model.product_name else '' }}",
+                        vendor: "{{ model.vendor_name|lower if model.vendor_name else '' }}",
+                            account: "{{ model.analytical_account_name }}"
+                },
+                {% endfor %}
+                    ];
+
+                for (const rule of rules) {
+                    let match = false;
+                    if (rule.product && rule.vendor) {
+                        if (val.includes(rule.product) && vendorVal.includes(rule.vendor)) match = true;
+                    } else if (rule.product) {
+                        if (val.includes(rule.product)) match = true;
+                    } else if (rule.vendor) {
+                        if (vendorVal.includes(rule.vendor)) match = true;
+                    }
+
+                    if (match) {
+                        Array.from(analyticSelect.options).forEach(opt => {
+                            if (opt.text === rule.account) analyticSelect.value = opt.value;
+                        });
+                        break;
                     }
                 }
+            }
             });
         });
 

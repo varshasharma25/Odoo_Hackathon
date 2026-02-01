@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automation Rule | Shiv Furniture</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #714B67;
+            --primary-hover: #5d3d55;
+            --body-bg: #f8fafc;
+            --card-white: #ffffff;
+            --text-dark: #333;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --accent-pink: #d63384;
+            --accent-orange: #ff9800;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            color: #000;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 36px;
+            border: 1px solid #000;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            text-align: left;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #a47c94;
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #000;
+            font-family: inherit;
+        }
+
+        .btn-confirm {
+            background-color: var(--primary-accent);
+            color: white;
+            border-color: var(--primary-accent);
+        }
+
+        .rules-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .rules-table td {
+            padding: 16px 0;
+            font-size: 18px;
+            border-bottom: 1.5px solid var(--border-color);
+        }
+
+        .label {
+            width: 240px;
+            color: var(--accent-pink);
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            border: none;
+            padding: 8px 0;
+            font-size: 18px;
+            color: #333;
+            background: transparent;
+            outline: none;
+            font-family: inherit;
+            border-bottom: 1.5px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        .input-field:focus {
+            border-bottom: 1.5px solid var(--primary-accent);
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="header-title">Create Automation Rule</h1>
+
+        <div class="form-card">
+            <div class="toolbar">
+                <div class="btn-group">
+                    <button type="submit" form="modelForm" class="btn btn-confirm">Save Rule</button>
+                    <button type="button" class="btn"
+                        onclick="window.location.href='{{ url_for('admin.auto_analytical_models_list') }}';">Cancel</button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn" onclick="window.history.back();">Back</button>
+                </div>
+            </div>
+
+            <form id="modelForm" method="POST">
+                <table class="rules-table">
+                    <tbody>
+                        <tr>
+                            <td class="label">Product Name Match</td>
+                            <td>
+                                <input type="text" name="product_name" class="input-field" placeholder="e.g. Chair"
+                                    list="productList">
+                                <p class="help-text">Leave blank to match all products</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">Vendor Name Match</td>
+                            <td>
+                                <input type="text" name="vendor_name" class="input-field" placeholder="e.g. Wood Works"
+                                    list="vendorList">
+                                <p class="help-text">Leave blank to match all vendors</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">Target Analytical Account</td>
+                            <td>
+                                <select name="analytical_account_name" class="input-field" required>
+                                    <option value="" disabled selected>Select Account</option>
+                                    {% for account in analytical_accounts %}
+                                    <option value="{{ account.name }}">{{ account.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <p class="help-text">Budget account to be automatically assigned</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <datalist id="productList">
+        {% for prod in products %}
+        <option value="{{ prod.name }}">
+            {% endfor %}
+    </datalist>
+
+    <datalist id="vendorList">
+        {% for vendor in vendors %}
+        <option value="{{ vendor.name }}">
+            {% endfor %}
+    </datalist>
+</body>
+
+</html>

@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from app.admin import bp
 from app import db
-from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine, VendorBill, VendorBillLine, Invoice, InvoiceLine, SaleOrder, SaleOrderLine, Users
+from app.models import Contact, Product, Budget, AnalyticalAccount, PurchaseOrder, PurchaseOrderLine, VendorBill, VendorBillLine, Invoice, InvoiceLine, SaleOrder, SaleOrderLine, Users, AutoAnalyticalModel
 from sqlalchemy.exc import IntegrityError
 
 def save_image(file):
@@ -292,8 +292,10 @@ def po_new():
         flash('Purchase Order created successfully!', 'success')
         return redirect(url_for('admin.po_list'))
         
+    auto_models = AutoAnalyticalModel.query.filter_by(is_active=True).all()
     return render_template('admin/po_form.html', po=None, order_number=order_number, 
-                           vendors=vendors, analytical_accounts=analytical_accounts, products=products)
+                           vendors=vendors, analytical_accounts=analytical_accounts, products=products,
+                           auto_models=auto_models)
 
 @bp.route('/purchase-order/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -342,8 +344,10 @@ def po_detail(id):
         flash('Purchase Order updated successfully!', 'success')
         return redirect(url_for('admin.po_list'))
         
+    auto_models = AutoAnalyticalModel.query.filter_by(is_active=True).all()
     return render_template('admin/po_form.html', po=po, order_number=po.order_number, 
-                           vendors=vendors, analytical_accounts=analytical_accounts, products=products)
+                           vendors=vendors, analytical_accounts=analytical_accounts, products=products,
+                           auto_models=auto_models)
 
 @bp.route('/purchase-order/<int:id>/status/<status>')
 @login_required
